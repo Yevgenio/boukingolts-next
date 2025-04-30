@@ -24,7 +24,7 @@ export default function Gallery() {
     async function fetchProducts() {
       setLoading(true);
       try {
-        const res = await fetch(`${API_URL}/products`);
+        const res = await fetch(`${API_URL}/api/products`);
         const data = await res.json();
         setProducts(data);
       } catch (error) {

@@ -1,21 +1,27 @@
-// /src/components/Logout.tsx
-import { useRouter } from 'next/router';
+// // /src/components/Logout.tsx
+// import API_URL from '@/config/config';
+// import { useRouter } from 'next/router';
 
-const Logout = () => {
-  const router = useRouter();
+// const Logout = () => {
+//   const router = useRouter();
 
-  const handleLogout = () => {
-    // Remove tokens from storage
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+//   const handleLogout = async () => {
+//     // Remove tokens from storage
+//     try {
+//       await fetch(`${API_URL}/api/auth/logout`, {             
+//         method: 'GET',
+//         credentials: 'include', 
+//       });
+//     } catch (err) {
+//       console.error('Logout API failed', err);
+//     }
+  
+//     router.push('/login');
+//   };
 
-    // Redirect to login page
-    router.push('/login');
-  };
+//   return (
+//     <button onClick={handleLogout}>Logout</button>
+//   );
+// };
 
-  return (
-    <button onClick={handleLogout}>Logout</button>
-  );
-};
-
-export default Logout;
+// export default Logout;
