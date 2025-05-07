@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next';
 import nookies from 'nookies';
 
 export function withAuth(gssp: GetServerSideProps) {
-  return async (context: any) => {
+  return async (context: Parameters<GetServerSideProps>[0]) => {
     const { access_token } = nookies.get(context);
 
     if (!access_token) {

@@ -1,6 +1,4 @@
 // pages/home.tsx
-import { GetServerSideProps } from 'next';
-import nookies from 'nookies'; // Helps easily read cookies in Next.js
 
 const Home = () => {
   return (

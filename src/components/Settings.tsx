@@ -4,7 +4,7 @@ import API_URL from '@/config/config';
 
 const Settings = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   
   useEffect(() => {
@@ -23,8 +23,12 @@ const Settings = () => {
         const data = await response.json();
         console.log(data);
         setEmail(data.email); // Assuming data contains email
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('An unknown error occurred');
+        }
       }
     };
 
@@ -36,20 +40,6 @@ const Settings = () => {
       <h1>Settings</h1>
         <p>Email: {email}</p>
       {error && <p className="error">{error}</p>}
-      {/* <form onSubmit={handleSaveChanges}>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Save Changes</button>
-      </form> */}
     </div>
   );
 };

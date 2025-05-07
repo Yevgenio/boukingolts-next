@@ -5,7 +5,6 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
-import API_URL from '@/config/config';
 
 const Header = () => {
   // const { isLoggedIn, isAdmin, setAuthState } = useAuth();

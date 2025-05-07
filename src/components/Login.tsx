@@ -4,8 +4,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import API_URL from '@/config/config';
-import { login } from '@/api/auth'; // Assuming you have a login function in your auth API
 
 const Login = () => {
   const router = useRouter();
@@ -14,38 +12,18 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // const handleLogin = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     const response = await fetch(`${API_URL}/api/auth/login`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ email, password }),
-  //       credentials: 'include',
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error('Error during login');
-  //     }
-
-  //     const data = await response.json();
-  //     setAuthState({ isLoggedIn: true, isAdmin: data.role === 'admin' });
-  //     router.push('/home');
-  //   } catch (err) {
-  //     setError('An error occurred during login');
-  //   }
-  // };
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await login(email, password);
       router.push('/home');
-    } catch (err) {
-      setError('Login failed');
-    }
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('An unknown error occurred');
+        }
+      }
   };
 
   return (

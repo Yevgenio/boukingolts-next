@@ -1,3 +1,5 @@
+export type TranslationStructure = typeof translations;
+
 export const translations = {
     homepage: {
         title: {

@@ -40,8 +40,12 @@ export default function CreateProductForm() {
 
       setSuccess(true);
       router.push('/gallery'); // Redirect or refresh
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Something went wrong');
+      }
     }
   };
 

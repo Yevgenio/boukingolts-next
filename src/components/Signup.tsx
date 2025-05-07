@@ -40,8 +40,12 @@ const Signup = () => {
           } else {
             setError("Signup failed. Please try again.");
           }
-        } catch (err) {
-          setError("An error occurred during signup");
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            setError(err.message);
+          } else {
+            setError('Something went wrong');
+          }
         }
     };
 

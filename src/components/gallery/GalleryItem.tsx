@@ -2,9 +2,9 @@
 'use client';
 
 import { useState } from 'react';
-import styles from './ProductCard.module.css';
 import Link from 'next/link';
 import API_URL from '@/config/config';
+import Image from 'next/image';
 
 interface Image {
   url: string;
@@ -39,7 +39,7 @@ export default function GalleryItem({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        <img
+        <Image
           src={`${API_URL}/api/uploads/${product.images[0]?.url}`}
           alt={product.name}
           className="absolute top-0 left-0 w-full h-full object-cover"
