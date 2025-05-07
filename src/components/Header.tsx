@@ -8,20 +8,14 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import API_URL from '@/config/config';
 
 const Header = () => {
-  const { isLoggedIn, isAdmin, setAuthState } = useAuth();
+  // const { isLoggedIn, isAdmin, setAuthState } = useAuth();
+  const { logout } = useAuth();
+  const { isLoggedIn, isAdmin } = useAuth(); // Assuming you have a way to get auth state
   const router = useRouter();
 
   const handleLogout = async () => {
-    try {
-      await fetch(`${API_URL}/api/auth/logout`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-      setAuthState({ isLoggedIn: false, isAdmin: false });
-      router.push('/login');
-    } catch (err) {
-      console.error('Logout API failed', err);
-    }
+    logout(); // Call the logout function from context
+    router.push('/login');
   };
 
   return (
