@@ -21,13 +21,13 @@ const Header = () => {
     <header className="p-2 bg-gray-800 text-white flex justify-between items-center">
       <h1 className="text-3xl"><Link href="/home">Boukingolts</Link></h1>
       <nav className="space-x-4 flex items-center">
+        {isAdmin && <Link href="/admin" className="font-bold text-red-500">Admin</Link>}
         <Link href="/home" className="hover:underline">Home</Link>
         <Link href="/gallery" className="hover:underline">Gallery</Link>
         {isLoggedIn ? (
           <>
             <Link href="/settings" className="hover:underline">Profile</Link>
             <button onClick={handleLogout} className="hover:underline">Logout</button>
-            {isAdmin && <Link href="/admin" className="ml-4 font-bold text-red-500">Admin Panel</Link>}
           </>
         ) : (
           <>

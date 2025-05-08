@@ -79,9 +79,9 @@ export default function Gallery() {
           <GalleryItem
             key={product._id}
             product={product}
-            isAdmin={isAdmin}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
+            //isAdmin={isAdmin}
+            //onEdit={handleEdit}
+            //onDelete={handleDelete}
           />
         ))}
       </div>

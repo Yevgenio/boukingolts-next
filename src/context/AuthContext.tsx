@@ -1,7 +1,7 @@
 // app/context/AuthProvider.tsx
 "use client";
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import API_URL from '@/config/config';
 
 interface AuthContextType {
@@ -15,6 +15,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [authState, setAuthState] = useState({ isLoggedIn: false, isAdmin: false });
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/auth/status`, {
+          credentials: 'include',
+        });
+
+        if (!res.ok) throw new Error('Not logged in');
+
+        const data = await res.json();
+        setAuthState({ isLoggedIn: true, isAdmin: data.isAdmin });
+      } catch {
+        setAuthState({ isLoggedIn: false, isAdmin: false });
+      }
+    };
+    checkStatus();
+  }, []);
 
   const login = async (email: string, password: string) => {
     const res = await fetch(`${API_URL}/api/auth/login`, {
@@ -32,7 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     await fetch(`${API_URL}/api/auth/logout`, {
-      method: 'POST',
+      method: 'GET',
       credentials: 'include',
     });
 

@@ -21,25 +21,19 @@ const Signup = () => {
         try {
             const response = await fetch(`${API_URL}/api/auth/signup`, {
                 method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
+                // headers: {
+                //   'Content-Type': 'application/json',
+                // },
+                credentials: 'include',
+                body: JSON.stringify({ username, email, password }),
+                // body: JSON.stringify({ email, password }),
             });
 
-            if (!response.ok) {
-                throw new Error('Error during signup');
+            if (response.ok) {
+              router.push("/home");
+            } else {
+              setError("Signup failed. Please try again.");
             }
-
-            const data = await response.json();
-
-          if (data.token) {
-            localStorage.setItem('token', data.token); // Store access token
-            localStorage.setItem('refresh_token', data.refreshToken); // Store refresh token
-            router.push("/home"); // Redirect after successful signup
-          } else {
-            setError("Signup failed. Please try again.");
-          }
         } catch (err: unknown) {
           if (err instanceof Error) {
             setError(err.message);
