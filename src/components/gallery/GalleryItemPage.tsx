@@ -2,12 +2,10 @@
 
 import API_URL from '@/config/config';
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useParams } from 'next/navigation';
 
 export default function GalleryItemPage() {
   const { id } = useParams();
-
   interface Product {
     name: string;
     description: string;
@@ -33,7 +31,7 @@ export default function GalleryItemPage() {
     <div className="max-w-6xl mx-auto p-6 grid md:grid-cols-2 gap-8 items-start">
       <div className="flex flex-col gap-4">
         <div className="w-full aspect-square border rounded-lg overflow-hidden">
-          <Image
+          <img
             src={`${API_URL}/api/uploads/${selectedImage}`}
             alt={product.name}
             className="w-full h-full object-cover"
@@ -48,7 +46,7 @@ export default function GalleryItemPage() {
                 selectedImage === img.url ? 'ring-2 ring-black' : ''
               }`}
             >
-              <Image
+              <img
                 src={`${API_URL}/api/uploads/${img.url}`}
                 alt={`Thumbnail ${i + 1}`}
                 className="w-full h-full object-cover"
