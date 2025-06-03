@@ -5,10 +5,12 @@ import { useRouter } from 'next/navigation';
 import API_URL from '@/config/config';
 
 export default function GalleryItemAdminControls({ productId }: { productId: string }) {
+    
+    const router = useRouter();
     const { isAdmin } = useAuth();
+    
     if (!isAdmin) return null;
 
-    const router = useRouter();
 
     const handleEdit = () => {
         router.push(`/gallery/edit/${productId}`);

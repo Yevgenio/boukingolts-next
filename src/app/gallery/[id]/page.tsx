@@ -1,5 +1,4 @@
 // /app/gallery/[id]/page.tsx
-export const dynamic = 'force-dynamic';
 
 // import GalleryItemPage from '@/components/gallery/GalleryItemPage';
 
@@ -11,7 +10,7 @@ export const dynamic = 'force-dynamic';
 import Image from 'next/image';
 import API_URL from '@/config/config';
 import ThumbnailSelector from '@/components/gallery/ThumbnailSelector';
-import ZoomableImage from '@/components/gallery/ZoomableImage';
+// import ZoomableImage from '@/components/gallery/ZoomableImage';
 
 interface ImageType {
   url: string;
@@ -34,7 +33,7 @@ export default async function GalleryItemPage({ params }: { params: { id: string
   }
 
   const product: Product = await res.json();
-  const firstImage = product.images[0]?.url;
+  //const firstImage = product.images[0]?.url;
 
   return (
     <div className="max-w-6xl mx-auto p-6 grid md:grid-cols-2 gap-8 items-start">
@@ -55,9 +54,6 @@ export default async function GalleryItemPage({ params }: { params: { id: string
         {/* Client hydration for thumbnail selection */}
         <ThumbnailSelector product={product} />
       </div>
-
-
-
 
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold">{product.name}</h1>

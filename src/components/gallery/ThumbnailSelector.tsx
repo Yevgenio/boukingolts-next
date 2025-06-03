@@ -2,7 +2,7 @@
 
 import API_URL from '@/config/config';
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
 
 interface ImageType {
   url: string;

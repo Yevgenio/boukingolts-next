@@ -4,8 +4,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
 export default function GalleryAdminControls() {
-  const { isAdmin } = useAuth();
   const router = useRouter();
+  const { isAdmin } = useAuth();
 
   if (!isAdmin) return null;
 
