@@ -32,14 +32,15 @@ export default function ThumbnailSelector({ product }: { product: Product }) {
     return (
       <div className="flex gap-2 overflow-x-auto">
         {product.images.map((img, index) => (
-          <button key={img._id} onClick={() => setActiveIndex(index)}>
+            <button key={img._id} onClick={() => setActiveIndex(index)}>
             <Image
               src={`${API_URL}/api/uploads/${img.url}`}
               alt={`Thumbnail ${index + 1}`}
-              fill
-              className={`w-20 h-20 ${index === activeIndex ? 'ring-2 ring-black' : ''}`}
+              width={80}
+              height={80}
+              className={`w-20 h-20 object-cover ${index === activeIndex ? 'ring-2 ring-black' : ''}`}
             />
-          </button>
+            </button>
         ))}
       </div>
     );
