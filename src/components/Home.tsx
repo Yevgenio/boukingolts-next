@@ -1,12 +1,16 @@
 // pages/home.tsx
-
-import ColorGrid from '@/components/grid/ColorGrid';
+import TileParagraph from '@/components/tiles/TileParagraph';
 
 const Home = () => {
-  return (
-    <section className="w-full h-full">
-      <ColorGrid />
-    </section>
+  return (        
+    <main>
+      <br /><br />
+      <section className="w-full h-full items-center justify-center flex flex-col">
+        <TileParagraph />
+      </section>
+    </main>
+
+
   );
 };
 

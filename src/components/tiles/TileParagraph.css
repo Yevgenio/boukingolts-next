@@ -1,0 +1,89 @@
+:root {
+  --container-width: 800px;
+  --container-height: 300px;
+  --font-size: 48px;
+}
+
+.paragraph-container {
+  position: relative;
+  width: var(--container-width);
+  height: var(--container-height);
+  font-family:  Arial, sans-serif;
+  font-weight: 600;
+  color: darkslategray;
+  overflow: hidden;
+}
+
+#main-paragraph {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  margin: 0;
+  font-size: var(--font-size);
+  transition: opacity 0.3s ease;
+}
+
+.tiles-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: none;
+  pointer-events: none;
+}
+
+.tile {
+  background-color: darkslategray;
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.tile-inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+
+.tile.flipped .tile-inner {
+  transform: rotateY(180deg);
+}
+
+.tile-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.tile-face > div {
+  width: var(--container-width);
+  height: var(--container-height);
+  padding: 20px;
+  box-sizing: border-box;
+  /* color: black; */
+  background: white;
+  font-size: var(--font-size);
+}
+
+
+.progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 3;
+}
+
+.progress {
+  height: 100%;
+  width: 0%;
+  background: #2f4f4f42;
+}

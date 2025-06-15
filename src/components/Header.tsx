@@ -4,7 +4,6 @@
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 const Header = () => {
   // const { isLoggedIn, isAdmin, setAuthState } = useAuth();
@@ -23,6 +22,7 @@ const Header = () => {
       <nav className="space-x-4 flex items-center">
         {isAdmin && <Link href="/admin" className="font-bold text-red-500">Admin</Link>}
         <Link href="/home" className="hover:underline">Home</Link>
+        <Link href="/grid" className="hover:underline">Grid</Link>
         <Link href="/gallery" className="hover:underline">Gallery</Link>
         {isLoggedIn ? (
           <>
@@ -35,9 +35,6 @@ const Header = () => {
             <Link href="/signup" className="hover:underline">Signup</Link>
           </>
         )}
-        <div className="ml-4">
-          <LanguageSwitcher />
-        </div>
       </nav>
     </header>
   );
