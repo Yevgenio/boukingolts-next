@@ -3,10 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import './TileParagraph.css';
 
 const paragraphs = [
-  `Greetings! My name is Yevgeni Boukingolts and welcome to my brand new website!`,
+  `Hey there! Wlcome to my website!</br>My name is Yevgeni Boukingolts and it's great to have you here.`,
   `The website is still under construction with pleanty of awesome features to come!`,
-  `Some features will become available only after user signup.`,
-  `If you love what I do contact me at <a href="mailto:Yevgeni.b93@gmail.com">Yevgeni.b93@gmail.com</a>.`,
+  `Keep in mind that some features will only become available only after user signup.`,
+  `If you love what I do contact me at <a href="mailto:Yevgeni.b93@gmail.com">Yevgeni.b93@gmail.com</a>`,
 ];
 
 const DURATION = 5000; // 5 seconds in ms
