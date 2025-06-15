@@ -12,6 +12,8 @@
   font-weight: 600;
   color: darkslategray;
   overflow: hidden;
+  border: rgba(47, 79, 79, 0.1) solid 1px;
+  border-radius: 5px;
 }
 
 #main-paragraph {
@@ -85,5 +87,5 @@
 .progress {
   height: 100%;
   width: 0%;
-  background: #2f4f4f42;
+  background: rgba(47, 79, 79, 0.5); /*  #2f4f4f42; */
 }

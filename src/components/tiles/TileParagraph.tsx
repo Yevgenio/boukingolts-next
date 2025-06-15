@@ -1,13 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import './TileParagraph.css';
-
-const paragraphs = [
-  `Hey there! Wlcome to my website!</br>My name is Yevgeni Boukingolts and it's great to have you here.`,
-  `The website is still under construction with pleanty of awesome features to come!`,
-  `Keep in mind that some features will only become available only after user signup.`,
-  `If you love what I do contact me at <a href="mailto:Yevgeni.b93@gmail.com">Yevgeni.b93@gmail.com</a>`,
-];
+import API_URL from '@/config/config'; // Make sure this is the same as in GalleryItem
 
 const DURATION = 5000; // 5 seconds in ms
 
@@ -16,18 +10,40 @@ export default function TileParagraph() {
   const tilesWrapperRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+  const [paragraphs, setParagraphs] = useState<string[]>([]);
   const [current, setCurrent] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const pausedRef = useRef(false); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const pausedRef = useRef(false);
 
   // Timer state
   const startTimeRef = useRef<number>(performance.now());
   const elapsedRef = useRef<number>(0);
   const rafRef = useRef<number>();
 
+  // Fetch paragraphs from API
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    fetch(`${API_URL}/api/content/website-introduction`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch paragraphs');
+        return res.json();
+      })
+      .then(data => {
+        // Expecting: { paragraphs: string[] }
+        setParagraphs(data.paragraphs);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
   // Progress bar update
   function updateProgress() {
-    if (pausedRef.current) return; // use ref here
+    if (pausedRef.current) return;
     const now = performance.now();
     const elapsed = now - startTimeRef.current + elapsedRef.current;
     const percent = Math.min((elapsed / DURATION) * 100, 100);
@@ -41,46 +57,40 @@ export default function TileParagraph() {
     }
   }
 
-  // Start or resume timer
   function startTimer() {
     startTimeRef.current = performance.now();
     rafRef.current = requestAnimationFrame(updateProgress);
   }
 
-  // Pause timer
   function pauseTimer() {
-    setPaused(true);
-    pausedRef.current = true; // <-- set ref
+    pausedRef.current = true;
     elapsedRef.current += performance.now() - startTimeRef.current;
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
   }
 
-  // Resume timer
   function resumeTimer() {
-    if (!pausedRef.current) return; // <-- use ref
-    setPaused(false);
-    pausedRef.current = false; // <-- set ref
+    if (!pausedRef.current) return;
+    pausedRef.current = false;
     startTimeRef.current = performance.now();
     rafRef.current = requestAnimationFrame(updateProgress);
   }
 
-  // Reset timer
   function resetTimer() {
     elapsedRef.current = 0;
     if (progressRef.current) progressRef.current.style.width = '0%';
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    setPaused(false);
-    pausedRef.current = false; // <-- set ref
+    pausedRef.current = false;
     startTimer();
   }
 
   useEffect(() => {
+    if (paragraphs.length === 0) return;
     resetTimer();
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
     // eslint-disable-next-line
-  }, [current]);
+  }, [current, paragraphs]);
 
   function getDimensions() {
     const container = containerRef.current!;
@@ -165,6 +175,7 @@ export default function TileParagraph() {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
     elapsedRef.current = 0;
     if (progressRef.current) progressRef.current.style.width = '0%';
+    if (paragraphs.length === 0) return;
     const from = paragraphs[current];
     const next = (current + 1) % paragraphs.length;
     const to = paragraphs[next];
@@ -176,6 +187,16 @@ export default function TileParagraph() {
   }
   function handleMouseLeave() {
     resumeTimer();
+  }
+
+  if (loading) {
+    return <div className="paragraph-container" ref={containerRef}>Loading...</div>;
+  }
+  if (error) {
+    return <div className="paragraph-container" ref={containerRef}>Error: {error}</div>;
+  }
+  if (paragraphs.length === 0) {
+    return <div className="paragraph-container" ref={containerRef}>No paragraphs found.</div>;
   }
 
   return (
