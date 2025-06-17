@@ -18,12 +18,12 @@ const Plane = () => {
   });
 
   return (
-    <group rotation={[0, deg(90), 0]}>
-      <mesh rotation={[0, 0, deg(90)]}>
+    <group rotation={[0, deg(90), 0]} >
+      <mesh rotation={[0, 0, deg(90)]} castShadow>
         <cylinderGeometry args={[0.15, 0.15, 2, 16]} />
         <meshStandardMaterial color="red" />
       </mesh>
-      <mesh position={[0, 0, 0]} rotation={[0, deg(90), 0]}>
+      <mesh position={[0, 0, 0]} rotation={[0, deg(90), 0]} castShadow>
         <boxGeometry args={[2, 0.05, 0.3]} />
         <meshStandardMaterial color="white" />
       </mesh>
@@ -31,7 +31,7 @@ const Plane = () => {
         <boxGeometry args={[0.5, 0.05, 0.15]} />
         <meshStandardMaterial color="blue" />
       </mesh>
-      <mesh position={[-0.95, 0.25, 0]}>
+      <mesh position={[-0.95, 0.25, 0]} >
         <boxGeometry args={[0.05, 0.3, 0.05]} />
         <meshStandardMaterial color="green" />
       </mesh>

@@ -12,7 +12,12 @@ export default function Terrain() {
   }, []);
 
   return (
-    <mesh geometry={geometry} rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, 0]}>
+    <mesh 
+      geometry={geometry} 
+      rotation={[-Math.PI / 2, 0, 0]} 
+      position={[0, -5, 0]}
+      receiveShadow
+    >
       <meshStandardMaterial color="green" />
     </mesh>
   );
