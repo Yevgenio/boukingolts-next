@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import * as THREE from 'three';
 
 export default function Terrain() {
-  const width = 2000;
-  const depth = 2000;
+  const width = 5000;
+  const depth = 5000;
 
   const geometry = useMemo(() => {
     return new THREE.PlaneGeometry(width, depth, 1, 1);

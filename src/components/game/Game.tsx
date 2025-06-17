@@ -1,13 +1,13 @@
-// Final Game.tsx with working Orbit Camera Follow + Orbit drag
-
 'use client';
 
+import React from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useRef, useEffect, useState, useMemo } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from '@react-three/drei';
 import Plane from './CartoonPlane';
 import Terrain from './Terrain';
+import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 const useKeyboardControls = () => {
   const [keys, setKeys] = useState({
@@ -24,10 +24,10 @@ const useKeyboardControls = () => {
       switch (key.toLowerCase()) {
         case 'w': case 'arrowup': return 'up';
         case 's': case 'arrowdown': return 'down';
-        case 'q': return 'rollLeft';
-        case 'e': return 'rollRight';
-        case 'a': case 'arrowleft': return 'yawLeft';
-        case 'd': case 'arrowright': return 'yawRight';
+        case 'a': return 'rollLeft';
+        case 'd': return 'rollRight';
+        case 'q': case 'arrowleft': return 'yawLeft';
+        case 'e': case 'arrowright': return 'yawRight';
         default: return null;
       }
     };
@@ -125,7 +125,8 @@ function CameraController({
   mouseDown: boolean;
 }) {
   const { camera, gl } = useThree();
-  const controlsRef = useRef<any>(null);
+  // const controlsRef = useRef<any>(null);
+  const controlsRef = useRef<OrbitControlsImpl | null>(null);
 
   useFrame(() => {
     if (!planeRef.current || !controlsRef.current) return;
@@ -166,6 +167,20 @@ function CameraController({
 
 const RandomObstacles = ({ obstacleRefs }: { obstacleRefs: React.RefObject<THREE.Mesh>[] }) => {
   const count = 100;
+
+  // Create refs once
+  const refs = useMemo(
+    () => Array.from({ length: count }, () => React.createRef<THREE.Mesh>()),
+    []
+  );
+
+  // Assign to external ref array
+  useEffect(() => {
+    refs.forEach((ref, i) => {
+      obstacleRefs[i] = ref;
+    });
+  }, [refs, obstacleRefs]);
+
   const obstacles = useMemo(() => {
     return Array.from({ length: count }, () => ({
       pos: [THREE.MathUtils.randFloatSpread(300), Math.random() * 30 + 5, THREE.MathUtils.randFloatSpread(300)] as [number, number, number],
@@ -173,18 +188,16 @@ const RandomObstacles = ({ obstacleRefs }: { obstacleRefs: React.RefObject<THREE
     }));
   }, []);
 
-  return <>
-    {obstacles.map((o, i) => {
-      const ref = useRef<THREE.Mesh>(null);
-      obstacleRefs[i] = ref;
-      return (
-        <mesh key={i} ref={ref} position={o.pos}>
+  return (
+    <>
+      {obstacles.map((o, i) => (
+        <mesh key={i} ref={refs[i]} position={o.pos}>
           <boxGeometry args={[o.size, o.size, o.size]} />
           <meshStandardMaterial color="orange" />
         </mesh>
-      );
-    })}
-  </>;
+      ))}
+    </>
+  );
 };
 
 export default function Game() {

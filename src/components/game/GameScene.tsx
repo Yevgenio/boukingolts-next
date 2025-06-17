@@ -1,13 +1,11 @@
 'use client';
 
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import Plane from './CartoonPlane'; // from your uploaded file
 
 const NUM_OBSTACLES = 50;
-
-const deg = (d: number) => (d * Math.PI) / 180;
 
 const RandomObstacles = () => {
   const groupRef = useRef<THREE.Group>(null);
