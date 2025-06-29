@@ -2,7 +2,9 @@
 
 export interface Image {
   url: string;
-  _id: string;
+  width?: number;
+  height?: number;
+  _id?: string; // Optional if not assigned in all cases
 }
 
 export interface Product {

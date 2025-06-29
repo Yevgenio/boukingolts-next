@@ -20,9 +20,11 @@ export default function GalleryItem({ product }: { product: Product }) {
       <Image
         src={`${API_URL}/api/uploads/${product.images[0]?.url}`}
         alt={product.name}
-        width={300}
-        height={300} // Fallback height
+        width={product.images[0]?.width || 300}
+        height={product.images[0]?.height || 400}
         className="w-full h-auto object-cover"
+        placeholder="blur"
+        blurDataURL="/placeholder.jpg"
       />
       <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white p-4">
         <h2 className="text-lg font-semibold">{product.name}</h2>
