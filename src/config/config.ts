@@ -3,7 +3,7 @@
 // // const API_URL = ""; //doesent work with SSR
 
 const isProd = process.env.NODE_ENV === 'production';
-const useLocalAPI = true;
+const useLocalAPI = false;
 
 let API_URL: string;
 

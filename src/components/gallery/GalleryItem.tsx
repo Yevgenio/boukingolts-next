@@ -21,7 +21,7 @@ export default function GalleryItem({ product }: { product: Product }) {
         src={`${API_URL}/api/uploads/${product.images[0]?.url}`}
         alt={product.name}
         width={300}
-        height={600} // Fallback height
+        height={300} // Fallback height
         className="w-full h-auto object-cover"
       />
       <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white p-4">
