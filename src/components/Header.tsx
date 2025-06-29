@@ -23,7 +23,7 @@ const Header = () => {
         {isAdmin && <Link href="/admin" className="font-bold text-red-500">Admin</Link>}
         <Link href="/home" className="hover:underline">Home</Link>
         <Link href="/grid" className="hover:underline">Grid</Link>
-        <Link href="/shape" className="hover:underline">Plane</Link>
+        <Link href="/plane" className="hover:underline">Plane</Link>
         {/* <Link href="/box" className="hover:underline">Box</Link> */}
         <Link href="/gallery" className="hover:underline">Gallery</Link>
         {isLoggedIn ? (

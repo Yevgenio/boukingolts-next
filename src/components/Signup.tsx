@@ -3,11 +3,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslation } from '@/lib/useTranslation';
 import API_URL from '@/config/config';
 
 const Signup = () => {
-    const { t } = useTranslation();
     
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState('');
@@ -47,12 +45,12 @@ const Signup = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
         <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
           <h1 className="text-2xl font-bold text-center mb-6">
-            {t("auth.signupTitle")}
+            Signup
           </h1>
           <form onSubmit={handleSignup} className="space-y-6">
             <div>
               <label className="block text-gray-700 mb-2">
-                {t("auth.usernameLabel")}
+                Username
               </label>
               <input
                 type="text"
@@ -65,7 +63,7 @@ const Signup = () => {
             </div>
             <div>
               <label className="block text-gray-700 mb-2">
-                {t("auth.emailLabel")}
+                Email
               </label>
               <input
                 type="email"
@@ -78,7 +76,7 @@ const Signup = () => {
             </div>
             <div>
               <label className="block text-gray-700 mb-2">
-                {t("auth.passwordLabel")}
+                Password
               </label>
               <input
                 type="password"
@@ -89,12 +87,12 @@ const Signup = () => {
                 required
               />
             </div>
-            {error && <p className="text-red-500 text-sm">{t("auth.signupError")}</p>}
+            {error && <p className="text-red-500 text-sm">Signup error</p>}
             <button
               type="submit"
               className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
             >
-              {t("auth.signupButton")}
+              Signup
             </button>
           </form>
         </div>

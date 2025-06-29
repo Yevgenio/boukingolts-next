@@ -18,7 +18,9 @@ export default function Terrain() {
       position={[0, -5, 0]}
       receiveShadow
     >
+
       <meshStandardMaterial color="green" />
+  
     </mesh>
   );
 }
