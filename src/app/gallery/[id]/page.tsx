@@ -11,19 +11,7 @@ import Image from 'next/image';
 import API_URL from '@/config/config';
 import ThumbnailSelector from '@/components/gallery/ThumbnailSelector';
 // import ZoomableImage from '@/components/gallery/ZoomableImage';
-
-interface ImageType {
-  url: string;
-  _id: string;
-}
-
-interface Product {
-  _id: string;
-  name: string;
-  description: string;
-  category: string;
-  images: ImageType[];
-}
+import { Product } from '@/types/Product';
 
 export default async function GalleryItemPage({ params }: { params: { id: string } }) {
   const res = await fetch(`${API_URL}/api/products/id/${params.id}`, { cache: 'no-store' });
