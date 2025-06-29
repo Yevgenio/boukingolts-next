@@ -18,7 +18,7 @@ export default function GalleryItem({ product }: { product: Product }) {
         className="absolute top-0 left-0 object-cover"
       /> */}
       <Image
-        src={`${API_URL}/api/uploads/${product.images[0]?.url}`}
+        src={`${API_URL}/api/uploads/${product.images[0]?.thumbnail}`}
         alt={product.name}
         width={product.images[0]?.width || 300}
         height={product.images[0]?.height || 400}

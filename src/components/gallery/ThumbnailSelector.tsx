@@ -4,19 +4,7 @@ import API_URL from '@/config/config';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 // import Image from 'next/image';
-
-interface ImageType {
-  url: string;
-  _id: string;
-}
-
-interface Product {
-  _id: string;
-  name: string;
-  description: string;
-  category: string;
-  images: ImageType[];
-}
+import { Product } from '@/types/Product';
 
 export default function ThumbnailSelector({ product }: { product: Product }) {
     const [activeIndex, setActiveIndex] = useState(0);
@@ -34,7 +22,7 @@ export default function ThumbnailSelector({ product }: { product: Product }) {
         {product.images.map((img, index) => (
             <button key={img._id} onClick={() => setActiveIndex(index)}>
             <Image
-              src={`${API_URL}/api/uploads/${img.url}`}
+              src={`${API_URL}/api/uploads/${img.thumbnail}`}
               alt={`Thumbnail ${index + 1}`}
               width={80}
               height={80}
