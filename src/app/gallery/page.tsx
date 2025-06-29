@@ -16,7 +16,7 @@ export default async function GalleryPage() {
       <GalleryAdminControls />
 
       {/* Masonry layout using columns and break-inside */}
-      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+      <div className="columns-1 sm:columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
         {products.map((product) => (
           <div key={product._id} className="break-inside-avoid">
             <GalleryItem product={product} />

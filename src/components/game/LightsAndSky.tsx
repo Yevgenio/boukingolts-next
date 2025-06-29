@@ -1,6 +1,6 @@
 // components/game/LightsAndSky.tsx
 'use client';
-import * as THREE from 'three';
+// import * as THREE from 'three';
 
 export default function LightsAndSky() {
   return (

@@ -20,7 +20,7 @@ export default function GalleryItem({ product }: { product: Product }) {
       <Image
         src={`${API_URL}/api/uploads/${product.images[0]?.url}`}
         alt={product.name}
-        width={400}
+        width={300}
         height={600} // Fallback height
         className="w-full h-auto object-cover"
       />
