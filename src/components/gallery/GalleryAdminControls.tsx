@@ -10,7 +10,7 @@ export default function GalleryAdminControls() {
   if (!isAdmin) return null;
 
   return (
-    <div className="mb-6 text-center">
+    <div className="mb-6 text-center p-4">
       <button
         onClick={() => router.push('/gallery/create')}
         className="bg-gray-200 hover:bg-gray-300 text-black text-sm px-3 py-3 rounded-full border-black border-1"

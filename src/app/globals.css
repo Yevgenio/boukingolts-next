@@ -25,3 +25,19 @@ body {
     text-wrap: balance;
   }
 }
+
+/* html,
+body,
+#__next {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+body > div {
+  height: 100%;
+} */
