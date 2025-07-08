@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import API_URL from '@/config/config';
 import { useRouter } from 'next/navigation';
 
+
 interface ProductFormProps {
   mode: 'create' | 'edit';
   productId?: string;
@@ -13,7 +14,16 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-  const [images, setImages] = useState<FileList | null>(null);
+  // const [images, setImages] = useState<FileList | null>(null);
+
+  const [images, setImages] = useState<File[]>([]);
+  const [rank, setRank] = useState<number | ''>('');
+  const [featured, setFeatured] = useState(false);
+  const [tags, setTags] = useState('');
+  const [price, setPrice] = useState<number | ''>('');
+  const [salePercent, setSalePercent] = useState<number | ''>('');
+  const [salePrice, setSalePrice] = useState<number | ''>('');
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
@@ -27,10 +37,76 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
         setName(data.name);
         setDescription(data.description);
         setCategory(data.category);
+
+        setRank(data.rank ?? '');
+        setFeatured(Boolean(data.featured));
+        setTags(Array.isArray(data.tags) ? data.tags.join(', ') : '');
+        setPrice(data.price ?? '');
+        setSalePercent(data.salePercent ?? '');
+        if (data.price && data.salePercent) {
+          setSalePrice(Number(data.price) - (Number(data.price) * Number(data.salePercent)) / 100);
+        }
       };
       fetchProduct();
     }
   }, [mode, productId]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImages(prev => [...prev, ...Array.from(e.target.files!)]);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const moveImage = (from: number, to: number) => {
+    if (to < 0 || to >= images.length) return;
+    setImages(prev => {
+      const arr = [...prev];
+      const [file] = arr.splice(from, 1);
+      arr.splice(to, 0, file);
+      return arr;
+    });
+  };
+
+  const handleSalePercentChange = (value: string) => {
+    if (value === '') {
+      setSalePercent('');
+      setSalePrice('');
+      return;
+    }
+    const perc = Number(value);
+    setSalePercent(perc);
+    if (price !== '') {
+      const p = Number(price);
+      setSalePrice(Number((p - (p * perc) / 100).toFixed(2)));
+    }
+  };
+
+  const handleSalePriceChange = (value: string) => {
+    if (value === '') {
+      setSalePrice('');
+      setSalePercent('');
+      return;
+    }
+    const sp = Number(value);
+    setSalePrice(sp);
+    if (price !== '') {
+      const p = Number(price);
+      setSalePercent(Number(((1 - sp / p) * 100).toFixed(2)));
+    }
+  };
+
+  useEffect(() => {
+    if (price !== '' && salePercent !== '') {
+      const p = Number(price);
+      const perc = Number(salePercent);
+      setSalePrice(Number((p - (p * perc) / 100).toFixed(2)));
+    }
+  }, [price, salePercent]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,9 +117,14 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
     formData.append('name', name);
     formData.append('description', description);
     formData.append('category', category);
+    if (rank !== '') formData.append('rank', String(rank));
+    formData.append('featured', String(featured));
+    if (tags.trim()) formData.append('tags', tags);
+    if (price !== '') formData.append('price', String(price));
+    if (salePercent !== '') formData.append('salePercent', String(salePercent));
 
-    if (images) {
-      Array.from(images).forEach((file) => {
+    if (images.length) {
+      images.forEach((file) => {
         formData.append('images', file);
       });
     }
@@ -113,14 +194,124 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
           />
         </div>
         <div>
+          <label className="block text-sm font-medium">Rank</label>
+          <input
+            type="number"
+            value={rank}
+            onChange={(e) =>
+              setRank(e.target.value === '' ? '' : Number(e.target.value))
+            }
+            className="w-full mt-1 border rounded px-3 py-2"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            id="featured"
+            type="checkbox"
+            checked={featured}
+            onChange={(e) => setFeatured(e.target.checked)}
+          />
+          <label htmlFor="featured" className="text-sm font-medium">
+            Featured
+          </label>
+        </div>
+        <div>
+          <label className="block text-sm font-medium">Tags (comma separated)</label>
+          <input
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="w-full mt-1 border rounded px-3 py-2"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium">Price</label>
+          <input
+            type="number"
+            step="0.01"
+            value={price}
+            onChange={(e) =>
+              setPrice(e.target.value === '' ? '' : Number(e.target.value))
+            }
+            className="w-full mt-1 border rounded px-3 py-2"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium">Sale</label>
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              step="0.01"
+              placeholder="%"
+              value={salePercent}
+              onChange={(e) => handleSalePercentChange(e.target.value)}
+              className="w-1/3 border rounded px-3 py-2"
+            />
+            <span>-</span>
+            <input
+              type="number"
+              step="0.01"
+              placeholder="Final"
+              value={salePrice}
+              onChange={(e) => handleSalePriceChange(e.target.value)}
+              className="w-1/3 border rounded px-3 py-2"
+            />
+          </div>
+        </div>
+        <div>
           <label className="block text-sm font-medium">Images</label>
           <input
             type="file"
             multiple
             accept="image/*"
-            onChange={(e) => setImages(e.target.files)}
+            onChange={handleImageChange}
             className="w-full mt-1"
           />
+          {images.length > 0 && (
+            <ul className="mt-2 space-y-2">
+              {images.map((file, index) => (
+                <li key={index} className="flex items-center gap-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt="preview"
+                    className="w-16 h-16 object-cover rounded"
+                  />
+                  <div className="flex-1 text-sm">
+                    <p>{file.name}</p>
+                    <p className="text-xs text-gray-500">
+                      {(file.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => moveImage(index, index - 1)}
+                      disabled={index === 0}
+                      className="px-2 py-1 text-xs border rounded"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveImage(index, index + 1)}
+                      disabled={index === images.length - 1}
+                      className="px-2 py-1 text-xs border rounded"
+                    >
+                      ↓
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="px-2 py-1 text-xs border rounded text-red-600"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         {error && <p className="text-red-600">{error}</p>}
         {success && <p className="text-green-600">Product submitted successfully!</p>}

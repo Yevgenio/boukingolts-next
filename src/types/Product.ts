@@ -14,6 +14,11 @@ export interface Product {
   description: string;
   category: string;
   images: Image[];
+  rank?: number;
+  featured?: boolean;
+  tags?: string[];
+  price?: number;
+  salePercent?: number;
   createdAt?: string;
   createdBy?: string;
 }
