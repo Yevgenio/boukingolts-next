@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
 import { Product } from '@/types/Product';
+import TileParagraph from '@/components/tiles/TileParagraph';
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -39,6 +40,7 @@ export default function HomePage() {
               Whether you're celebrating something special or just want to brighten your day,
               we’re here to help — with delivery and market pickup available.
             </p>
+
             <div className="flex flex-wrap justify-center gap-4">
               <a
                 href={`/gallery`}
@@ -81,9 +83,12 @@ export default function HomePage() {
       </section>
 
       {/* About Section */}
-      <section className="w-full max-w-5xl px-4 py-12 text-center">
+      <section className="w-full max-w-5xl px-4 py-12 flex flex-col items-center text-center">
         <h2 className="text-3xl font-semibold mb-4">About Boukingolts</h2>
-        <p className="text-lg">Founded from a love of nature and community, Boukingolts brings floral joy to people all over Tel Aviv. From hand-picked bouquets to custom arrangements, we’re here to make every day beautiful.</p>
+        <div className="w-full flex flex-col items-center">
+          <TileParagraph />
+          {/* <p className="text-lg">Founded from a love of nature and community, Boukingolts brings floral joy to people all over Tel Aviv. From hand-picked bouquets to custom arrangements, we’re here to make every day beautiful.</p> */}
+        </div>
       </section>
 
       {/* Contact CTA */}
