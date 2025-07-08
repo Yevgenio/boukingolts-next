@@ -3,7 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import API_URL from '@/config/config';
 import { useRouter } from 'next/navigation';
+import { Image } from '@/types/Product';
 
+interface ImageItem {
+  file?: File;
+  url?: string;
+  id?: string;
+  isNew?: boolean;
+}
 
 interface ProductFormProps {
   mode: 'create' | 'edit';
@@ -16,7 +23,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
   const [category, setCategory] = useState('');
   // const [images, setImages] = useState<FileList | null>(null);
 
-  const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [rank, setRank] = useState<number | ''>('');
   const [featured, setFeatured] = useState(false);
   const [tags, setTags] = useState('');
@@ -46,6 +53,15 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
         if (data.price && data.salePercent) {
           setSalePrice(Number(data.price) - (Number(data.price) * Number(data.salePercent)) / 100);
         }
+        if (Array.isArray(data.images)) {
+          setImages(
+            data.images.map((img: Image) => ({
+              url: img.url,
+              id: img._id,
+              isNew: false,
+            }))
+          );
+        }
       };
       fetchProduct();
     }
@@ -53,20 +69,24 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setImages(prev => [...prev, ...Array.from(e.target.files!)]);
+      const files = Array.from(e.target.files).map((file) => ({
+        file,
+        isNew: true,
+      }));
+      setImages((prev) => [...prev, ...files]);
     }
   };
 
   const handleRemoveImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const moveImage = (from: number, to: number) => {
     if (to < 0 || to >= images.length) return;
-    setImages(prev => {
+    setImages((prev) => {
       const arr = [...prev];
-      const [file] = arr.splice(from, 1);
-      arr.splice(to, 0, file);
+      const [item] = arr.splice(from, 1);
+      arr.splice(to, 0, item);
       return arr;
     });
   };
@@ -107,7 +127,6 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
     }
   }, [price, salePercent]);
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -124,9 +143,17 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
     if (salePercent !== '') formData.append('salePercent', String(salePercent));
 
     if (images.length) {
-      images.forEach((file) => {
-        formData.append('images', file);
-      });
+      const existing = images
+        .filter((img) => !img.isNew && img.url)
+        .map((img) => img.url as string);
+      if (existing.length) {
+        formData.append('sortedImages', JSON.stringify(existing));
+      }
+      images
+        .filter((img) => img.isNew && img.file)
+        .forEach((img) => {
+          formData.append('images', img.file as File);
+        });
     }
 
     try {
@@ -269,19 +296,25 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
           />
           {images.length > 0 && (
             <ul className="mt-2 space-y-2">
-              {images.map((file, index) => (
+              {images.map((item, index) => (
                 <li key={index} className="flex items-center gap-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={URL.createObjectURL(file)}
+                    src={
+                      item.isNew && item.file
+                        ? URL.createObjectURL(item.file)
+                        : `${API_URL}/api/uploads/${item.url}`
+                    }
                     alt="preview"
                     className="w-16 h-16 object-cover rounded"
                   />
                   <div className="flex-1 text-sm">
-                    <p>{file.name}</p>
-                    <p className="text-xs text-gray-500">
-                      {(file.size / 1024).toFixed(1)} KB
-                    </p>
+                    <p>{item.isNew ? item.file?.name : item.url}</p>
+                    {item.isNew && item.file && (
+                      <p className="text-xs text-gray-500">
+                        {(item.file.size / 1024).toFixed(1)} KB
+                      </p>
+                    )}
                   </div>
                   <div className="flex gap-1">
                     <button
