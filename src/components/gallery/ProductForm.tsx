@@ -142,13 +142,15 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
     if (price !== '') formData.append('price', String(price));
     if (salePercent !== '') formData.append('salePercent', String(salePercent));
 
-    if (images.length) {
-      const existing = images
-        .filter((img) => !img.isNew && img.url)
-        .map((img) => img.url as string);
-      if (existing.length) {
-        formData.append('sortedImages', JSON.stringify(existing));
-      }
+ if (images.length) {
+      const sortedImages = images.map((img) => {
+        if (img.isNew && img.file) {
+          return { new: true, filename: img.file.name };
+        }
+        return { new: false, id: img.id };
+      });
+      formData.append('sortedImages', JSON.stringify(sortedImages));
+
       images
         .filter((img) => img.isNew && img.file)
         .forEach((img) => {
