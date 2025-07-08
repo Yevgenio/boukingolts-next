@@ -32,7 +32,7 @@ export default function ProductMarquee({ products }: Props) {
     const baseSpeed = 0.6;
 
     const animate = (timestamp: number) => {
-      const delta = timestamp - lastTimestamp;
+      // const delta = timestamp - lastTimestamp;
       lastTimestamp = timestamp;
 
       const scrollBoost = scrollBoostRef.current;

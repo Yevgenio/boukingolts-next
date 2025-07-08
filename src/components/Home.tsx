@@ -1,7 +1,7 @@
 'use client';
 
 import ProductMarquee from '@/components/home/ProductMarquee';
-import Link from 'next/link';
+// import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
 import { Product } from '@/types/Product';
