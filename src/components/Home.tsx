@@ -38,7 +38,7 @@ export default function HomePage() {
             <p className="text-lg md:text-xl mb-8">
               Discover our curated selection of fresh-cut flowers and unique floral designs.
               Whether you're celebrating something special or just want to brighten your day,
-              we’re here to help — with delivery and market pickup available.
+              we&apos;re here to help — with delivery and market pickup available.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">

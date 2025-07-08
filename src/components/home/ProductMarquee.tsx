@@ -28,12 +28,12 @@ export default function ProductMarquee({ products }: Props) {
     };
 
     let animationFrameId: number;
-    let lastTimestamp = performance.now();
+    // let lastTimestamp = performance.now();
     const baseSpeed = 0.6;
 
     const animate = (timestamp: number) => {
       // const delta = timestamp - lastTimestamp;
-      lastTimestamp = timestamp;
+      // lastTimestamp = timestamp;
 
       const scrollBoost = scrollBoostRef.current;
       scrollBoostRef.current *= 0.9; // decay
