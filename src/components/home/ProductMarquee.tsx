@@ -31,7 +31,7 @@ export default function ProductMarquee({ products }: Props) {
     // let lastTimestamp = performance.now();
     const baseSpeed = 0.6;
 
-    const animate = (timestamp: number) => {
+    const animate = () => {
       // const delta = timestamp - lastTimestamp;
       // lastTimestamp = timestamp;
 

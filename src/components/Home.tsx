@@ -37,7 +37,7 @@ export default function HomePage() {
             </h1>
             <p className="text-lg md:text-xl mb-8">
               Discover our curated selection of fresh-cut flowers and unique floral designs.
-              Whether you're celebrating something special or just want to brighten your day,
+              Whether you&apos;re celebrating something special or just want to brighten your day,
               we&apos;re here to help — with delivery and market pickup available.
             </p>
 
@@ -87,14 +87,14 @@ export default function HomePage() {
         <h2 className="text-3xl font-semibold mb-4">About Boukingolts</h2>
         <div className="w-full flex flex-col items-center">
           <TileParagraph />
-          {/* <p className="text-lg">Founded from a love of nature and community, Boukingolts brings floral joy to people all over Tel Aviv. From hand-picked bouquets to custom arrangements, we’re here to make every day beautiful.</p> */}
+          {/* <p className="text-lg">Founded from a love of nature and community, Boukingolts brings floral joy to people all over Tel Aviv. From hand-picked bouquets to custom arrangements, we&apos;re here to make every day beautiful.</p> */}
         </div>
       </section>
 
       {/* Contact CTA */}
       <section className="bg-black text-white w-full py-12 text-center">
         <h2 className="text-2xl mb-4">Ready to order flowers?</h2>
-        <p className="mb-6">Send us a WhatsApp or give us a call — we’ll be happy to help!</p>
+        <p className="mb-6">Send us a WhatsApp or give us a call — we&apos;ll be happy to help!</p>
         <div className="flex gap-4 justify-center">
           <a href="https://wa.me/972547932924" target="_blank" className="bg-green-600 text-white px-6 py-3 rounded-full">WhatsApp Us</a>
           <a href="tel:+972547932924" className="bg-white text-black px-6 py-3 rounded-full">Call Us</a>
