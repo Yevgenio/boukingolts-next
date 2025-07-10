@@ -25,7 +25,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
 
   const [images, setImages] = useState<ImageItem[]>([]);
   const [rank, setRank] = useState<number | ''>('');
-  const [featured, setFeatured] = useState(false);
+  const [featured, setFeatured] = useState<number | ''>('');
   const [tags, setTags] = useState('');
   const [price, setPrice] = useState<number | ''>('');
   const [salePercent, setSalePercent] = useState<number | ''>('');
@@ -46,7 +46,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
         setCategory(data.category);
 
         setRank(data.rank ?? '');
-        setFeatured(Boolean(data.featured));
+        setFeatured(data.featured ?? '');
         setTags(Array.isArray(data.tags) ? data.tags.join(', ') : '');
         setPrice(data.price ?? '');
         setSalePercent(data.salePercent ?? '');
@@ -235,10 +235,12 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
         </div>
         <div className="flex items-center gap-2">
           <input
-            id="featured"
-            type="checkbox"
-            checked={featured}
-            onChange={(e) => setFeatured(e.target.checked)}
+            type="number"
+            value={rank}
+            onChange={(e) =>
+              setFeatured(e.target.value === '' ? '' : Number(e.target.value))
+            }
+            className="w-full mt-1 border rounded px-3 py-2"
           />
           <label htmlFor="featured" className="text-sm font-medium">
             Featured

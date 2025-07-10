@@ -1,12 +1,6 @@
 // /types/Product.ts
 
-export interface Image {
-  url: string;
-  thumbnail: string; 
-  width?: number;
-  height?: number;
-  _id?: string; // Optional if not assigned in all cases
-}
+import { Image } from './Image';
 
 export interface Product {
   _id: string;
@@ -15,7 +9,7 @@ export interface Product {
   category: string;
   images: Image[];
   rank?: number;
-  featured?: boolean;
+  featured?: number;
   tags?: string[];
   price?: number;
   salePercent?: number;

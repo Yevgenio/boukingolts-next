@@ -28,7 +28,7 @@ export default function GalleryItem({ product }: { product: Product }) {
       />
       <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white p-4">
         <h2 className="text-lg font-semibold">{product.name}</h2>
-        <p className="text-sm">{product.description}</p>
+        {/* <p className="text-sm">{product.description}</p> */}
       </div>
     </Link>
     {/* Pass the hover to child using group-hover */}

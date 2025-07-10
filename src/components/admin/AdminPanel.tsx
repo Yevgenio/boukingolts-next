@@ -20,6 +20,24 @@ export default function AdminPanel() {
         >
           Manage Website Introduction Paragraphs
         </button>
+        <button
+          className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
+          onClick={() => router.push('/admin/hero')}
+        >
+          Edit Hero Section
+        </button>
+        <button
+          className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
+          onClick={() => router.push('/admin/testimonials')}
+        >
+          Edit Testimonials
+        </button>
+        <button
+          className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
+          onClick={() => router.push('/admin/about')}
+        >
+          Edit About Section
+        </button>
       </div>
     </div>
   );
