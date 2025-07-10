@@ -9,9 +9,9 @@ interface Props {
 
 export default function AboutSection({ content }: Props) {
   return (
-    <section className="w-full max-w-5xl px-4 py-12 flex flex-col items-center text-center">
-      <h2 className="text-3xl font-semibold mb-4">About Boukingolts</h2>
-      <div className="w-full flex flex-col items-center space-y-4">
+    <section className="w-full px-4 py-12 flex flex-col items-center text-center">
+      <div className="w-full max-w-5xl flex flex-col items-center space-y-4">
+        <h2 className="text-3xl font-semibold mb-4">About Boukingolts</h2>
         {content.images?.[0] && (
           <Image src={`${API_URL}/api/uploads/${content.images[0].thumbnail}`}
             alt={content.name}

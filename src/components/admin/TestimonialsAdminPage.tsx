@@ -2,12 +2,15 @@
 import { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
-import { TestimonialsContent, TestimonialItem } from '@/types/HomeContent';
+// import { TestimonialsContent, TestimonialItem } from '@/types/HomeContent';
+import { TestimonialItem } from '@/types/HomeContent';
 
 export default function TestimonialsAdminPage() {
   const { isAdmin } = useAuth();
 
   const [comments, setComments] = useState<TestimonialItem[]>([]);
+  const [enabled, setEnabled] = useState(false);
+  const [order, setOrder] = useState(0);
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState({ comment: '', author: '' });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -17,9 +20,11 @@ export default function TestimonialsAdminPage() {
     if (!isAdmin) return;
     fetch(`${API_URL}/api/content/home-testimonials`)
       .then(res => res.json())
-      .then(data => { 
+      .then(data => {
         setComments(data.testimonials || []);
-        setLoading(false); 
+        setEnabled(data.enabled ?? false);
+        setOrder(data.order ?? 0);
+        setLoading(false);
       })
       .catch(() => setLoading(false));
   }, [isAdmin]);
@@ -29,7 +34,7 @@ export default function TestimonialsAdminPage() {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify(updated),
+      body: JSON.stringify({ enabled, order, testimonials: updated }),
     });
     if (res.ok) {
       setComments(updated);
@@ -69,6 +74,15 @@ export default function TestimonialsAdminPage() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
       <h1 className="text-2xl font-bold mb-4">Manage Testimonials</h1>
+
+      <label className="flex items-center gap-2">
+        <span>Enabled</span>
+        <input type="checkbox" checked={enabled} onChange={e => setEnabled(e.target.checked)} />
+      </label>
+      <label className="block">
+        Order
+        <input type="number" className="border w-full p-2" value={order} onChange={e => setOrder(parseInt(e.target.value))} />
+      </label>
 
       {comments.map((testimonial, i) => (
         <div key={i} className="border rounded p-4 space-y-2">

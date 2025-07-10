@@ -31,3 +31,9 @@ export interface AboutContent extends BaseContent {
     images: Image[];
     comment: string;
 }
+
+export type MarqueeContent = BaseContent;
+
+export interface EventsContent extends BaseContent {
+    text: string;
+}
