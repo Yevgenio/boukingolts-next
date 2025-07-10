@@ -45,7 +45,8 @@ export default async function GalleryItemPage({ params }: { params: { id: string
 
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold">{product.name}</h1>
-        <p className="text-gray-600 text-lg">{product.description}</p>
+        {/* <p className="text-gray-600 text-lg">{product.description}</p> */}
+        <div className="text-gray-600 text-lg" dangerouslySetInnerHTML={{ __html: product.description }} />
       </div>
     </div>
   );

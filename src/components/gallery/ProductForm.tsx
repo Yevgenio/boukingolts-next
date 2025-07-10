@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Image } from '@/types/Image';
 
 import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
+import RichTextEditor from '@/components/common/RichTextEditor';
 
 interface ProductFormProps {
   mode: 'create' | 'edit';
@@ -175,13 +176,8 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium">Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            className="w-full mt-1 border rounded px-3 py-2"
-          />
+          <label className="block text-sm font-medium mb-1">Description</label>
+          <RichTextEditor value={description} onChange={setDescription} />
         </div>
         <div>
           <label className="block text-sm font-medium">Category</label>
