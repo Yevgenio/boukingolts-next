@@ -3,10 +3,13 @@ import { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { HeroContent } from '@/types/HomeContent';
+import { Image } from '@/types/Image';
+import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
 
 export default function HeroAdminPage() {
   const { isAdmin } = useAuth();
   const [form, setForm] = useState<HeroContent | null>(null);
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,6 +18,9 @@ export default function HeroAdminPage() {
       .then(res => res.json())
       .then(data => {
         setForm(data);
+        if (Array.isArray(data.images)) {
+          setImages(data.images.map((img: Image) => ({ url: img.url, id: img._id, isNew: false })));
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -22,11 +28,25 @@ export default function HeroAdminPage() {
 
   const handleSave = async () => {
     if (!form) return;
+    const formData = new FormData();
+    formData.append('enabled', String(form.enabled));
+    formData.append('order', String(form.order));
+    formData.append('title', form.title);
+    formData.append('paragraph', form.paragraph);
+    formData.append('tint', form.tint);
+
+    if (images.length) {
+      const sorted = images.map(img =>
+        img.isNew && img.file ? { new: true, filename: img.file.name } : { new: false, id: img.id }
+      );
+      formData.append('sortedImages', JSON.stringify(sorted));
+      images.filter(img => img.isNew && img.file).forEach(img => formData.append('images', img.file as File));
+    }
+
     await fetch(`${API_URL}/api/content/home-hero`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify(form),
+      body: formData,
     });
   };
 
@@ -53,8 +73,8 @@ export default function HeroAdminPage() {
         <textarea className="border w-full p-2" value={form.paragraph} onChange={e => setForm({ ...form, paragraph: e.target.value })} />
       </label>
       <label className="block">
-        Image URL
-        <input type="text" className="border w-full p-2" value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} />
+        Images
+        <ImageUploadList images={images} setImages={setImages} />
       </label>
       <label className="block">
         Tint Class

@@ -5,12 +5,7 @@ import API_URL from '@/config/config';
 import { useRouter } from 'next/navigation';
 import { Image } from '@/types/Image';
 
-interface ImageItem {
-  file?: File;
-  url?: string;
-  id?: string;
-  isNew?: boolean;
-}
+import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
 
 interface ProductFormProps {
   mode: 'create' | 'edit';
@@ -66,30 +61,6 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
       fetchProduct();
     }
   }, [mode, productId]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files).map((file) => ({
-        file,
-        isNew: true,
-      }));
-      setImages((prev) => [...prev, ...files]);
-    }
-  };
-
-  const handleRemoveImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const moveImage = (from: number, to: number) => {
-    if (to < 0 || to >= images.length) return;
-    setImages((prev) => {
-      const arr = [...prev];
-      const [item] = arr.splice(from, 1);
-      arr.splice(to, 0, item);
-      return arr;
-    });
-  };
 
   const handleSalePercentChange = (value: string) => {
     if (value === '') {
@@ -291,64 +262,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
         </div>
         <div>
           <label className="block text-sm font-medium">Images</label>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full mt-1"
-          />
-          {images.length > 0 && (
-            <ul className="mt-2 space-y-2">
-              {images.map((item, index) => (
-                <li key={index} className="flex items-center gap-2">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={
-                      item.isNew && item.file
-                        ? URL.createObjectURL(item.file)
-                        : `${API_URL}/api/uploads/${item.url}`
-                    }
-                    alt="preview"
-                    className="w-16 h-16 object-cover rounded"
-                  />
-                  <div className="flex-1 text-sm">
-                    <p>{item.isNew ? item.file?.name : item.url}</p>
-                    {item.isNew && item.file && (
-                      <p className="text-xs text-gray-500">
-                        {(item.file.size / 1024).toFixed(1)} KB
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex gap-1">
-                    <button
-                      type="button"
-                      onClick={() => moveImage(index, index - 1)}
-                      disabled={index === 0}
-                      className="px-2 py-1 text-xs border rounded"
-                    >
-                      ↑
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => moveImage(index, index + 1)}
-                      disabled={index === images.length - 1}
-                      className="px-2 py-1 text-xs border rounded"
-                    >
-                      ↓
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="px-2 py-1 text-xs border rounded text-red-600"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+          <ImageUploadList images={images} setImages={setImages} />
         </div>
         {error && <p className="text-red-600">{error}</p>}
         {success && <p className="text-green-600">Product submitted successfully!</p>}

@@ -1,13 +1,3 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-
-import { HeroContent } from '@/types/HomeContent';
-
-interface Props {
-  content: HeroContent;
-}
 
 // export default function HeroSection() {
 //     const headingRef = useRef<HTMLHeadingElement>(null);
@@ -50,35 +40,61 @@ interface Props {
 //         </section>
 //     );
 // }
+'use client';
+
+import { useEffect, useState } from 'react';
+import API_URL from '@/config/config';
+
+import { HeroContent } from '@/types/HomeContent';
+
+interface Props {
+  content: HeroContent;
+}
+
 export default function HeroSection({ content }: Props) {
-    return (
-        <section
-        className="relative w-full h-[40vh] bg-cover bg-center text-white"
-        style={{ backgroundImage: `url('${content.images}')` }}
-        >
-        <div className={`absolute inset-0 ${content.tint} z-0`} />
-        <div className="relative z-10 flex items-center justify-center h-full px-6 text-center">
-            <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
-                {content.title}
-            </h1>
-            <p className="text-lg md:text-xl mb-8">{content.paragraph}</p>
-            <div className="flex flex-wrap justify-center gap-4">
-                <a
-                href="/gallery"
-                className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 border-2 text-sm font-semibold"
-                >
-                Explore Shop
-                </a>
-                <a
-                href="/gallery"
-                className="bg-transparent hover:bg-white hover:text-black border-2 px-6 py-3 text-sm font-semibold"
-                >
-                Future Events
-                </a>
-            </div>
-            </div>
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (content.images.length <= 1) return;
+    const id = setInterval(() => {
+      setIndex(i => (i + 1) % content.images.length);
+    }, 5000);
+    return () => clearInterval(id);
+  }, [content.images.length]);
+
+  return (
+    <section className="relative w-full h-[40vh] overflow-hidden text-white">
+      {content.images.map((img, i) => (
+        <div
+          key={i}
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
+          style={{
+            backgroundImage: `url('${API_URL}/api/uploads/${img.url}')`,
+            transform: `translateX(${(i - index) * 100}%)`,
+          }}
+        />
+      ))}
+      <div className={`absolute inset-0 ${content.tint} z-0`} />
+      <div className="relative z-10 flex items-center justify-center h-full px-6 text-center">
+        <div className="max-w-3xl">
+          <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">{content.title}</h1>
+          <p className="text-lg md:text-xl mb-8">{content.paragraph}</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="/gallery"
+              className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 border-2 text-sm font-semibold"
+            >
+              Explore Shop
+            </a>
+            <a
+              href="/gallery"
+              className="bg-transparent hover:bg-white hover:text-black border-2 px-6 py-3 text-sm font-semibold"
+            >
+              Future Events
+            </a>
+          </div>
         </div>
-        </section>
-    );
+      </div>
+    </section>
+  );
 }

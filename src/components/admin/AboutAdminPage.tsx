@@ -3,27 +3,54 @@ import { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { AboutContent } from '@/types/HomeContent';
+import { Image } from '@/types/Image';
+import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
 
 export default function AboutAdminPage() {
   const { isAdmin } = useAuth();
   const [form, setForm] = useState<AboutContent | null>(null);
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!isAdmin) return;
     fetch(`${API_URL}/api/content/about-boukingolts`)
       .then(res => res.json())
-      .then(data => { setForm(data); setLoading(false); })
+      .then(data => {
+        setForm(data);
+        if (Array.isArray(data.images)) {
+          setImages(data.images.map((img: Image) => ({ url: img.url, id: img._id, isNew: false })));
+        }
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }, [isAdmin]);
 
   const save = async () => {
     if (!form) return;
+    const formData = new FormData();
+    formData.append('enabled', String(form.enabled));
+    formData.append('order', String(form.order));
+    formData.append('name', form.name);
+    formData.append('address', form.address);
+    formData.append('email', form.email);
+    formData.append('phone', form.phone);
+    formData.append('whatsapp', form.whatsapp);
+    formData.append('instagram', form.instagram);
+    formData.append('comment', form.comment);
+
+    if (images.length) {
+      const sorted = images.map(img =>
+        img.isNew && img.file ? { new: true, filename: img.file.name } : { new: false, id: img.id }
+      );
+      formData.append('sortedImages', JSON.stringify(sorted));
+      images.filter(img => img.isNew && img.file).forEach(img => formData.append('images', img.file as File));
+    }
+
     await fetch(`${API_URL}/api/content/about-boukingolts`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify(form),
+      body: formData,
     });
   };
 
@@ -66,8 +93,8 @@ export default function AboutAdminPage() {
         <input type="text" className="border w-full p-2" value={form.instagram} onChange={e => setForm({ ...form, instagram: e.target.value })} />
       </label>
       <label className="block">
-        Image URL
-        <input type="text" className="border w-full p-2" value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} />
+        Images
+        <ImageUploadList images={images} setImages={setImages} />
       </label>
       <label className="block">
         Comment
