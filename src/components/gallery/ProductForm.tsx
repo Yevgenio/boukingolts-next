@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import API_URL from '@/config/config';
 import { useRouter } from 'next/navigation';
-import { Image } from '@/types/Product';
+import { Image } from '@/types/Image';
 
 interface ImageItem {
   file?: File;
