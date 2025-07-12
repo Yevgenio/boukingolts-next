@@ -114,21 +114,21 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
     if (price !== '') formData.append('price', String(price));
     if (salePercent !== '') formData.append('salePercent', String(salePercent));
 
- if (images.length) {
-      const sortedImages = images.map((img) => {
-        if (img.isNew && img.file) {
-          return { new: true, filename: img.file.name };
-        }
-        return { new: false, id: img.id };
-      });
-      formData.append('sortedImages', JSON.stringify(sortedImages));
+    if (images.length) {
+          const sortedImages = images.map((img) => {
+            if (img.isNew && img.file) {
+              return { new: true, filename: img.file.name };
+            }
+            return { new: false, id: img.id };
+          });
+          formData.append('sortedImages', JSON.stringify(sortedImages));
 
-      images
-        .filter((img) => img.isNew && img.file)
-        .forEach((img) => {
-          formData.append('images', img.file as File);
-        });
-    }
+          images
+            .filter((img) => img.isNew && img.file)
+            .forEach((img) => {
+              formData.append('images', img.file as File);
+            });
+        }
 
     try {
       let res;
@@ -150,6 +150,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
 
       setSuccess(true);
       router.push('/gallery');
+      router.refresh();
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

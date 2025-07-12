@@ -1,5 +1,6 @@
 'use client';
 import { AboutContent } from '@/types/HomeContent';
+import { LocationIcon, CallIcon, EmailIcon, WhatsappIcon, InstagramIcon } from '@/components/icons';
 
 interface Props {
   contact: AboutContent | null;
@@ -17,10 +18,16 @@ export default function ContactSection({ contact }: Props) {
           target="_blank"
           className="bg-green-600 text-white px-6 py-3 rounded-full"
         >
-          WhatsApp Us
+          <div className='flex'>
+            <WhatsappIcon className="w-6 h-6" />
+            <h3 className='pl-3'>WhatsApp Us</h3>
+          </div>
         </a>
         <a href={`tel:${contact.phone}`} className="bg-white text-black px-6 py-3 rounded-full">
-          Call Us
+          <div className='flex'>
+            <CallIcon className="w-6 h-6" />
+            <h3 className='pl-3'>Call Us</h3>
+          </div>
         </a>
       </div>
     </section>

@@ -40,6 +40,7 @@ export default function ProductPageAdminControls({ productId }: { productId: str
     });
     if (res.ok) {
       router.push('/gallery');
+      router.refresh();
     } else {
       alert('Failed to delete product');
     }

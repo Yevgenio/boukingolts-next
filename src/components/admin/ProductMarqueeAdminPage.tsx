@@ -2,12 +2,14 @@
 import { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 import { MarqueeContent } from '@/types/HomeContent';
 import { Product } from '@/types/Product';
 import { getMarqueeProducts, updateMarqueeProductIds } from '@/api/marquee';
 
 export default function ProductMarqueeAdminPage() {
   const { isAdmin } = useAuth();
+  const router = useRouter();
   const [form, setForm] = useState<MarqueeContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
@@ -82,10 +84,18 @@ export default function ProductMarqueeAdminPage() {
       <div className="space-y-2">
         {products.map((p, i) => (
           <div key={p._id} className="flex items-center gap-2 border p-2 rounded">
+            {p.images?.[0] && (
+              <img
+                src={`${API_URL}/api/uploads/${p.images[0].thumbnail}`}
+                alt={p.name}
+                className="w-10 h-10 object-cover rounded"
+              />
+            )}
             <span className="flex-1">{p.name}</span>
             <button onClick={() => move(i, -1)} className="px-2">↑</button>
             <button onClick={() => move(i, 1)} className="px-2">↓</button>
             <button onClick={() => remove(i)} className="px-2 text-red-600">✕</button>
+            <button onClick={() => router.push(`/gallery/${p._id}`)} className="px-2 underline">View</button>
           </div>
         ))}
       </div>

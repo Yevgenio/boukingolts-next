@@ -13,7 +13,7 @@ export default function GalleryPage() {
   const [selectedCategory, setSelectedCategory] = useState('');
 
   const fetchCategories = async () => {
-    const res = await fetch(`${API_URL}/api/products/categories`);
+    const res = await fetch(`${API_URL}/api/products/categories`, { cache: 'no-store' });
     const data = await res.json();
     setCategories(data);
   };
@@ -27,7 +27,7 @@ export default function GalleryPage() {
     const url = new URL(`${API_URL}/api/products/search`);
     if (query) url.searchParams.set('query', query);
     if (selectedCategory) url.searchParams.set('category', selectedCategory);
-    const res = await fetch(url.toString());
+    const res = await fetch(url.toString(), { cache: 'no-store' });
     const result = await res.json();
     setProducts(result.data);
   }, [query, selectedCategory]);
