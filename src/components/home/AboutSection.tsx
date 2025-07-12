@@ -9,22 +9,28 @@ interface Props {
 
 export default function AboutSection({ content }: Props) {
   return (
-    <section className="w-full px-4 py-12 flex flex-col items-center text-center">
-      <div className="w-full max-w-5xl flex flex-col items-center space-y-4">
-        <h2 className="text-3xl font-semibold mb-4">About Boukingolts</h2>
+    <section className="w-full px-4 py-12 flex justify-center">
+      <div className="w-full max-w-5xl flex flex-col md:flex-row items-center md:items-start gap-8">
         {content.images?.[0] && (
-          <Image src={`${API_URL}/api/uploads/${content.images[0].thumbnail}`}
+          <Image
+            src={`${API_URL}/api/uploads/${content.images[0].thumbnail}`}
             alt={content.name}
-            width={300}
-            height={200}
-            className="rounded" />
+            width={256}
+            height={256}
+            className="rounded-full object-cover w-40 h-40 md:w-64 md:h-64"
+          />
         )}
-        <p>{content.comment}</p>
-        <div className="space-y-1">
-          <p>{content.name}</p>
-          <p>{content.address}</p>
-          <p>{content.email}</p>
-          <p>{content.instagram}</p>
+        <div className="flex flex-col space-y-4 text-center md:text-left">
+          <h2 className="text-3xl font-semibold">{content.name}</h2>
+          
+          <div className="space-y-1">
+
+            <h2>{content.address}</h2>       
+            {/* <p>{content.email}</p> */}
+            {/* <p>{content.instagram}</p> */}
+          </div>
+          <p>{content.comment}</p>
+          
         </div>
       </div>
     </section>

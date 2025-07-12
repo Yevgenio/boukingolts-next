@@ -74,7 +74,8 @@ export default function HeroSection({ content }: Props) {
           }}
         />
       ))}
-      <div className={`absolute inset-0 ${content.tint} z-0`} />
+      {/* <div className={`absolute inset-0 ${content.tint} z-0`} /> */}
+      <div className={`absolute inset-0 bg-slate-800/60 z-0`} />
       <div className="relative z-10 flex items-center justify-center h-full px-6 text-center">
         <div className="max-w-3xl">
           <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">{content.title}</h1>
