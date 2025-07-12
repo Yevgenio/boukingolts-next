@@ -3,18 +3,26 @@ import { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { MarqueeContent } from '@/types/HomeContent';
+import { Product } from '@/types/Product';
+import { getMarqueeProducts, updateMarqueeProductIds } from '@/api/marquee';
 
 export default function ProductMarqueeAdminPage() {
   const { isAdmin } = useAuth();
   const [form, setForm] = useState<MarqueeContent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [newId, setNewId] = useState('');
 
-  useEffect(() => {
+ useEffect(() => {
     if (!isAdmin) return;
     fetch(`${API_URL}/api/content/home-product-marquee`)
       .then(res => res.json())
-      .then(data => { setForm(data); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then(data => setForm(data))
+      .catch(() => {});
+
+    getMarqueeProducts()
+      .then((data) => setProducts(data))
+      .finally(() => setLoading(false));
   }, [isAdmin]);
 
   const save = async () => {
@@ -25,6 +33,35 @@ export default function ProductMarqueeAdminPage() {
       credentials: 'include',
       body: JSON.stringify(form),
     });
+
+    await updateMarqueeProductIds(products.map(p => p._id));
+  };
+
+  const move = (index: number, dir: number) => {
+    const updated = [...products];
+    const tgt = index + dir;
+    if (tgt < 0 || tgt >= updated.length) return;
+    const [item] = updated.splice(index, 1);
+    updated.splice(tgt, 0, item);
+    setProducts(updated);
+  };
+
+  const remove = (index: number) => {
+    const updated = products.filter((_, i) => i !== index);
+    setProducts(updated);
+  };
+
+  const addProduct = async () => {
+    if (!newId.trim()) return;
+    try {
+      const res = await fetch(`${API_URL}/api/products/id/${newId.trim()}`);
+      if (!res.ok) throw new Error('Not found');
+      const prod: Product = await res.json();
+      setProducts([...products, prod]);
+      setNewId('');
+    } catch {
+      alert('Product not found');
+    }
   };
 
   if (!isAdmin) return <div className="p-4">Unauthorized</div>;
@@ -41,6 +78,23 @@ export default function ProductMarqueeAdminPage() {
         Order
         <input type="number" className="border w-full p-2" value={form.order} onChange={e => setForm({ ...form, order: parseInt(e.target.value) })} />
       </label>
+
+      <div className="space-y-2">
+        {products.map((p, i) => (
+          <div key={p._id} className="flex items-center gap-2 border p-2 rounded">
+            <span className="flex-1">{p.name}</span>
+            <button onClick={() => move(i, -1)} className="px-2">↑</button>
+            <button onClick={() => move(i, 1)} className="px-2">↓</button>
+            <button onClick={() => remove(i)} className="px-2 text-red-600">✕</button>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex gap-2 items-center">
+        <input value={newId} onChange={e => setNewId(e.target.value)} placeholder="Product ID" className="flex-1 border p-2" />
+        <button className="bg-gray-200 px-3 py-2 rounded" onClick={addProduct}>Add</button>
+      </div>
+
       <button className="bg-black text-white px-4 py-2 rounded" onClick={save}>Save</button>
     </div>
   );

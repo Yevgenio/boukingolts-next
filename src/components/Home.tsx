@@ -15,6 +15,7 @@ import {
   MarqueeContent,
   EventsContent,
 } from '@/types/HomeContent';
+import { getMarqueeProducts } from '@/api/marquee';
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -26,9 +27,12 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const res = await fetch(`${API_URL}/api/products/search?sort=recent&limit=10`, { cache: 'no-store' });
-      const data = await res.json();
-      setProducts(data.data);
+      try {
+        const data = await getMarqueeProducts();
+        setProducts(data);
+      } catch {
+        setProducts([]);
+      }
     };
     fetchProducts();
 

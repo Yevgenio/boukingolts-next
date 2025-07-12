@@ -10,7 +10,7 @@
 import Image from 'next/image';
 import API_URL from '@/config/config';
 import ThumbnailSelector from '@/components/gallery/ThumbnailSelector';
-// import ZoomableImage from '@/components/gallery/ZoomableImage';
+import ProductPageAdminControls from '@/components/gallery/ProductPageAdminControls';
 import { Product } from '@/types/Product';
 
 export default async function GalleryItemPage({ params }: { params: { id: string } }) {
@@ -44,6 +44,7 @@ export default async function GalleryItemPage({ params }: { params: { id: string
       </div>
 
       <div className="flex flex-col gap-4">
+        <ProductPageAdminControls productId={params.id} />
         <h1 className="text-3xl font-bold">{product.name}</h1>
         {/* <p className="text-gray-600 text-lg">{product.description}</p> */}
         <div className="text-gray-600 text-lg" dangerouslySetInnerHTML={{ __html: product.description }} />
