@@ -51,6 +51,14 @@ interface Props {
   content: HeroContent;
 }
 
+function getTintStyle(tint: string): React.CSSProperties {
+  if (!tint) return {};
+  if (tint.startsWith('#') || tint.startsWith('rgb')) {
+    return { backgroundColor: tint };
+  }
+  return {};
+}
+
 export default function HeroSection({ content }: Props) {
   const [index, setIndex] = useState(0);
 
@@ -74,8 +82,11 @@ export default function HeroSection({ content }: Props) {
           }}
         />
       ))}
-      {/* <div className={`absolute inset-0 ${content.tint} z-0`} /> */}
-      <div className={`absolute inset-0 bg-slate-800/60 z-0`} />
+      <div
+        className="absolute inset-0 z-0"
+        style={getTintStyle(content.tint)}
+      />
+      {/* <div className={`absolute inset-0 bg-slate-800/60 z-0`} /> */}
       <div className="relative z-10 flex items-center justify-center h-full px-6 text-center">
         <div className="max-w-3xl">
           <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-6">{content.title}</h1>
