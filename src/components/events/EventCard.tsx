@@ -24,7 +24,7 @@ export default function EventCard({
     >
       <div
         className={`relative flex flex-col h-56 md:flex-row border 
-          rounded-lg overflow-hidden shadow hover:shadow-lg 
+          overflow-hidden shadow hover:shadow-lg 
           transition cursor-pointer group ${className}`}
       >
 
@@ -51,7 +51,7 @@ export default function EventCard({
         
         {/* Details about the Event */}
         <div
-          className="flex-1 p-4 flex flex-col gap-2 relative text-left text-gray-100"
+          className="flex-1 p-4 flex flex-col gap-2 relative text-left text-gray-200"
           style={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
           {/* Overlay for tint */}

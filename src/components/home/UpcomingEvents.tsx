@@ -32,7 +32,7 @@ export default function UpcomingEvents() {
       : undefined;
 
   return (
-    <div className="relative w-full h-56 md:h-64" onMouseLeave={() => setHover(false)}>
+    <div className="relative w-full h-56 md:h-64 items-center flex flex-col" onMouseLeave={() => setHover(false)}>
       {bgImage && (
         <div
           className="absolute inset-0 bg-center bg-cover blur-sm scale-110"
@@ -41,19 +41,19 @@ export default function UpcomingEvents() {
           <div className="absolute inset-0 bg-black/40" />
         </div>
       )}
-      <div className="relative flex w-full max-w-5xl h-full overflow-hidden gap-2 mx-auto justify-center">
+      <div className="relative flex w-full max-w-7xl h-full overflow-hidden gap-2 items-center">
         {events.map((event, idx) => (
           <div
-        key={event._id}
-        className={`overflow-hidden transition-all duration-[600ms] ${
-          idx === active ? 'flex-auto basis-full' : 'flex-none basis-[90px]'
-        }`}
-        onMouseEnter={() => {
-          setActive(idx);
-          setHover(true);
-        }}
+            key={event._id}
+            className={`overflow-hidden transition-all duration-[600ms] ${
+              idx === active ? 'flex-auto basis-full' : 'flex-none basis-[125px]'
+            }`}
+            onMouseEnter={() => {
+              setActive(idx);
+              setHover(true);
+            }}
           >
-        <EventCard event={event} className="w-[700px]" />
+            <EventCard event={event} className="w-[745px]" />
           </div>
         ))}
       </div>

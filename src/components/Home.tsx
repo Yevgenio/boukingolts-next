@@ -55,16 +55,7 @@ export default function HomePage() {
     sections.push({
       order: events.order,
       element: (
-        <section className="w-full px-4 py-12 flex flex-col items-center text-center">
-          <div className="w-full flex flex-col items-center space-y-4">
-            <h2 className="text-3xl font-semibold mb-4">Upcoming Events</h2>
-            <p className="text-lg mb-4">
-              {events.text ||
-                'Come visit us at our location or join us at one of our events!'}
-            </p>
-            <UpcomingEvents />
-          </div>
-        </section>
+        <UpcomingEvents />
       ),
     });
   if (about && about.enabled)
