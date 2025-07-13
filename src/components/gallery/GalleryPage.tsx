@@ -5,6 +5,8 @@ import GalleryItem from '@/components/gallery/GalleryItem';
 import GalleryAdminControls from '@/components/gallery/GalleryAdminControls';
 import API_URL from '@/config/config';
 import { Product } from '@/types/Product';
+import { BackIcon } from '../icons';
+import router from 'next/router';
 
 export default function GalleryPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -39,7 +41,12 @@ export default function GalleryPage() {
   return (
     <div className="p-4 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h1 className="text-3xl font-bold">Gallery</h1>
+        <h1 className="text-4xl font-bold">
+          <button className="mt-2">
+            <BackIcon onClick={() => router.back()}className="w-10 h-10" />
+          </button>
+          Gallery
+        </h1>
         <GalleryAdminControls />
       </div>
 

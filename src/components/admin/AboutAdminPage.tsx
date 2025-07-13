@@ -1,10 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
+import { BackIcon } from '@/components/icons';
 import { useAuth } from '@/context/AuthContext';
 import { AboutContent } from '@/types/HomeContent';
 import { Image } from '@/types/Image';
 import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
+import router from 'next/router';
 
 export default function AboutAdminPage() {
   const { isAdmin } = useAuth();
@@ -52,6 +54,8 @@ export default function AboutAdminPage() {
       credentials: 'include',
       body: formData,
     });
+
+    router.push('/admin');
   };
 
   if (!isAdmin) return <div className="p-4">Unauthorized</div>;

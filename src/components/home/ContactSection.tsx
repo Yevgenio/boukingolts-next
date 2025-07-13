@@ -1,6 +1,6 @@
 'use client';
 import { AboutContent } from '@/types/HomeContent';
-import { LocationIcon, CallIcon, EmailIcon, WhatsappIcon, InstagramIcon } from '@/components/icons';
+import { CallIcon, WhatsappIcon } from '@/components/icons';
 
 interface Props {
   contact: AboutContent | null;

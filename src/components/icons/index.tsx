@@ -55,17 +55,25 @@ export const DeleteIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export const AddIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" width="24" height="24" {...props}>
-    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth={2} />
-    <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
-    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
+  // <svg viewBox="0 0 24 24" width="24" height="24" {...props}>
+  //   <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth={2} />
+  //   <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
+  //   <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
+  // </svg>
+  <svg fill="#000000" width="24" height="24" viewBox="0 0 36 36">
+    <path d="M27.19,34a2.22,2.22,0,0,1-1.24-.38l-7.46-5a.22.22,0,0,0-.25,0l-7.46,5A2.22,2.22,0,0,1,7.4,31.21l2.45-8.64a.23.23,0,0,0-.08-.24L2.71,16.78a2.22,2.22,0,0,1,1.29-4l9-.34a.23.23,0,0,0,.2-.15l3.1-8.43a2.22,2.22,0,0,1,4.17,0l3.1,8.43a.23.23,0,0,0,.2.15l9,.34a2.22,2.22,0,0,1,1.29,4L27,22.33a.22.22,0,0,0-.08.24l2.45,8.64A2.23,2.23,0,0,1,27.19,34Zm-8.82-7.42A2.21,2.21,0,0,1,19.6,27l7.46,5a.22.22,0,0,0,.34-.25l-2.45-8.64a2.21,2.21,0,0,1,.77-2.35l7.06-5.55a.22.22,0,0,0-.13-.4l-9-.34a2.22,2.22,0,0,1-2-1.46l-3.1-8.43a.22.22,0,0,0-.42,0L15.06,13a2.22,2.22,0,0,1-2,1.46l-9,.34a.22.22,0,0,0-.13.4L11,20.76a2.22,2.22,0,0,1,.77,2.35L9.33,31.75a.21.21,0,0,0,.08.24.2.2,0,0,0,.26,0l7.46-5A2.22,2.22,0,0,1,18.36,26.62Z"></path>
+    <rect x="0" y="0" width="36" height="36" fill-opacity="0"/>
   </svg>
 );
 
 export const RemoveIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" width="24" height="24" {...props}>
-    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth={2} />
-    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
+  // <svg viewBox="0 0 24 24" width="24" height="24" {...props}>
+  //   <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth={2} />
+  //   <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
+  // </svg>
+  <svg fill="#000000" width="24" height="24" viewBox="0 0 36 36" {...props}>
+    <path d="M34,16.78a2.22,2.22,0,0,0-1.29-4l-9-.34a.23.23,0,0,1-.2-.15L20.4,3.89a2.22,2.22,0,0,0-4.17,0l-3.1,8.43a.23.23,0,0,1-.2.15l-9,.34a2.22,2.22,0,0,0-1.29,4l7.06,5.55a.23.23,0,0,1,.08.24L7.35,31.21a2.22,2.22,0,0,0,3.38,2.45l7.46-5a.22.22,0,0,1,.25,0l7.46,5a2.2,2.2,0,0,0,2.55,0,2.2,2.2,0,0,0,.83-2.4l-2.45-8.64a.22.22,0,0,1,.08-.24Z"></path>
+    <rect x="0" y="0" width="36" height="36" fill-opacity="0"/>
   </svg>
 );
 
@@ -108,6 +116,12 @@ export const WhatsappIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
     <path d="M6.014 8.00613C6.12827 7.1024 7.30277 5.87414 8.23488 6.01043L8.23339 6.00894C9.14051 6.18132 9.85859 7.74261 10.2635 8.44465C10.5504 8.95402 10.3641 9.4701 10.0965 9.68787C9.7355 9.97883 9.17099 10.3803 9.28943 10.7834C9.5 11.5 12 14 13.2296 14.7107C13.695 14.9797 14.0325 14.2702 14.3207 13.9067C14.5301 13.6271 15.0466 13.46 15.5548 13.736C16.3138 14.178 17.0288 14.6917 17.69 15.27C18.0202 15.546 18.0977 15.9539 17.8689 16.385C17.4659 17.1443 16.3003 18.1456 15.4542 17.9421C13.9764 17.5868 8 15.27 6.08033 8.55801C5.97237 8.24048 5.99955 8.12044 6.014 8.00613Z" fill="#0F0F0F"/>
     <path fill-rule="evenodd" clip-rule="evenodd" d="M12 23C10.7764 23 10.0994 22.8687 9 22.5L6.89443 23.5528C5.56462 24.2177 4 23.2507 4 21.7639V19.5C1.84655 17.492 1 15.1767 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12C23 18.0751 18.0751 23 12 23ZM6 18.6303L5.36395 18.0372C3.69087 16.4772 3 14.7331 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C11.0143 21 10.552 20.911 9.63595 20.6038L8.84847 20.3397L6 21.7639V18.6303Z" fill="#0F0F0F"/>
+  </svg>
+);
+
+export const BackIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg fill="#000000" width="24" height="24" viewBox="0 0 200 200" data-name="Layer 1" id="Layer_1"  {...props}>
+    <path d="M100,15a85,85,0,1,0,85,85A84.93,84.93,0,0,0,100,15Zm0,150a65,65,0,1,1,65-65A64.87,64.87,0,0,1,100,165ZM116.5,57.5a9.67,9.67,0,0,0-14,0L74,86a19.92,19.92,0,0,0,0,28.5L102.5,143a9.9,9.9,0,0,0,14-14l-28-29L117,71.5C120.5,68,120.5,61.5,116.5,57.5Z"/>
   </svg>
 );
 

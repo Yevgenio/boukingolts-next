@@ -190,7 +190,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
             className="w-full mt-1 border rounded px-3 py-2"
           />
         </div>
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium">Rank</label>
           <input
             type="number"
@@ -213,7 +213,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
           <label htmlFor="featured" className="text-sm font-medium">
             Featured
           </label>
-        </div>
+        </div> */}
         <div>
           <label className="block text-sm font-medium">Tags (comma separated)</label>
           <input

@@ -37,6 +37,7 @@ export default function ProductMarqueeAdminPage() {
     });
 
     await updateMarqueeProductIds(products.map(p => p._id));
+    router.push('/admin');
   };
 
   const move = (index: number, dir: number) => {
@@ -92,10 +93,10 @@ export default function ProductMarqueeAdminPage() {
               />
             )}
             <span className="flex-1">{p.name}</span>
+            <button onClick={() => router.push(`/gallery/${p._id}`)} className="px-2 underline">View</button>
             <button onClick={() => move(i, -1)} className="px-2">↑</button>
             <button onClick={() => move(i, 1)} className="px-2">↓</button>
             <button onClick={() => remove(i)} className="px-2 text-red-600">✕</button>
-            <button onClick={() => router.push(`/gallery/${p._id}`)} className="px-2 underline">View</button>
           </div>
         ))}
       </div>

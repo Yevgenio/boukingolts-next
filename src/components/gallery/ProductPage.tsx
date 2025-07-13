@@ -45,6 +45,18 @@ export default async function GalleryItemPage({ params }: { params: { id: string
 
       <div className="flex flex-col gap-4">
         <ProductPageAdminControls productId={params.id} />
+        {product.tags && product.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-2">
+                {product.tags.map((tag: string) => (
+                    <div
+                        key={tag}
+                        className="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full"
+                    >
+                        #{tag}
+                    </div>
+                ))}
+            </div>
+        )}
         <h1 className="text-3xl font-bold">{product.name}</h1>
         {/* <p className="text-gray-600 text-lg">{product.description}</p> */}
         <div className="text-gray-600 text-lg" dangerouslySetInnerHTML={{ __html: product.description }} />
