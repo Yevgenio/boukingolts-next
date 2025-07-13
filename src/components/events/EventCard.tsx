@@ -46,6 +46,14 @@ export default function EventCard({ event }: { event: Event }) {
             {new Date(event.date).getFullYear()}
           </div>
         </div>
+        {/* <div className="flex flex-col items-center justify-center px-6 bg-gray-800 h-full border-l border-dotted border-gray-300 min-w-[90px]">
+          <div className="text-3xl font-bold text-white leading-none">
+            {new Date(event.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
+          </div>
+          <div className="text-lg text-gray-400 mt-1">
+            {new Date(event.date).getFullYear()}
+          </div>
+        </div> */}
       
       </div>
     </Link>
