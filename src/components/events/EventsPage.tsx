@@ -37,7 +37,7 @@ export default function EventsPage() {
 
   useEffect(() => {
     fetchEvents();
-  }, [fetchEvents]);
+  }, [query, selectedCategory]);
 
   return (
     <div className="p-4 max-w-5xl mx-auto space-y-4">
