@@ -71,6 +71,7 @@ export default function ProductsAdminPage() {
               />
             )}
             <span className="flex-1">{p.name}</span>
+            <button onClick={() => router.push(`/gallery/${p._id}`)} className="px-2 underline">View</button>
             <button onClick={() => router.push(`/gallery/edit/${p._id}`)} className="px-2">
               <EditIcon className="w-5 h-5" />
             </button>

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
-import { BackIcon } from '@/components/icons';
+// import { BackIcon } from '@/components/icons';
 import { useAuth } from '@/context/AuthContext';
 import { AboutContent } from '@/types/HomeContent';
 import { Image } from '@/types/Image';
