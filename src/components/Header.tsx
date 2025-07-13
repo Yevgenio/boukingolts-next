@@ -22,10 +22,11 @@ const Header = () => {
       <nav className="space-x-4 flex items-center">
         {isAdmin && <Link href="/admin" className="font-bold text-red-500">Admin</Link>}
         <Link href="/home" className="hover:underline">Home</Link>
-        <Link href="/grid" className="hover:underline">Grid</Link>
-        <Link href="/plane" className="hover:underline">Plane</Link>
+        {/* <Link href="/grid" className="hover:underline">Grid</Link> */}
+        {/* <Link href="/plane" className="hover:underline">Plane</Link> */}
         {/* <Link href="/box" className="hover:underline">Box</Link> */}
         <Link href="/gallery" className="hover:underline">Gallery</Link>
+        <Link href="/events" className="hover:underline">Events</Link>
         {isLoggedIn ? (
           <>
             <Link href="/settings" className="hover:underline">Profile</Link>
