@@ -77,7 +77,7 @@ export default function HeroSection({ content }: Props) {
   }, [content.images.length]);
 
   return (
-    <section className="relative w-full h-[40vh] overflow-hidden text-white">
+    <section className="relative w-full p-16 overflow-hidden text-white">
       {content.images.map((img, i) => (
         <div
           key={i}

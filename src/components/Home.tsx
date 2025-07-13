@@ -8,6 +8,7 @@ import HeroSection from '@/components/home/HeroSection';
 import Testimonials from '@/components/home/Testimonials';
 import AboutSection from '@/components/home/AboutSection';
 import ContactSection from '@/components/home/ContactSection';
+import UpcomingEvents from '@/components/home/UpcomingEvents';
 import {
   HeroContent,
   TestimonialsContent,
@@ -51,16 +52,21 @@ export default function HomePage() {
   if (marquee && marquee.enabled)
     sections.push({ order: marquee.order, element: <ProductMarquee products={products} /> });
   if (events && events.enabled)
-    sections.push({ order: events.order, element: (
-      <section className="w-full px-4 py-12 flex flex-col items-center text-center">
-        <div className="w-full max-w-5xl flex flex-col items-center space-y-4">
-          <h2 className="text-3xl font-semibold mb-4">Upcoming Events</h2>
-          <p className="text-lg mb-4">
-            {events.text || 'We sell flowers at Carmel Market every Friday and pop-up events across Tel Aviv. Reach out to book us for your event!'}
-          </p>
-        </div>
-      </section>
-    ) });
+    sections.push({
+      order: events.order,
+      element: (
+        <section className="w-full px-4 py-12 flex flex-col items-center text-center">
+          <div className="w-full max-w-5xl flex flex-col items-center space-y-4">
+            <h2 className="text-3xl font-semibold mb-4">Upcoming Events</h2>
+            <p className="text-lg mb-4">
+              {events.text ||
+                'Come visit us at our location or join us at one of our events!'}
+            </p>
+            <UpcomingEvents />
+          </div>
+        </section>
+      ),
+    });
   if (about && about.enabled)
     sections.push({ order: about.order, element: <AboutSection content={about} /> });
 

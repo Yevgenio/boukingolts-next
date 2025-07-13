@@ -14,6 +14,20 @@ export default function EventCard({ event }: { event: Event }) {
       aria-label={event.name}
     >
       <div className="relative flex flex-col h-56 md:flex-row border rounded-lg overflow-hidden shadow hover:shadow-lg transition cursor-pointer group">
+        
+{/* Image for the Event */}
+
+
+        {/* Date of the Event */}
+        <div className="flex flex-col items-center justify-center px-6 bg-white h-full border-l border-dotted border-gray-300 min-w-[90px]">
+          <div className="text-3xl font-bold text-gray-800 leading-none">
+            {new Date(event.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
+          </div>
+          <div className="text-lg text-gray-500 mt-1">
+            {new Date(event.date).getFullYear()}
+          </div>
+        </div>
+
         {event.images && event.images[0] && (
           <Image
           src={`${API_URL}/api/uploads/${event.images[0].thumbnail || event.images[0].url}`}
@@ -23,6 +37,8 @@ export default function EventCard({ event }: { event: Event }) {
           className="w-full md:w-64 h-48 md:h-auto object-cover"
           />
         )}
+        
+        {/* Details about the Event */}
         <div className="flex-1 p-4 flex flex-col gap-2">
           <EventItemAdminControls eventId={event._id} />
           <h2 className="text-xl font-semibold">
@@ -38,14 +54,10 @@ export default function EventCard({ event }: { event: Event }) {
           />
           )}
         </div>
-        <div className="flex flex-col items-center justify-center px-6 bg-white h-full border-l border-dotted border-gray-300 min-w-[90px]">
-          <div className="text-3xl font-bold text-gray-800 leading-none">
-            {new Date(event.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
-          </div>
-          <div className="text-lg text-gray-500 mt-1">
-            {new Date(event.date).getFullYear()}
-          </div>
-        </div>
+
+
+
+        
         {/* <div className="flex flex-col items-center justify-center px-6 bg-gray-800 h-full border-l border-dotted border-gray-300 min-w-[90px]">
           <div className="text-3xl font-bold text-white leading-none">
             {new Date(event.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
