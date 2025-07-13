@@ -20,7 +20,6 @@ export default function GalleryPage() {
     setCategories(data);
   };
 
-
   useEffect(() => {
     fetchCategories();
   }, []);
