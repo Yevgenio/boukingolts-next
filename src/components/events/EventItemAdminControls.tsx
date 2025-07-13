@@ -24,13 +24,30 @@ export default function EventItemAdminControls({ eventId }: { eventId: string })
   };
 
   return (
-    <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100">
-      <button onClick={handleEdit} className="bg-gray-200 hover:bg-gray-300 text-black text-sm px-2 py-1 rounded">
-        <EditIcon className="w-4 h-4" />
-      </button>
-      <button onClick={handleDelete} className="bg-gray-200 hover:bg-gray-300 text-black text-sm px-2 py-1 rounded">
-        <DeleteIcon className="w-4 h-4" />
-      </button>
-    </div>
+    // <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100">
+    //   <button onClick={handleEdit} className="bg-gray-200 hover:bg-gray-300 text-black text-sm px-2 py-1 rounded">
+    //     <EditIcon className="w-4 h-4" />
+    //   </button>
+    //   <button onClick={handleDelete} className="bg-gray-200 hover:bg-gray-300 text-black text-sm px-2 py-1 rounded">
+    //     <DeleteIcon className="w-4 h-4" />
+    //   </button>
+    // </div>
+    <div
+            className={`absolute top-2 right-2 flex flex-col gap-2 opacity-0 scale-75
+                        transition-all duration-300 group-hover:opacity-100 group-hover:scale-100`}
+            >
+                <button
+                    onClick={handleEdit}
+                    className="bg-gray-200 hover:bg-gray-300 text-black text-sm px-3 py-3 rounded-full border-black border-1"
+                >
+                    <EditIcon />
+                </button>
+                <button
+                    onClick={handleDelete}
+                    className="bg-gray-200 hover:bg-gray-300 text-black text-sm px-3 py-3 rounded-full border-black border-1"
+                >
+                    <DeleteIcon />
+                </button>
+            </div>
   );
 }

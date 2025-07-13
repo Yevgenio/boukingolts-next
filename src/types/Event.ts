@@ -3,6 +3,7 @@ export interface Event {
   name: string;
   description?: string;
   category?: string;
+  tags?: string[];
   images: import('./Image').Image[];
   date: string;
   location?: string;

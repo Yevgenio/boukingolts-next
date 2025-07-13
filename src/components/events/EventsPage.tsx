@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import API_URL from '@/config/config';
-import { Event } from '@/types/Event';
 import EventCard from './EventCard';
 import EventsAdminControls from './EventsAdminControls';
+import { Event } from '@/types/Event';
 
 export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
