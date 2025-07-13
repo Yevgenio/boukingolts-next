@@ -5,7 +5,16 @@ import API_URL from '@/config/config';
 import { Event } from '@/types/Event';
 import EventItemAdminControls from './EventItemAdminControls';
 
-export default function EventCard({ event }: { event: Event }) {
+export default function EventCard({
+  event,
+  className = 'w-full',
+}: {
+  event: Event;
+  className?: string;
+}) {
+
+    const bgImage = event.images && event.images[0] ? `${API_URL}/api/uploads/${event.images[0].thumbnail || event.images[0].url}` : undefined;
+
   return (
     <Link
       href={`/events/${event._id}`}
@@ -13,13 +22,14 @@ export default function EventCard({ event }: { event: Event }) {
       tabIndex={-1}
       aria-label={event.name}
     >
-      <div className="relative flex flex-col h-56 md:flex-row border rounded-lg overflow-hidden shadow hover:shadow-lg transition cursor-pointer group">
-        
-{/* Image for the Event */}
-
+      <div
+        className={`relative flex flex-col h-56 md:flex-row border 
+          rounded-lg overflow-hidden shadow hover:shadow-lg 
+          transition cursor-pointer group ${className}`}
+      >
 
         {/* Date of the Event */}
-        <div className="flex flex-col items-center justify-center px-6 bg-white h-full border-l border-dotted border-gray-300 min-w-[90px]">
+        <div className="flex flex-col items-center justify-center px-6 bg-white h-full border-l border-dotted border-gray-300 min-w-[100px]">
           <div className="text-3xl font-bold text-gray-800 leading-none">
             {new Date(event.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
           </div>
@@ -28,7 +38,8 @@ export default function EventCard({ event }: { event: Event }) {
           </div>
         </div>
 
-        {event.images && event.images[0] && (
+        {/* Image for the Event */}
+        {/* {event.images && event.images[0] && (
           <Image
           src={`${API_URL}/api/uploads/${event.images[0].thumbnail || event.images[0].url}`}
           alt={event.name}
@@ -36,27 +47,39 @@ export default function EventCard({ event }: { event: Event }) {
           height={event.images[0].height || 300}
           className="w-full md:w-64 h-48 md:h-auto object-cover"
           />
-        )}
+        )} */}
         
         {/* Details about the Event */}
-        <div className="flex-1 p-4 flex flex-col gap-2">
-          <EventItemAdminControls eventId={event._id} />
-          <h2 className="text-xl font-semibold">
-          {event.name}
-          </h2>
-          {/* <p className="text-sm text-gray-600">{new Date(event.date).toLocaleDateString()}</p> */}
-          {event.location && <p className="text-sm text-gray-600 flex items-center gap-1">{event.location}</p>}
-          {event.description && (
-          <p
-            className="text-sm overflow-hidden"
-            style={{ display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical' }}
-            dangerouslySetInnerHTML={{ __html: event.description }}
-          />
+        <div
+          className="flex-1 p-4 flex flex-col gap-2 relative text-left text-gray-100"
+          style={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+        >
+          {/* Overlay for tint */}
+          {bgImage && (
+            <div className="absolute inset-0 bg-slate-800/60 pointer-events-none" aria-hidden="true"></div>
           )}
+          <div className="relative z-10">
+            <EventItemAdminControls eventId={event._id} />
+            <h2 className="text-xl font-semibold">
+              {event.name}
+            </h2>
+            {/* <p className="text-sm text-gray-600">{new Date(event.date).toLocaleDateString()}</p> */}
+            {event.location && (
+              <p className="text-sm text-gray-200 flex items-center gap-1">{event.location}</p>
+            )}
+            {event.description && (
+              <p
+                className="text-sm overflow-hidden"
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 4,
+                  WebkitBoxOrient: 'vertical',
+                }}
+                dangerouslySetInnerHTML={{ __html: event.description }}
+              />
+            )}
+          </div>
         </div>
-
-
-
         
         {/* <div className="flex flex-col items-center justify-center px-6 bg-gray-800 h-full border-l border-dotted border-gray-300 min-w-[90px]">
           <div className="text-3xl font-bold text-white leading-none">
