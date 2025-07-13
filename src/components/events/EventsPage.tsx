@@ -1,65 +1,59 @@
 'use client';
-
-import { useEffect, useState , useCallback } from 'react';
-import GalleryItem from '@/components/gallery/GalleryItem';
-import GalleryAdminControls from '@/components/gallery/GalleryAdminControls';
+import { useEffect, useState, useCallback } from 'react';
 import API_URL from '@/config/config';
-import { Product } from '@/types/Product';
-import { BackIcon } from '../icons';
-import router from 'next/router';
+import { Event } from '@/types/Event';
+import EventCard from './EventCard';
+import EventsAdminControls from './EventsAdminControls';
 
-export default function GalleryPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+export default function EventsPage() {
+  const [events, setEvents] = useState<Event[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
   const fetchCategories = async () => {
-    const res = await fetch(`${API_URL}/api/products/categories`, { cache: 'no-store' });
-    const data = await res.json();
-    setCategories(data);
+    const res = await fetch(`${API_URL}/api/events/categories`, { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      setCategories(data);
+    }
   };
-
 
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  const fetchProducts = useCallback(async () => {
-    const url = new URL(`${API_URL}/api/products/search`);
+  const fetchEvents = useCallback(async () => {
+    const url = new URL(`${API_URL}/api/events/search`);
     if (query) url.searchParams.set('query', query);
     if (selectedCategory) url.searchParams.set('category', selectedCategory);
     const res = await fetch(url.toString(), { cache: 'no-store' });
     const result = await res.json();
-    setProducts(result.data);
+    const sorted = (result.data as Event[]).sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+    setEvents(sorted);
   }, [query, selectedCategory]);
 
   useEffect(() => {
-    fetchProducts();
-  }, [query, selectedCategory]);
+    fetchEvents();
+  }, [fetchEvents]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div className="p-4 max-w-5xl mx-auto space-y-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h1 className="text-4xl font-bold">
-          <button className="mt-2">
-            <BackIcon onClick={() => router.back()} className="w-10 h-10" />
-          </button>
-          Gallery
-        </h1>
-        <GalleryAdminControls />
+        <h1 className="text-4xl font-bold">Upcoming Events</h1>
+        <EventsAdminControls />
       </div>
 
-      {/* Search Input */}
       <input
         type="text"
-        placeholder="Search by name, description or category..."
+        placeholder="Search events..."
         className="w-full border px-4 py-2 mb-4 rounded"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
 
-      {/* Category Buttons */}
       <div className="mb-6 flex flex-wrap gap-2">
         <button
           onClick={() => setSelectedCategory('')}
@@ -78,12 +72,9 @@ export default function GalleryPage() {
         ))}
       </div>
 
-      {/* Masonry Layout */}
-      <div className="columns-1 sm:columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-        {products.map((product) => (
-          <div key={product._id} className="break-inside-avoid">
-            <GalleryItem product={product} />
-          </div>
+      <div className="space-y-4">
+        {events.map((event) => (
+          <EventCard key={event._id} event={event} />
         ))}
       </div>
     </div>

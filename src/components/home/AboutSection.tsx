@@ -46,15 +46,15 @@ export default function AboutSection({ content }: Props) {
                 <WhatsappIcon className="w-6 h-6" />
               </a>
             )}
+            {content.instagram && (
+              <a href={content.instagram} target="_blank" className="hover:text-gray-600">
+                <InstagramIcon className="w-6 h-6" />
+              </a>
+            )}
             {content.email && (
               <a href={`mailto:${content.email}`}
                  className="hover:text-gray-600">
                 <EmailIcon className="w-6 h-6" />
-              </a>
-            )}
-            {content.instagram && (
-              <a href={content.instagram} target="_blank" className="hover:text-gray-600">
-                <InstagramIcon className="w-6 h-6" />
               </a>
             )}
           </div>
