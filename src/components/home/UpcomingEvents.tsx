@@ -16,7 +16,7 @@ export default function UpcomingEvents() {
 
   useEffect(() => {
     if (hover || events.length < 2) return;
-    const id = setInterval(() => {
+    const id = setInterval(() => {e
       setActive((a) => (a + 1) % events.length);
     }, 5000);
     return () => clearInterval(id);

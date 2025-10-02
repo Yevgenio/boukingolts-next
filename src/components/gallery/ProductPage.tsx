@@ -12,6 +12,7 @@ import API_URL from '@/config/config';
 import ProductPageAdminControls from '@/components/gallery/ProductPageAdminControls';
 import ThumbnailSelector from '@/components/gallery/ThumbnailSelector';
 import { Product } from '@/types/Product';
+import PageHeader from '@/components/common/PageHeader';
 
 export default async function GalleryItemPage({ params }: { params: { id: string } }) {
   const res = await fetch(`${API_URL}/api/products/id/${params.id}`, { cache: 'no-store' });
@@ -44,8 +45,10 @@ export default async function GalleryItemPage({ params }: { params: { id: string
       </div>
 
       <div className="flex flex-col gap-4">
+        <PageHeader title={product.name} />
         <ProductPageAdminControls productId={params.id} />
         {product.tags && product.tags.length > 0 && (
+          
             <div className="flex flex-wrap gap-2 mb-2">
                 {product.tags.map((tag: string) => (
                     <div
@@ -57,7 +60,7 @@ export default async function GalleryItemPage({ params }: { params: { id: string
                 ))}
             </div>
         )}
-        <h1 className="text-3xl font-bold">{product.name}</h1>
+        {/* <h1 className="text-3xl font-bold">{product.name}</h1> */}
         {/* <p className="text-gray-600 text-lg">{product.description}</p> */}
         <div className="text-gray-600 text-lg" dangerouslySetInnerHTML={{ __html: product.description }} />
       </div>

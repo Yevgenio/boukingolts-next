@@ -3,7 +3,8 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { BackIcon } from '../icons';
+// import { BackIcon } from '../icons';
+import PageHeader from '@/components/common/PageHeader';
 
 export default function AdminPanel() {
   const { isAdmin } = useAuth();
@@ -15,10 +16,7 @@ export default function AdminPanel() {
     <div className="max-w-xl mx-auto p-6">
       
       <div className="text-4xl font-bold flex mb-6">
-        <button  className="mb-4 pr-2">
-          <BackIcon onClick={() => router.back()}className="w-10 h-10" />
-        </button>
-        Admin Panel
+         <PageHeader title="Admin Panel" />
       </div>
       <div className="space-y-8">
         <div className="space-y-4">

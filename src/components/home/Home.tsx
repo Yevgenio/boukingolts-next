@@ -8,7 +8,7 @@ import HeroSection from '@/components/home/HeroSection';
 import Testimonials from '@/components/home/Testimonials';
 import AboutSection from '@/components/home/AboutSection';
 import ContactSection from '@/components/home/ContactSection';
-import UpcomingEvents from '@/components/home/UpcomingEvents';
+import FruitAccordion from '@/components/home/UpcomingEvents';
 import {
   HeroContent,
   TestimonialsContent,
@@ -55,7 +55,7 @@ export default function HomePage() {
     sections.push({
       order: events.order,
       element: (
-        <UpcomingEvents />
+        <FruitAccordion />
       ),
     });
   if (about && about.enabled)
