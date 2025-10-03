@@ -17,9 +17,8 @@
         "name": "next"
       }
     ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "baseUrl": ".",                 // <-- REQUIRED for paths to work
+    "paths": { "@/*": ["src/*"] }   // "./src/*" is fine too; this is a bit cleaner
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/game/GameOld.tsx"],
   "exclude": ["node_modules"]
