@@ -1,5 +1,5 @@
 // app/page.tsx (server component)
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 // const Chain3D = dynamic(() => import('@/components/Chain3D'), { ssr: false });
 
 export default function Home() {
