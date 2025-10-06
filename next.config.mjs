@@ -42,10 +42,6 @@ const nextConfig = {
     ],
   },
 
-  // 👇 add this section
-  experimental: {
-    tsconfigPaths: true,
-  },
   webpack: (config) => {
     // Map "@" to "src" folder for both dev & prod builds
     config.resolve.alias["@"] = path.resolve(process.cwd(), "src");
