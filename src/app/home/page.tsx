@@ -1,6 +1,6 @@
 // app/page.tsx (server component)
 import dynamic from 'next/dynamic';
-const Chain3D = dynamic(() => import('@/components/Chain3D'), { ssr: false });
+// const Chain3D = dynamic(() => import('@/components/Chain3D'), { ssr: false });
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
       </section>
 
       {/* client island */}
-      <Chain3D count={18} bounds={7} pxThreshold={150} hysteresisPx={16} />
+      {/* <Chain3D count={18} bounds={7} pxThreshold={150} hysteresisPx={16} /> */}
     </>
   );
 }
