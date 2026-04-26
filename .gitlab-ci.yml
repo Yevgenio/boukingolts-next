@@ -12,7 +12,7 @@ build-and-push:
     - pipeline
   services:
     - name: docker:27-dind
-      command: ["--insecure-registry=10.1.0.11:5050"]
+      command: ["--insecure-registry=10.1.0.11:5050", "--tls=false"]
   variables:
     DOCKER_TLS_CERTDIR: ""
   before_script:
