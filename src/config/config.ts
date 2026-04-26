@@ -11,7 +11,7 @@ if (isProd) {
   API_URL = 'https://boukingolts.art';
 } else if (useLocalAPI) {
   // Fetch from local API during development
-  API_URL = 'http://localhost:5000';
+  API_URL = 'http://localhost:5001';
 } else {
   // Fetch from remote (optional)
   API_URL = 'https://boukingolts.art';
