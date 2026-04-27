@@ -1,0 +1,1 @@
+sudo kubectl create secret tls boukingolts-tls --cert=/etc/letsencrypt/live/boukingolts.art/fullchain.pem --key=/etc/letsencrypt/live/boukingolts.art/privkey.pem -n traefik 

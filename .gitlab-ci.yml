@@ -15,6 +15,7 @@ build-and-push:
       command: ["--insecure-registry=10.1.0.11:5050", "--tls=false"]
   variables:
     DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
   script:
