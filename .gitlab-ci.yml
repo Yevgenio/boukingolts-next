@@ -36,11 +36,11 @@ deploy:
   script:
     - git clone http://oauth2:$GITOPS_TOKEN@10.1.0.11/devops/cluster-charts.git
     - cd cluster-charts
-    - sed -i "s/  tag: .*/  tag: \"$IMAGE_TAG\"/" gallery-frontend/values.yaml
+    - 'sed -i "s/  tag:.*/  tag: $IMAGE_TAG/" gallery-frontend/values.yaml'
     - git config user.email "ci@boukingolts.art"
     - git config user.name "GitLab CI"
     - git add gallery-frontend/values.yaml
-    - git commit -m "ci: update gallery-frontend image to $IMAGE_TAG"
+    - 'git commit -m "ci: update gallery-frontend image to $IMAGE_TAG"'
     - git push
   only:
     - main
