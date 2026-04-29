@@ -44,7 +44,13 @@ export default function ImageUploadList({ images, setImages }: Props) {
             <li key={index} className="flex items-center gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={item.isNew && item.file ? URL.createObjectURL(item.file) : `${API_URL}/api/uploads/${item.url}`}
+                src={
+                  item.isNew && item.file
+                    ? URL.createObjectURL(item.file)
+                    : item.url
+                    ? `${API_URL}/api/uploads/${item.url}`
+                    : `${API_URL}/api/uploads/default.jpg`
+                }
                 alt="preview"
                 className="w-16 h-16 object-cover rounded"
               />

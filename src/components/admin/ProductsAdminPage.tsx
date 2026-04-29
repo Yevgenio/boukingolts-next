@@ -63,7 +63,7 @@ export default function ProductsAdminPage() {
       <div className="space-y-2">
         {products.map(p => (
           <div key={p._id} className="flex items-center gap-2 border p-2 rounded">
-            {p.images?.[0] && (
+            {p.images?.[0]?.thumbnail && (
               <img
                 src={`${API_URL}/api/uploads/${p.images[0].thumbnail}`}
                 alt={p.name}
