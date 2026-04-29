@@ -7,7 +7,7 @@ export default function Home() {
     <>
       {/* SSR headline for SEO */}
       <section className="relative z-10 text-center py-16">
-        <h1 className="text-4xl md:text-6xl font-semibold">Boukingolts - Art</h1>
+        <h1 className="text-4xl md:text-6xl font-semibold">Boukingolts • Art</h1>
         <p className="text-lg opacity-70">Hand-crafted works & motion art</p>
       </section>
 
