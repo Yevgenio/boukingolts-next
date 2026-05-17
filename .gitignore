@@ -38,3 +38,4 @@ next-env.d.ts
 # public
 /public
 
+.DS_Store
