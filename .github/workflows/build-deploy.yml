@@ -32,9 +32,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            ${{ env.IMAGE }}:${{ env.SHORT_SHA }}
-            ${{ env.IMAGE }}:latest
+          tags: ${{ env.IMAGE }}:${{ env.SHORT_SHA }}
 
   deploy:
     needs: build
