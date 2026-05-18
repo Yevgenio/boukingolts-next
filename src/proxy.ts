@@ -1,9 +1,8 @@
-// src/middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 // import jwt from 'jsonwebtoken';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const accessToken = request.cookies.get('access_token')?.value;
   const userRole = request.cookies.get('user_role')?.value;
 

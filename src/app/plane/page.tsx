@@ -1,4 +1,4 @@
-// app/3d/page.tsx or pages/3d.tsx depending on your structure
+'use client';
 import dynamic from 'next/dynamic';
 
 // const RotatingBox = dynamic(() => import('@/components/shape/RotatingBox'), {
