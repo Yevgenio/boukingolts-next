@@ -1,7 +1,6 @@
-// /app/gallery/page.tsx
-
 import ProductPage from '@/components/gallery/ProductPage';
 
-export default function Page({ params }: { params: { id: string } }) {
-  return <ProductPage params={params} />;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  return <ProductPage params={resolvedParams} />;
 }
