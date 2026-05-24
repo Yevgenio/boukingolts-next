@@ -26,10 +26,12 @@ export default function GalleryPage() {
   }, []);
 
   const fetchProducts = useCallback(async () => {
-    const url = new URL(`${API_URL}/api/products/search`);
-    if (query) url.searchParams.set('query', query);
-    if (selectedCategory) url.searchParams.set('category', selectedCategory);
-    const res = await fetch(url.toString(), { cache: 'no-store' });
+    const params = new URLSearchParams();
+    if (query) params.set('query', query);
+    if (selectedCategory) params.set('category', selectedCategory);
+    const qs = params.toString();
+    const url = `${API_URL}/api/products/search${qs ? `?${qs}` : ''}`;
+    const res = await fetch(url, { cache: 'no-store' });
     const result = await res.json();
     setProducts(result.data);
   }, [query, selectedCategory]);

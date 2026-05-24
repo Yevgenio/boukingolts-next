@@ -24,10 +24,12 @@ export default function EventsPage() {
   }, []);
 
   const fetchEvents = useCallback(async () => {
-    const url = new URL(`${API_URL}/api/events/search`);
-    if (query) url.searchParams.set('query', query);
-    if (selectedCategory) url.searchParams.set('category', selectedCategory);
-    const res = await fetch(url.toString(), { cache: 'no-store' });
+    const params = new URLSearchParams();
+    if (query) params.set('query', query);
+    if (selectedCategory) params.set('category', selectedCategory);
+    const qs = params.toString();
+    const url = `${API_URL}/api/events/search${qs ? `?${qs}` : ''}`;
+    const res = await fetch(url, { cache: 'no-store' });
     const result = await res.json();
     const sorted = (result.data as Event[]).sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
