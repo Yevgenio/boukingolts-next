@@ -109,11 +109,6 @@ export default function AboutAdminPage() {
         <h1 className="text-2xl font-serif text-stone-800 mb-1">Edit About Section</h1>
         <div className="h-px bg-stone-200 mb-6" />
 
-        {toast && (
-          <div className={`px-4 py-2 rounded-lg text-sm mb-6 ${toast.ok ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-            {toast.msg}
-          </div>
-        )}
 
         <div className="grid lg:grid-cols-2 gap-8 items-start">
           {/* Form */}
@@ -161,6 +156,9 @@ export default function AboutAdminPage() {
             <button className="bg-stone-800 hover:bg-stone-700 text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-50 transition-colors" onClick={save} disabled={saving}>
               {saving ? 'Saving…' : 'Save Changes'}
             </button>
+            {toast && (
+              <p className={`text-sm ${toast.ok ? 'text-green-700' : 'text-red-600'}`}>{toast.msg}</p>
+            )}
           </div>
 
           {/* Preview */}

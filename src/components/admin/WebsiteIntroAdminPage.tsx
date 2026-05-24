@@ -86,11 +86,6 @@ export default function WebsiteIntroAdminPage() {
       <button onClick={() => router.push('/admin')} className="text-sm text-gray-500 hover:underline">← Back to Admin</button>
       <h1 className="text-2xl font-bold">Manage Website Introduction</h1>
 
-      {toast && (
-        <div className={`px-4 py-2 rounded text-sm ${toast.ok ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-          {toast.msg}
-        </div>
-      )}
 
       {paragraphs.map((text, i) => (
         <div key={i} className="border rounded p-4 space-y-2">
@@ -134,13 +129,18 @@ export default function WebsiteIntroAdminPage() {
           onChange={(e) => setNewParagraph(e.target.value)}
           rows={3}
         />
-        <button
-          className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 disabled:opacity-50"
-          onClick={handleAdd}
-          disabled={saving}
-        >
-          {saving ? 'Adding...' : 'Add Paragraph'}
-        </button>
+        <div className="flex items-center gap-3 mt-2">
+          <button
+            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 disabled:opacity-50"
+            onClick={handleAdd}
+            disabled={saving}
+          >
+            {saving ? 'Adding...' : 'Add Paragraph'}
+          </button>
+          {toast && (
+            <p className={`text-sm ${toast.ok ? 'text-green-700' : 'text-red-600'}`}>{toast.msg}</p>
+          )}
+        </div>
       </div>
     </div>
   );

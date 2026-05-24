@@ -28,6 +28,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
   const [salePercent, setSalePercent] = useState<number | ''>('');
   const [salePrice, setSalePrice] = useState<number | ''>('');
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -79,6 +80,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSubmitting(true);
 
     const formData = new FormData();
     formData.append('name', name);
@@ -110,6 +112,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
       router.refresh();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
+      setSubmitting(false);
     }
   };
 
@@ -191,9 +194,10 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-stone-800 text-white py-3 rounded-xl text-sm tracking-wide hover:bg-stone-700 transition-colors"
+            disabled={submitting}
+            className="w-full bg-stone-800 text-white py-3 rounded-xl text-sm tracking-wide hover:bg-stone-700 transition-colors disabled:opacity-60"
           >
-            {mode === 'create' ? 'Create Artwork' : 'Save Changes'}
+            {submitting ? (mode === 'create' ? 'Creating…' : 'Saving…') : (mode === 'create' ? 'Create Artwork' : 'Save Changes')}
           </button>
         </form>
 

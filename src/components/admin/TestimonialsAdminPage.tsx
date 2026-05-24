@@ -102,11 +102,6 @@ export default function TestimonialsAdminPage() {
         <h1 className="text-2xl font-serif text-stone-800 mb-1">Manage Testimonials</h1>
         <div className="h-px bg-stone-200 mb-6" />
 
-        {toast && (
-          <div className={`px-4 py-2 rounded-lg text-sm mb-6 ${toast.ok ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-            {toast.msg}
-          </div>
-        )}
 
         <div className="grid lg:grid-cols-2 gap-8 items-start">
           {/* Form */}
@@ -122,9 +117,14 @@ export default function TestimonialsAdminPage() {
                 <label className={LABEL}>Display order</label>
                 <input type="number" className={INPUT} value={order} onChange={e => setOrder(parseInt(e.target.value))} />
               </div>
-              <button className="bg-stone-700 hover:bg-stone-600 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50 transition-colors" onClick={saveSettings} disabled={saving}>
-                {saving ? 'Saving…' : 'Save Settings'}
-              </button>
+              <div className="flex items-center gap-3">
+                <button className="bg-stone-700 hover:bg-stone-600 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50 transition-colors" onClick={saveSettings} disabled={saving}>
+                  {saving ? 'Saving…' : 'Save Settings'}
+                </button>
+                {toast && (
+                  <p className={`text-sm ${toast.ok ? 'text-green-700' : 'text-red-600'}`}>{toast.msg}</p>
+                )}
+              </div>
             </div>
 
             {/* Existing testimonials */}

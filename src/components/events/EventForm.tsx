@@ -27,6 +27,7 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
   const [location, setLocation] = useState('');
   const [images, setImages] = useState<ImageItem[]>([]);
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -50,6 +51,7 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSubmitting(true);
 
     const formData = new FormData();
     formData.append('name', name);
@@ -78,6 +80,7 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
       router.refresh();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
+      setSubmitting(false);
     }
   };
 
@@ -133,9 +136,10 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-stone-800 text-white py-3 rounded-xl text-sm tracking-wide hover:bg-stone-700 transition-colors"
+            disabled={submitting}
+            className="w-full bg-stone-800 text-white py-3 rounded-xl text-sm tracking-wide hover:bg-stone-700 transition-colors disabled:opacity-60"
           >
-            {mode === 'create' ? 'Create Event' : 'Save Changes'}
+            {submitting ? (mode === 'create' ? 'Creating…' : 'Saving…') : (mode === 'create' ? 'Create Event' : 'Save Changes')}
           </button>
         </form>
 
