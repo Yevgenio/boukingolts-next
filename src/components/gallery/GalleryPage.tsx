@@ -1,13 +1,10 @@
 'use client';
 
-import { useEffect, useState , useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import GalleryItem from '@/components/gallery/GalleryItem';
 import GalleryAdminControls from '@/components/gallery/GalleryAdminControls';
 import API_URL from '@/config/config';
 import { Product } from '@/types/Product';
-// import { BackIcon } from '../icons';
-// import router from 'next/router';
-import PageHeader from '@/components/common/PageHeader';
 
 export default function GalleryPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -15,14 +12,9 @@ export default function GalleryPage() {
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  const fetchCategories = async () => {
-    const res = await fetch(`${API_URL}/api/products/categories`, { cache: 'no-store' });
-    const data = await res.json();
-    setCategories(data);
-  };
-
   useEffect(() => {
-    fetchCategories();
+    fetch(`${API_URL}/api/products/categories`, { cache: 'no-store' })
+      .then(r => r.json()).then(setCategories).catch(() => {});
   }, []);
 
   const fetchProducts = useCallback(async () => {
@@ -36,53 +28,68 @@ export default function GalleryPage() {
     setProducts(result.data);
   }, [query, selectedCategory]);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [query, selectedCategory]);
+  useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <PageHeader title="Gallery" />
+    <div className="max-w-7xl mx-auto px-6 py-10">
+
+      {/* Header */}
+      <div className="flex items-end justify-between mb-2">
+        <h1 className="text-4xl font-serif text-stone-800 tracking-tight">Gallery</h1>
         <GalleryAdminControls />
       </div>
+      <div className="h-px bg-stone-200 mb-8" />
 
-      {/* Search Input */}
+      {/* Search */}
       <input
         type="text"
-        placeholder="Search by name, description or category..."
-        className="w-full border px-4 py-2 mb-4 rounded"
+        placeholder="Search artworks…"
+        className="w-full border border-stone-300 rounded-lg px-4 py-2.5 mb-5 text-stone-800 bg-white focus:outline-none focus:ring-2 focus:ring-stone-200 placeholder:text-stone-400 text-sm"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={e => setQuery(e.target.value)}
       />
 
-      {/* Category Buttons */}
-      <div className="mb-6 flex flex-wrap gap-2">
-        <button
-          onClick={() => setSelectedCategory('')}
-          className={`px-3 py-1 rounded border ${selectedCategory === '' ? 'bg-black text-white' : ''}`}
-        >
-          All
-        </button>
-        {categories.map((cat) => (
+      {/* Category pills */}
+      {categories.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-8">
           <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`px-3 py-1 rounded border ${selectedCategory === cat ? 'bg-black text-white' : ''}`}
+            onClick={() => setSelectedCategory('')}
+            className={`px-4 py-1.5 rounded-full text-sm transition-colors ${
+              selectedCategory === ''
+                ? 'bg-stone-800 text-white'
+                : 'border border-stone-300 text-stone-600 hover:border-stone-500 hover:text-stone-800'
+            }`}
           >
-            {cat}
+            All
           </button>
-        ))}
-      </div>
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-1.5 rounded-full text-sm transition-colors ${
+                selectedCategory === cat
+                  ? 'bg-stone-800 text-white'
+                  : 'border border-stone-300 text-stone-600 hover:border-stone-500 hover:text-stone-800'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {/* Masonry Layout */}
-      <div className="columns-1 sm:columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-        {products.map((product) => (
-          <div key={product._id} className="break-inside-avoid">
-            <GalleryItem product={product} />
-          </div>
-        ))}
-      </div>
+      {/* Masonry grid */}
+      {products.length === 0 ? (
+        <p className="text-center text-stone-400 italic py-16">No artworks found.</p>
+      ) : (
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5">
+          {products.map(product => (
+            <div key={product._id} className="break-inside-avoid">
+              <GalleryItem product={product} />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
