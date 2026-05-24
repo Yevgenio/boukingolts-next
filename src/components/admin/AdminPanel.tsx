@@ -11,6 +11,7 @@ import {
   FiInfo,
   FiGrid,
   FiChevronRight,
+  FiFolder,
 } from 'react-icons/fi';
 
 const HOME_ITEMS = [
@@ -52,6 +53,15 @@ const GALLERY_ITEMS = [
     description: 'Add, edit and organise your artworks',
     icon: FiGrid,
     path: '/admin/products',
+  },
+];
+
+const MEDIA_ITEMS = [
+  {
+    label: 'Image Library',
+    description: 'Browse, inspect and delete uploaded images',
+    icon: FiFolder,
+    path: '/admin/images',
   },
 ];
 
@@ -117,10 +127,26 @@ export default function AdminPanel() {
         </section>
 
         {/* Gallery section */}
-        <section>
+        <section className="mb-8">
           <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Gallery</h2>
           <div className="space-y-3">
             {GALLERY_ITEMS.map((item) => (
+              <AdminCard
+                key={item.path}
+                label={item.label}
+                description={item.description}
+                icon={item.icon}
+                onClick={() => router.push(item.path)}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Media section */}
+        <section>
+          <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Media</h2>
+          <div className="space-y-3">
+            {MEDIA_ITEMS.map((item) => (
               <AdminCard
                 key={item.path}
                 label={item.label}

@@ -32,7 +32,7 @@ export default function AboutSection({ content }: Props) {
               {content.address}
             </h2>
           </div>
-          <p>{content.comment}</p>
+          <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: content.comment }} />
 
           <div className="flex justify-center md:justify-start gap-4 pt-2">
             {content.phone && (
