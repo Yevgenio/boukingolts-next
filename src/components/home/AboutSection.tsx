@@ -23,7 +23,7 @@ export default function AboutSection({ content }: Props) {
             className="rounded-full object-cover w-40 h-40 md:w-64 md:h-64"
           />
         )}
-        <div className="flex flex-col space-y-4 text-center md:text-left">
+        <div className="flex-1 min-w-0 flex flex-col space-y-4 text-center md:text-left">
           <h2 className="text-3xl font-semibold">{content.name}</h2>
 
           <div className="space-y-1">
