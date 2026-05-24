@@ -3,15 +3,24 @@
 import React, { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function WebsiteIntroAdminPage() {
   const { isAdmin } = useAuth();
+  const router = useRouter();
 
   const [paragraphs, setParagraphs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [newParagraph, setNewParagraph] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editedText, setEditedText] = useState('');
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+
+  const showToast = (msg: string, ok: boolean) => {
+    setToast({ msg, ok });
+    setTimeout(() => setToast(null), 2500);
+  };
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -24,25 +33,32 @@ export default function WebsiteIntroAdminPage() {
   }, [isAdmin]);
 
   const updateParagraphs = async (updated: string[]) => {
-    const res = await fetch(`${API_URL}/api/content/website-introduction`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ paragraphs: updated }),
-    });
-    if (res.ok) {
-      setParagraphs(updated);
-      setEditingIndex(null);
-      setEditedText('');
-      setNewParagraph('');
-    } else {
-      alert('Failed to update');
+    setSaving(true);
+    try {
+      const res = await fetch(`${API_URL}/api/content/website-introduction`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ paragraphs: updated }),
+      });
+      if (res.ok) {
+        setParagraphs(updated);
+        setEditingIndex(null);
+        setEditedText('');
+        setNewParagraph('');
+        showToast('Saved!', true);
+      } else {
+        showToast('Failed to update', false);
+      }
+    } catch {
+      showToast('Failed to update', false);
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleDelete = (index: number) => {
-    const updated = paragraphs.filter((_, i) => i !== index);
-    updateParagraphs(updated);
+    updateParagraphs(paragraphs.filter((_, i) => i !== index));
   };
 
   const handleEdit = (index: number) => {
@@ -67,7 +83,14 @@ export default function WebsiteIntroAdminPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
-      <h1 className="text-2xl font-bold mb-4">Manage Website Introduction</h1>
+      <button onClick={() => router.push('/admin')} className="text-sm text-gray-500 hover:underline">← Back to Admin</button>
+      <h1 className="text-2xl font-bold">Manage Website Introduction</h1>
+
+      {toast && (
+        <div className={`px-4 py-2 rounded text-sm ${toast.ok ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+          {toast.msg}
+        </div>
+      )}
 
       {paragraphs.map((text, i) => (
         <div key={i} className="border rounded p-4 space-y-2">
@@ -80,15 +103,13 @@ export default function WebsiteIntroAdminPage() {
               />
               <div className="flex gap-2">
                 <button
-                  className="bg-green-600 text-white px-4 py-1 rounded"
+                  className="bg-green-600 text-white px-4 py-1 rounded disabled:opacity-50"
                   onClick={handleEditSave}
+                  disabled={saving}
                 >
-                  Save
+                  {saving ? 'Saving...' : 'Save'}
                 </button>
-                <button
-                  className="bg-gray-300 px-4 py-1 rounded"
-                  onClick={() => setEditingIndex(null)}
-                >
+                <button className="bg-gray-300 px-4 py-1 rounded" onClick={() => setEditingIndex(null)}>
                   Cancel
                 </button>
               </div>
@@ -97,18 +118,8 @@ export default function WebsiteIntroAdminPage() {
             <>
               <p>{text}</p>
               <div className="flex gap-2">
-                <button
-                  className="bg-blue-600 text-white px-4 py-1 rounded"
-                  onClick={() => handleEdit(i)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="bg-red-600 text-white px-4 py-1 rounded"
-                  onClick={() => handleDelete(i)}
-                >
-                  Delete
-                </button>
+                <button className="bg-blue-600 text-white px-4 py-1 rounded" onClick={() => handleEdit(i)}>Edit</button>
+                <button className="bg-red-600 text-white px-4 py-1 rounded" onClick={() => handleDelete(i)}>Delete</button>
               </div>
             </>
           )}
@@ -124,10 +135,11 @@ export default function WebsiteIntroAdminPage() {
           rows={3}
         />
         <button
-          className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+          className="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-800 disabled:opacity-50"
           onClick={handleAdd}
+          disabled={saving}
         >
-          Add Paragraph
+          {saving ? 'Adding...' : 'Add Paragraph'}
         </button>
       </div>
     </div>

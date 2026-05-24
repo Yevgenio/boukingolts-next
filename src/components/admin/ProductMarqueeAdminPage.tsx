@@ -12,10 +12,17 @@ export default function ProductMarqueeAdminPage() {
   const router = useRouter();
   const [form, setForm] = useState<MarqueeContent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [newId, setNewId] = useState('');
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
- useEffect(() => {
+  const showToast = (msg: string, ok: boolean) => {
+    setToast({ msg, ok });
+    setTimeout(() => setToast(null), 2500);
+  };
+
+  useEffect(() => {
     if (!isAdmin) return;
     fetch(`${API_URL}/api/content/home-product-marquee`)
       .then(res => res.json())
@@ -29,15 +36,28 @@ export default function ProductMarqueeAdminPage() {
 
   const save = async () => {
     if (!form) return;
-    await fetch(`${API_URL}/api/content/home-product-marquee`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(form),
-    });
-
-    await updateMarqueeProductIds(products.map(p => p._id));
-    router.push('/admin');
+    setSaving(true);
+    try {
+      const [res] = await Promise.all([
+        fetch(`${API_URL}/api/content/home-product-marquee`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(form),
+        }),
+        updateMarqueeProductIds(products.map(p => p._id)),
+      ]);
+      if (res.ok) {
+        showToast('Marquee saved!', true);
+        setTimeout(() => router.push('/admin'), 1500);
+      } else {
+        showToast('Failed to save', false);
+      }
+    } catch {
+      showToast('Failed to save', false);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const move = (index: number, dir: number) => {
@@ -50,8 +70,7 @@ export default function ProductMarqueeAdminPage() {
   };
 
   const remove = (index: number) => {
-    const updated = products.filter((_, i) => i !== index);
-    setProducts(updated);
+    setProducts(products.filter((_, i) => i !== index));
   };
 
   const addProduct = async () => {
@@ -63,7 +82,7 @@ export default function ProductMarqueeAdminPage() {
       setProducts([...products, prod]);
       setNewId('');
     } catch {
-      alert('Product not found');
+      showToast('Product not found', false);
     }
   };
 
@@ -72,7 +91,15 @@ export default function ProductMarqueeAdminPage() {
 
   return (
     <div className="max-w-xl mx-auto p-6 space-y-4">
-      <h1 className="text-2xl font-bold mb-4">Edit Product Marquee</h1>
+      <button onClick={() => router.push('/admin')} className="text-sm text-gray-500 hover:underline">← Back to Admin</button>
+      <h1 className="text-2xl font-bold">Edit Product Marquee</h1>
+
+      {toast && (
+        <div className={`px-4 py-2 rounded text-sm ${toast.ok ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+          {toast.msg}
+        </div>
+      )}
+
       <label className="flex items-center gap-2">
         <span>Enabled</span>
         <input type="checkbox" checked={form.enabled} onChange={e => setForm({ ...form, enabled: e.target.checked })} />
@@ -93,7 +120,7 @@ export default function ProductMarqueeAdminPage() {
               />
             )}
             <span className="flex-1">{p.name}</span>
-            <button onClick={() => router.push(`/gallery/${p._id}`)} className="px-2 underline">View</button>
+            <button onClick={() => router.push(`/gallery/${p._id}`)} className="px-2 underline text-sm">View</button>
             <button onClick={() => move(i, -1)} className="px-2">↑</button>
             <button onClick={() => move(i, 1)} className="px-2">↓</button>
             <button onClick={() => remove(i)} className="px-2 text-red-600">✕</button>
@@ -102,11 +129,23 @@ export default function ProductMarqueeAdminPage() {
       </div>
 
       <div className="flex gap-2 items-center">
-        <input value={newId} onChange={e => setNewId(e.target.value)} placeholder="Product ID" className="flex-1 border p-2" />
+        <input
+          value={newId}
+          onChange={e => setNewId(e.target.value)}
+          placeholder="Product ID"
+          className="flex-1 border p-2"
+          onKeyDown={e => e.key === 'Enter' && addProduct()}
+        />
         <button className="bg-gray-200 px-3 py-2 rounded" onClick={addProduct}>Add</button>
       </div>
 
-      <button className="bg-black text-white px-4 py-2 rounded" onClick={save}>Save</button>
+      <button
+        className="bg-black text-white px-4 py-2 rounded disabled:opacity-50"
+        onClick={save}
+        disabled={saving}
+      >
+        {saving ? 'Saving...' : 'Save'}
+      </button>
     </div>
   );
 }
