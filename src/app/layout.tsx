@@ -1,5 +1,6 @@
 // /app/layout.tsx
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 
@@ -8,14 +9,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <title>Boukingolts</title>
-        {/* <link rel="icon" type="image/x-icon" href="/favicon.ico" /> */}
       </head>
-      <body>
-        
+      <body className="flex flex-col min-h-screen">
         <AuthProvider>
           <Header />
-          <main>{children}</main>
+          <main className="flex-1">{children}</main>
         </AuthProvider>
+        <Footer />
       </body>
     </html>
   );

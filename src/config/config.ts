@@ -12,3 +12,7 @@ if (isProd) {
 }
 
 export default API_URL;
+
+// Always empty in production so <img src> renders as a relative path the browser
+// can reach via the reverse proxy — even when rendered in a server component.
+export const IMAGE_URL = isProd ? '' : 'http://localhost:5001';

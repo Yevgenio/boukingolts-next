@@ -9,13 +9,11 @@ export default function EventsAdminControls() {
   if (!isAdmin) return null;
 
   return (
-    <div className="mb-6 text-center p-4">
-      <button
-        onClick={() => router.push('/events/create')}
-        className="bg-gray-200 hover:bg-gray-300 text-black text-sm px-3 py-3 rounded-full border-black border-1"
-      >
-        + Add New
-      </button>
-    </div>
+    <button
+      onClick={() => router.push('/events/create')}
+      className="text-sm border border-stone-300 text-stone-600 px-4 py-1.5 rounded-full hover:border-stone-500 hover:text-stone-800 transition-colors"
+    >
+      + Add event
+    </button>
   );
 }

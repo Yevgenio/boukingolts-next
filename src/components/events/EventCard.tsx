@@ -1,86 +1,52 @@
 'use client';
-// import Image from 'next/image';
 import Link from 'next/link';
 import API_URL from '@/config/config';
 import { Event } from '@/types/Event';
 import EventItemAdminControls from './EventItemAdminControls';
 
-export default function EventCard({
-  event,
-  className = 'w-full',
-}: {
-  event: Event;
-  className?: string;
-}) {
+export default function EventCard({ event, className = '' }: { event: Event; className?: string }) {
+  const bgImage = event.images?.[0]
+    ? `${API_URL}/api/uploads/${event.images[0].thumbnail || event.images[0].url}`
+    : undefined;
 
-    const bgImage = event.images && event.images[0] ? `${API_URL}/api/uploads/${event.images[0].thumbnail || event.images[0].url}` : undefined;
+  const d = new Date(event.date);
+  const day = d.toLocaleDateString('en-GB', { day: '2-digit' });
+  const month = d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase();
+  const year = d.getFullYear();
 
   return (
-    <Link
-      href={`/events/${event._id}`}
-      className="block focus:outline-none"
-      tabIndex={-1}
-      aria-label={event.name}
-    >
-      <div
-        className={`relative flex flex-col h-56 md:flex-row border 
-          overflow-hidden shadow hover:shadow-lg 
-          transition cursor-pointer group ${className}`}
-      >
+    <Link href={`/events/${event._id}`} className={`block group ${className}`}>
+      <div className="flex rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 h-44">
 
-        {/* Date of the Event */}
-        <div className="flex flex-col items-center justify-center px-6 bg-white h-full border-l border-dotted border-gray-300 min-w-[100px]">
-          <div className="text-3xl font-bold text-gray-800 leading-none">
-            {new Date(event.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}
-          </div>
-          <div className="text-lg text-gray-500 mt-1">
-            {new Date(event.date).getFullYear()}
-          </div>
+        {/* Date column */}
+        <div className="flex-shrink-0 w-24 bg-stone-800 text-white flex flex-col items-center justify-center gap-0.5 group-hover:bg-stone-700 transition-colors">
+          <span className="text-2xl font-serif font-semibold leading-none">{day}</span>
+          <span className="text-xs tracking-widest text-stone-300">{month}</span>
+          <span className="text-xs text-stone-500 mt-1">{year}</span>
         </div>
 
-        {/* Image for the Event */}
-        {/* {event.images && event.images[0] && (
-          <Image
-          src={`${API_URL}/api/uploads/${event.images[0].thumbnail || event.images[0].url}`}
-          alt={event.name}
-          width={event.images[0].width || 300}
-          height={event.images[0].height || 300}
-          className="w-full md:w-64 h-48 md:h-auto object-cover"
-          />
-        )} */}
-        
-        {/* Details about the Event */}
+        {/* Content */}
         <div
-          className="flex-1 p-4 flex flex-col gap-2 relative text-left text-gray-200"
-          style={{ backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+          className="flex-1 relative overflow-hidden"
+          style={bgImage ? { backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
         >
-          {/* Overlay for tint */}
-          {bgImage && (
-            <div className="absolute inset-0 bg-slate-800/60 pointer-events-none" aria-hidden="true"></div>
-          )}
-          <div className="relative z-10">
-            <EventItemAdminControls eventId={event._id} />
-            <h2 className="text-xl font-semibold">
-              {event.name}
-            </h2>
-            {/* <p className="text-sm text-gray-600">{new Date(event.date).toLocaleDateString()}</p> */}
-            {event.location && (
-              <p className="text-sm text-gray-200 flex items-center gap-1">{event.location}</p>
-            )}
+          {bgImage && <div className="absolute inset-0 bg-stone-900/65" />}
+          <div className={`relative z-10 h-full flex flex-col justify-between p-5 ${bgImage ? 'text-white' : 'text-stone-800 bg-stone-50'}`}>
+            <div>
+              <EventItemAdminControls eventId={event._id} />
+              <h2 className="font-serif text-xl leading-snug mb-1">{event.name}</h2>
+              {event.location && (
+                <p className={`text-sm ${bgImage ? 'text-stone-300' : 'text-stone-500'}`}>{event.location}</p>
+              )}
+            </div>
             {event.description && (
               <p
-                className="text-sm overflow-hidden"
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 4,
-                  WebkitBoxOrient: 'vertical',
-                }}
-                dangerouslySetInnerHTML={{ __html: event.description }}
+                className={`text-sm leading-relaxed line-clamp-2 ${bgImage ? 'text-stone-300' : 'text-stone-500'}`}
+                dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '') }}
               />
             )}
           </div>
         </div>
-      
       </div>
     </Link>
   );
