@@ -3,8 +3,85 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-// import { BackIcon } from '../icons';
-import PageHeader from '@/components/common/PageHeader';
+import {
+  FiImage,
+  FiSliders,
+  FiMessageSquare,
+  FiMapPin,
+  FiInfo,
+  FiGrid,
+  FiChevronRight,
+} from 'react-icons/fi';
+
+const HOME_ITEMS = [
+  {
+    label: 'Hero Section',
+    description: 'Edit the main banner — title, text and images',
+    icon: FiImage,
+    path: '/admin/hero',
+  },
+  {
+    label: 'Product Marquee',
+    description: 'Choose which products scroll across the homepage',
+    icon: FiSliders,
+    path: '/admin/marquee',
+  },
+  {
+    label: 'Testimonials',
+    description: 'Add, edit or remove customer reviews',
+    icon: FiMessageSquare,
+    path: '/admin/testimonials',
+  },
+  {
+    label: 'Where to Find Us',
+    description: 'Update event listings and locations',
+    icon: FiMapPin,
+    path: '/admin/events',
+  },
+  {
+    label: 'About Section',
+    description: 'Edit contact details, description and photos',
+    icon: FiInfo,
+    path: '/admin/about',
+  },
+];
+
+const GALLERY_ITEMS = [
+  {
+    label: 'Manage Products',
+    description: 'Add, edit and organise your artworks',
+    icon: FiGrid,
+    path: '/admin/products',
+  },
+];
+
+function AdminCard({
+  label,
+  description,
+  icon: Icon,
+  onClick,
+}: {
+  label: string;
+  description: string;
+  icon: React.ElementType;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-4 bg-white border border-stone-200 rounded-xl px-5 py-4 text-left hover:border-stone-400 hover:shadow-md transition-all duration-150 group"
+    >
+      <div className="flex-shrink-0 w-11 h-11 rounded-full bg-stone-100 group-hover:bg-stone-200 flex items-center justify-center transition-colors">
+        <Icon className="w-5 h-5 text-stone-600" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-base font-semibold text-stone-800">{label}</p>
+        <p className="text-sm text-stone-500 mt-0.5">{description}</p>
+      </div>
+      <FiChevronRight className="flex-shrink-0 w-5 h-5 text-stone-400 group-hover:text-stone-600 transition-colors" />
+    </button>
+  );
+}
 
 export default function AdminPanel() {
   const { isAdmin } = useAuth();
@@ -13,39 +90,48 @@ export default function AdminPanel() {
   if (!isAdmin) return <p className="p-4">Unauthorized</p>;
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      
-      <div className="text-4xl font-bold flex mb-6">
-         <PageHeader title="Admin Panel" />
-      </div>
-      <div className="space-y-8">
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Home Page</h2>
-          {/* <button className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800" onClick={() => router.push('/admin/website-introduction')}>
-            Manage Website Introduction Paragraphs
-          </button> */}
-          <button className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800" onClick={() => router.push('/admin/hero')}>
-            Edit Hero Section
-          </button>
-          <button className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800" onClick={() => router.push('/admin/marquee')}>
-            Edit Product Marquee
-          </button>
-          <button className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800" onClick={() => router.push('/admin/testimonials')}>
-            Edit Testimonials
-          </button>
-          <button className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800" onClick={() => router.push('/admin/events')}>
-            Edit Where to Find Us
-          </button>
-          <button className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800" onClick={() => router.push('/admin/about')}>
-            Edit About Section
-          </button>
+    <div className="min-h-screen bg-stone-50">
+      <div className="max-w-2xl mx-auto px-4 py-10">
+
+        {/* Header */}
+        <div className="mb-10">
+          <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-1">Boukingolts</p>
+          <h1 className="text-3xl font-serif text-stone-800">Admin Dashboard</h1>
+          <div className="mt-3 h-px bg-stone-200" />
         </div>
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Gallery</h2>
-          <button className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800" onClick={() => router.push('/admin/products')}>
-            Manage Products
-          </button>
-        </div>
+
+        {/* Home Page section */}
+        <section className="mb-8">
+          <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Home Page</h2>
+          <div className="space-y-3">
+            {HOME_ITEMS.map((item) => (
+              <AdminCard
+                key={item.path}
+                label={item.label}
+                description={item.description}
+                icon={item.icon}
+                onClick={() => router.push(item.path)}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Gallery section */}
+        <section>
+          <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Gallery</h2>
+          <div className="space-y-3">
+            {GALLERY_ITEMS.map((item) => (
+              <AdminCard
+                key={item.path}
+                label={item.label}
+                description={item.description}
+                icon={item.icon}
+                onClick={() => router.push(item.path)}
+              />
+            ))}
+          </div>
+        </section>
+
       </div>
     </div>
   );

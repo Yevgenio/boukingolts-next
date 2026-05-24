@@ -137,6 +137,13 @@ export default function ProductMarqueeAdminPage() {
           onKeyDown={e => e.key === 'Enter' && addProduct()}
         />
         <button className="bg-gray-200 px-3 py-2 rounded" onClick={addProduct}>Add</button>
+        <button
+          className="bg-white border border-stone-300 px-3 py-2 rounded text-sm text-stone-600 hover:bg-stone-50 whitespace-nowrap"
+          onClick={() => router.push('/admin/products')}
+          type="button"
+        >
+          Browse Products →
+        </button>
       </div>
 
       <button
