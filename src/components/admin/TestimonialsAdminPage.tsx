@@ -5,10 +5,30 @@ import { useAuth } from '@/context/AuthContext';
 import { TestimonialItem } from '@/types/HomeContent';
 import { useRouter } from 'next/navigation';
 
+const INPUT = 'border border-stone-300 rounded-lg w-full px-3 py-2.5 mt-1 bg-white focus:outline-none focus:ring-2 focus:ring-stone-200 text-stone-800';
+const LABEL = 'block text-sm font-medium text-stone-700';
+
+function TestimonialsPreview({ comments }: { comments: TestimonialItem[] }) {
+  if (!comments.length)
+    return <p className="text-sm text-stone-400 italic text-center py-6">No testimonials yet</p>;
+  return (
+    <div className="bg-gray-100 rounded-lg p-4">
+      <h3 className="text-base font-semibold text-center mb-3">What Our Customers Say</h3>
+      <div className="space-y-2">
+        {comments.map((t, i) => (
+          <blockquote key={i} className="bg-white rounded p-3 shadow-sm text-sm">
+            <p className="text-stone-700">{t.comment || <span className="italic text-stone-300">Comment…</span>}</p>
+            <p className="italic text-stone-400 text-xs mt-1">— {t.author || 'Author'}</p>
+          </blockquote>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function TestimonialsAdminPage() {
   const { isAdmin } = useAuth();
   const router = useRouter();
-
   const [comments, setComments] = useState<TestimonialItem[]>([]);
   const [enabled, setEnabled] = useState(false);
   const [order, setOrder] = useState(0);
@@ -28,12 +48,7 @@ export default function TestimonialsAdminPage() {
     if (!isAdmin) return;
     fetch(`${API_URL}/api/content/home-testimonials`)
       .then(res => res.json())
-      .then(data => {
-        setComments(data.testimonials || []);
-        setEnabled(data.enabled ?? false);
-        setOrder(data.order ?? 0);
-        setLoading(false);
-      })
+      .then(data => { setComments(data.testimonials || []); setEnabled(data.enabled ?? false); setOrder(data.order ?? 0); setLoading(false); })
       .catch(() => setLoading(false));
   }, [isAdmin]);
 
@@ -41,186 +56,135 @@ export default function TestimonialsAdminPage() {
     setSaving(true);
     try {
       const res = await fetch(`${API_URL}/api/content/home-testimonials`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({ enabled, order, testimonials: updated }),
       });
-      if (res.ok) {
-        setComments(updated);
-        setEditingIndex(null);
-        setEditedItem({ comment: '', author: '' });
-        setNewComment({ comment: '', author: '' });
-        showToast('Testimonials updated!', true);
-      } else {
-        showToast('Failed to update', false);
-      }
-    } catch {
-      showToast('Failed to update', false);
-    } finally {
-      setSaving(false);
-    }
+      if (res.ok) { setComments(updated); setEditingIndex(null); setEditedItem({ comment: '', author: '' }); setNewComment({ comment: '', author: '' }); showToast('Testimonials updated!', true); }
+      else showToast('Failed to update', false);
+    } catch { showToast('Failed to update', false); }
+    finally { setSaving(false); }
   };
 
   const saveSettings = async () => {
     setSaving(true);
     try {
       const res = await fetch(`${API_URL}/api/content/home-testimonials`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({ enabled, order, testimonials: comments }),
       });
-      if (res.ok) showToast('Settings saved!', true);
-      else showToast('Failed to save', false);
-    } catch {
-      showToast('Failed to save', false);
-    } finally {
-      setSaving(false);
-    }
+      if (res.ok) showToast('Settings saved!', true); else showToast('Failed to save', false);
+    } catch { showToast('Failed to save', false); }
+    finally { setSaving(false); }
   };
 
-  const handleDelete = (index: number) => {
-    const updated = comments.filter((_, i) => i !== index);
-    updateComments(updated);
-  };
-
-  const handleEdit = (index: number) => {
-    setEditingIndex(index);
-    setEditedItem(comments[index]);
-  };
-
+  const handleDelete = (i: number) => updateComments(comments.filter((_, j) => j !== i));
+  const handleEdit = (i: number) => { setEditingIndex(i); setEditedItem(comments[i]); };
   const handleEditSave = () => {
     if (editingIndex === null) return;
-    const updated = [...comments];
-    updated[editingIndex] = editedItem;
-    updateComments(updated);
+    const updated = [...comments]; updated[editingIndex] = editedItem; updateComments(updated);
   };
-
   const handleAdd = () => {
     if (!newComment.comment.trim() || !newComment.author.trim()) return;
     updateComments([...comments, { ...newComment }]);
   };
 
+  const previewComments = editingIndex !== null
+    ? comments.map((c, i) => (i === editingIndex ? editedItem : c))
+    : newComment.comment || newComment.author ? [...comments, newComment] : comments;
+
   if (!isAdmin) return <div className="p-4">Unauthorized</div>;
   if (loading) return <div className="p-4">Loading...</div>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-4">
-      <button onClick={() => router.push('/admin')} className="text-sm text-gray-500 hover:underline">← Back to Admin</button>
-      <h1 className="text-2xl font-bold">Manage Testimonials</h1>
+    <div className="min-h-screen bg-stone-50">
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">← Back to Admin</button>
+        <h1 className="text-2xl font-serif text-stone-800 mb-1">Manage Testimonials</h1>
+        <div className="h-px bg-stone-200 mb-6" />
 
-      {toast && (
-        <div className={`px-4 py-2 rounded text-sm ${toast.ok ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-          {toast.msg}
-        </div>
-      )}
+        {toast && (
+          <div className={`px-4 py-2 rounded-lg text-sm mb-6 ${toast.ok ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+            {toast.msg}
+          </div>
+        )}
 
-      <div className="border rounded p-4 space-y-3 bg-gray-50">
-        <h2 className="font-semibold text-sm text-gray-600 uppercase tracking-wide">Section Settings</h2>
-        <label className="flex items-center gap-2">
-          <span>Enabled</span>
-          <input type="checkbox" checked={enabled} onChange={e => setEnabled(e.target.checked)} />
-        </label>
-        <label className="block">
-          Order
-          <input type="number" className="border w-full p-2 mt-1" value={order} onChange={e => setOrder(parseInt(e.target.value))} />
-        </label>
-        <button
-          className="bg-gray-800 text-white px-4 py-1.5 rounded text-sm disabled:opacity-50"
-          onClick={saveSettings}
-          disabled={saving}
-        >
-          {saving ? 'Saving...' : 'Save Settings'}
-        </button>
-      </div>
+        <div className="grid lg:grid-cols-2 gap-8 items-start">
+          {/* Form */}
+          <div className="space-y-4">
+            {/* Settings card */}
+            <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-4">
+              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Section Settings</h2>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" className="accent-stone-800 w-4 h-4" checked={enabled} onChange={e => setEnabled(e.target.checked)} />
+                <span className="text-sm font-medium text-stone-700">Section enabled</span>
+              </label>
+              <div>
+                <label className={LABEL}>Display order</label>
+                <input type="number" className={INPUT} value={order} onChange={e => setOrder(parseInt(e.target.value))} />
+              </div>
+              <button className="bg-stone-700 hover:bg-stone-600 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50 transition-colors" onClick={saveSettings} disabled={saving}>
+                {saving ? 'Saving…' : 'Save Settings'}
+              </button>
+            </div>
 
-      {comments.map((testimonial, i) => (
-        <div key={i} className="border rounded p-4 space-y-2">
-          {editingIndex === i ? (
-            <>
-              <div className="space-y-2">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Author</label>
-                  <input
-                    type="text"
-                    className="w-full p-2 border rounded"
-                    value={editedItem.author}
-                    onChange={(e) => setEditedItem({ ...editedItem, author: e.target.value })}
-                    placeholder="Author name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Comment</label>
-                  <textarea
-                    className="w-full p-2 border rounded"
-                    value={editedItem.comment}
-                    onChange={(e) => setEditedItem({ ...editedItem, comment: e.target.value })}
-                    rows={3}
-                    placeholder="Testimonial comment"
-                  />
-                </div>
+            {/* Existing testimonials */}
+            {comments.map((testimonial, i) => (
+              <div key={i} className="bg-white border border-stone-200 rounded-xl p-4 space-y-3">
+                {editingIndex === i ? (
+                  <>
+                    <div>
+                      <label className={LABEL}>Author</label>
+                      <input type="text" className={INPUT} value={editedItem.author} onChange={e => setEditedItem({ ...editedItem, author: e.target.value })} placeholder="Author name" />
+                    </div>
+                    <div>
+                      <label className={LABEL}>Comment</label>
+                      <textarea className={INPUT} rows={3} value={editedItem.comment} onChange={e => setEditedItem({ ...editedItem, comment: e.target.value })} placeholder="Testimonial comment" />
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm disabled:opacity-50" onClick={handleEditSave} disabled={saving}>
+                        {saving ? 'Saving…' : 'Save'}
+                      </button>
+                      <button className="bg-stone-100 text-stone-600 px-4 py-1.5 rounded-lg text-sm" onClick={() => setEditingIndex(null)}>Cancel</button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-semibold text-stone-800">{testimonial.author}</p>
+                    <p className="text-stone-600 text-sm">{testimonial.comment}</p>
+                    <div className="flex gap-2">
+                      <button className="bg-stone-800 text-white px-4 py-1.5 rounded-lg text-sm" onClick={() => handleEdit(i)}>Edit</button>
+                      <button className="bg-red-600 text-white px-4 py-1.5 rounded-lg text-sm" onClick={() => handleDelete(i)}>Delete</button>
+                    </div>
+                  </>
+                )}
               </div>
-              <div className="flex gap-2">
-                <button
-                  className="bg-green-600 text-white px-4 py-1 rounded disabled:opacity-50"
-                  onClick={handleEditSave}
-                  disabled={saving}
-                >
-                  {saving ? 'Saving...' : 'Save'}
-                </button>
-                <button
-                  className="bg-gray-300 px-4 py-1 rounded"
-                  onClick={() => setEditingIndex(null)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="space-y-1">
-                <p className="font-semibold text-gray-700">{testimonial.author}</p>
-                <p className="text-gray-600">{testimonial.comment}</p>
-              </div>
-              <div className="flex gap-2">
-                <button className="bg-blue-600 text-white px-4 py-1 rounded" onClick={() => handleEdit(i)}>Edit</button>
-                <button className="bg-red-600 text-white px-4 py-1 rounded" onClick={() => handleDelete(i)}>Delete</button>
-              </div>
-            </>
-          )}
-        </div>
-      ))}
+            ))}
 
-      <div className="pt-4 border-t space-y-2">
-        <h2 className="font-semibold mb-2">Add New Testimonial</h2>
-        <div>
-          <label className="block text-sm font-medium mb-1">Author</label>
-          <input
-            type="text"
-            className="w-full p-2 border rounded"
-            value={newComment.author}
-            onChange={(e) => setNewComment({ ...newComment, author: e.target.value })}
-            placeholder="Author name"
-          />
+            {/* Add new */}
+            <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-4">
+              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Add New Testimonial</h2>
+              <div>
+                <label className={LABEL}>Author</label>
+                <input type="text" className={INPUT} value={newComment.author} onChange={e => setNewComment({ ...newComment, author: e.target.value })} placeholder="Author name" />
+              </div>
+              <div>
+                <label className={LABEL}>Comment</label>
+                <textarea className={INPUT} rows={3} value={newComment.comment} onChange={e => setNewComment({ ...newComment, comment: e.target.value })} placeholder="Testimonial comment" />
+              </div>
+              <button className="bg-stone-800 hover:bg-stone-700 text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-50 transition-colors" onClick={handleAdd} disabled={saving}>
+                {saving ? 'Adding…' : 'Add Testimonial'}
+              </button>
+            </div>
+          </div>
+
+          {/* Preview */}
+          <div className="lg:sticky lg:top-4">
+            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview</p>
+            <div className="border border-stone-200 rounded-xl bg-white p-4">
+              <TestimonialsPreview comments={previewComments} />
+            </div>
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Comment</label>
-          <textarea
-            className="w-full p-2 border rounded"
-            value={newComment.comment}
-            onChange={(e) => setNewComment({ ...newComment, comment: e.target.value })}
-            rows={3}
-            placeholder="Testimonial comment"
-          />
-        </div>
-        <button
-          className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 disabled:opacity-50"
-          onClick={handleAdd}
-          disabled={saving}
-        >
-          {saving ? 'Adding...' : 'Add Testimonial'}
-        </button>
       </div>
     </div>
   );

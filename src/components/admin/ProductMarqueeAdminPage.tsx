@@ -7,6 +7,31 @@ import { MarqueeContent } from '@/types/HomeContent';
 import { Product } from '@/types/Product';
 import { getMarqueeProducts, updateMarqueeProductIds } from '@/api/marquee';
 
+const INPUT = 'border border-stone-300 rounded-lg w-full px-3 py-2.5 mt-1 bg-white focus:outline-none focus:ring-2 focus:ring-stone-200 text-stone-800';
+const LABEL = 'block text-sm font-medium text-stone-700';
+
+function MarqueePreview({ products }: { products: Product[] }) {
+  if (!products.length)
+    return <p className="text-sm text-stone-400 italic text-center py-6">No products selected yet</p>;
+  return (
+    <div className="border-y border-stone-200 py-3 overflow-x-auto">
+      <div className="flex gap-3 px-2" style={{ minWidth: 'max-content' }}>
+        {products.map((p) => (
+          <div key={p._id} className="flex-shrink-0 w-24 text-center">
+            <div className="w-24 h-32 rounded overflow-hidden shadow-sm bg-stone-200">
+              {p.images?.[0]?.thumbnail && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={`${API_URL}/api/uploads/${p.images[0].thumbnail}`} alt={p.name} className="w-full h-full object-cover" />
+              )}
+            </div>
+            <p className="text-xs text-stone-600 mt-1 truncate">{p.name}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function ProductMarqueeAdminPage() {
   const { isAdmin } = useAuth();
   const router = useRouter();
@@ -24,14 +49,8 @@ export default function ProductMarqueeAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/api/content/home-product-marquee`)
-      .then(res => res.json())
-      .then(data => setForm(data))
-      .catch(() => {});
-
-    getMarqueeProducts()
-      .then((data) => setProducts(data))
-      .finally(() => setLoading(false));
+    fetch(`${API_URL}/api/content/home-product-marquee`).then(res => res.json()).then(data => setForm(data)).catch(() => {});
+    getMarqueeProducts().then(setProducts).finally(() => setLoading(false));
   }, [isAdmin]);
 
   const save = async () => {
@@ -40,24 +59,14 @@ export default function ProductMarqueeAdminPage() {
     try {
       const [res] = await Promise.all([
         fetch(`${API_URL}/api/content/home-product-marquee`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify(form),
+          method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(form),
         }),
         updateMarqueeProductIds(products.map(p => p._id)),
       ]);
-      if (res.ok) {
-        showToast('Marquee saved!', true);
-        setTimeout(() => router.push('/admin'), 1500);
-      } else {
-        showToast('Failed to save', false);
-      }
-    } catch {
-      showToast('Failed to save', false);
-    } finally {
-      setSaving(false);
-    }
+      if (res.ok) { showToast('Marquee saved!', true); setTimeout(() => router.push('/admin'), 1500); }
+      else showToast('Failed to save', false);
+    } catch { showToast('Failed to save', false); }
+    finally { setSaving(false); }
   };
 
   const move = (index: number, dir: number) => {
@@ -69,90 +78,91 @@ export default function ProductMarqueeAdminPage() {
     setProducts(updated);
   };
 
-  const remove = (index: number) => {
-    setProducts(products.filter((_, i) => i !== index));
-  };
-
   const addProduct = async () => {
     if (!newId.trim()) return;
     try {
       const res = await fetch(`${API_URL}/api/products/id/${newId.trim()}`);
-      if (!res.ok) throw new Error('Not found');
+      if (!res.ok) throw new Error();
       const prod: Product = await res.json();
       setProducts([...products, prod]);
       setNewId('');
-    } catch {
-      showToast('Product not found', false);
-    }
+    } catch { showToast('Product not found', false); }
   };
 
   if (!isAdmin) return <div className="p-4">Unauthorized</div>;
   if (loading || !form) return <div className="p-4">Loading...</div>;
 
   return (
-    <div className="max-w-xl mx-auto p-6 space-y-4">
-      <button onClick={() => router.push('/admin')} className="text-sm text-gray-500 hover:underline">← Back to Admin</button>
-      <h1 className="text-2xl font-bold">Edit Product Marquee</h1>
+    <div className="min-h-screen bg-stone-50">
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">← Back to Admin</button>
+        <h1 className="text-2xl font-serif text-stone-800 mb-1">Edit Product Marquee</h1>
+        <div className="h-px bg-stone-200 mb-6" />
 
-      {toast && (
-        <div className={`px-4 py-2 rounded text-sm ${toast.ok ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-          {toast.msg}
-        </div>
-      )}
-
-      <label className="flex items-center gap-2">
-        <span>Enabled</span>
-        <input type="checkbox" checked={form.enabled} onChange={e => setForm({ ...form, enabled: e.target.checked })} />
-      </label>
-      <label className="block">
-        Order
-        <input type="number" className="border w-full p-2" value={form.order} onChange={e => setForm({ ...form, order: parseInt(e.target.value) })} />
-      </label>
-
-      <div className="space-y-2">
-        {products.map((p, i) => (
-          <div key={p._id} className="flex items-center gap-2 border p-2 rounded">
-            {p.images?.[0]?.thumbnail && (
-              <img
-                src={`${API_URL}/api/uploads/${p.images[0].thumbnail}`}
-                alt={p.name}
-                className="w-10 h-10 object-cover rounded"
-              />
-            )}
-            <span className="flex-1">{p.name}</span>
-            <button onClick={() => router.push(`/gallery/${p._id}`)} className="px-2 underline text-sm">View</button>
-            <button onClick={() => move(i, -1)} className="px-2">↑</button>
-            <button onClick={() => move(i, 1)} className="px-2">↓</button>
-            <button onClick={() => remove(i)} className="px-2 text-red-600">✕</button>
+        {toast && (
+          <div className={`px-4 py-2 rounded-lg text-sm mb-6 ${toast.ok ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+            {toast.msg}
           </div>
-        ))}
-      </div>
+        )}
 
-      <div className="flex gap-2 items-center">
-        <input
-          value={newId}
-          onChange={e => setNewId(e.target.value)}
-          placeholder="Product ID"
-          className="flex-1 border p-2"
-          onKeyDown={e => e.key === 'Enter' && addProduct()}
-        />
-        <button className="bg-gray-200 px-3 py-2 rounded" onClick={addProduct}>Add</button>
-        <button
-          className="bg-white border border-stone-300 px-3 py-2 rounded text-sm text-stone-600 hover:bg-stone-50 whitespace-nowrap"
-          onClick={() => router.push('/admin/products')}
-          type="button"
-        >
-          Browse Products →
-        </button>
-      </div>
+        <div className="grid lg:grid-cols-2 gap-8 items-start">
+          {/* Form */}
+          <div className="space-y-4">
+            <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" className="accent-stone-800 w-4 h-4" checked={form.enabled} onChange={e => setForm({ ...form, enabled: e.target.checked })} />
+                <span className="text-sm font-medium text-stone-700">Section enabled</span>
+              </label>
+              <div>
+                <label className={LABEL}>Display order</label>
+                <input type="number" className={INPUT} value={form.order} onChange={e => setForm({ ...form, order: parseInt(e.target.value) })} />
+              </div>
+            </div>
 
-      <button
-        className="bg-black text-white px-4 py-2 rounded disabled:opacity-50"
-        onClick={save}
-        disabled={saving}
-      >
-        {saving ? 'Saving...' : 'Save'}
-      </button>
+            <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-3">
+              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Products in Marquee</h2>
+              {products.length === 0 && <p className="text-sm text-stone-400 italic">No products added yet</p>}
+              {products.map((p, i) => (
+                <div key={p._id} className="flex items-center gap-3 border border-stone-100 rounded-lg p-2 bg-stone-50">
+                  {p.images?.[0]?.thumbnail && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={`${API_URL}/api/uploads/${p.images[0].thumbnail}`} alt={p.name} className="w-10 h-10 object-cover rounded" />
+                  )}
+                  <span className="flex-1 text-sm text-stone-700">{p.name}</span>
+                  <button onClick={() => router.push(`/gallery/${p._id}`)} className="text-xs text-stone-400 underline">View</button>
+                  <button onClick={() => move(i, -1)} className="px-1.5 text-stone-400 hover:text-stone-700">↑</button>
+                  <button onClick={() => move(i, 1)} className="px-1.5 text-stone-400 hover:text-stone-700">↓</button>
+                  <button onClick={() => setProducts(products.filter((_, j) => j !== i))} className="px-1.5 text-red-400 hover:text-red-600">✕</button>
+                </div>
+              ))}
+
+              <div className="flex gap-2 items-center pt-2">
+                <input
+                  value={newId} onChange={e => setNewId(e.target.value)} placeholder="Paste a Product ID here"
+                  className="flex-1 border border-stone-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-stone-200"
+                  onKeyDown={e => e.key === 'Enter' && addProduct()}
+                />
+                <button className="bg-stone-100 border border-stone-300 px-3 py-2 rounded-lg text-sm text-stone-700 hover:bg-stone-200" onClick={addProduct}>Add</button>
+                <button className="bg-white border border-stone-300 px-3 py-2 rounded-lg text-sm text-stone-600 hover:bg-stone-50 whitespace-nowrap" onClick={() => router.push('/admin/products')} type="button">
+                  Browse →
+                </button>
+              </div>
+            </div>
+
+            <button className="bg-stone-800 hover:bg-stone-700 text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-50 transition-colors w-full" onClick={save} disabled={saving}>
+              {saving ? 'Saving…' : 'Save Changes'}
+            </button>
+          </div>
+
+          {/* Preview */}
+          <div className="lg:sticky lg:top-4">
+            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview</p>
+            <div className="border border-stone-200 rounded-xl bg-white p-4">
+              <MarqueePreview products={products} />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
