@@ -9,26 +9,33 @@ interface Props {
 export default function ContactSection({ contact }: Props) {
   if (!contact) return null;
   return (
-    <section className="bg-black text-white w-full py-12 text-center">
-      <h2 className="text-2xl mb-4">Ready to order flowers?</h2>
-      <p className="mb-6">Send us a WhatsApp or give us a call — we&apos;ll be happy to help!</p>
-      <div className="flex gap-4 justify-center">
-        <a
-          href={`https://wa.me/${contact.whatsapp}`}
-          target="_blank"
-          className="bg-green-600 text-white px-6 py-3 rounded-full"
-        >
-          <div className='flex'>
-            <WhatsappIcon className="w-6 h-6" />
-            <h3 className='pl-3'>WhatsApp Us</h3>
-          </div>
-        </a>
-        <a href={`tel:${contact.phone}`} className="bg-white text-black px-6 py-3 rounded-full">
-          <div className='flex'>
-            <CallIcon className="w-6 h-6" />
-            <h3 className='pl-3'>Call Us</h3>
-          </div>
-        </a>
+    <section className="bg-stone-900 text-white w-full py-16 text-center">
+      <div className="max-w-xl mx-auto px-6">
+        <h2 className="text-3xl font-serif font-light mb-3">Ready to order?</h2>
+        <p className="text-stone-400 text-sm mb-10 leading-relaxed">
+          Send us a WhatsApp or give us a call — we&apos;ll be happy to help.
+        </p>
+        <div className="flex gap-4 justify-center flex-wrap">
+          {contact.whatsapp && (
+            <a
+              href={`https://wa.me/${contact.whatsapp}`}
+              target="_blank"
+              className="flex items-center gap-2.5 bg-white text-stone-900 px-7 py-3 text-sm font-medium hover:bg-stone-100 transition-colors"
+            >
+              <WhatsappIcon className="w-5 h-5" />
+              WhatsApp Us
+            </a>
+          )}
+          {contact.phone && (
+            <a
+              href={`tel:${contact.phone}`}
+              className="flex items-center gap-2.5 border border-white text-white px-7 py-3 text-sm font-medium hover:bg-white hover:text-stone-900 transition-colors"
+            >
+              <CallIcon className="w-5 h-5" />
+              Call Us
+            </a>
+          )}
+        </div>
       </div>
     </section>
   );

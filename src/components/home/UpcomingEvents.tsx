@@ -32,6 +32,11 @@ export default function UpcomingEvents() {
       : undefined;
 
   return (
+    <section className="w-full">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <h2 className="text-3xl font-serif text-stone-800">Upcoming Events</h2>
+        <div className="h-px bg-stone-200 mt-4" />
+      </div>
     <div className="relative w-full h-56 md:h-64 items-center flex flex-col" onMouseLeave={() => setHover(false)}>
       {bgImage && (
         <div
@@ -58,5 +63,6 @@ export default function UpcomingEvents() {
         ))}
       </div>
     </div>
+    </section>
   );
 }

@@ -10,6 +10,26 @@ import { useRouter } from 'next/navigation';
 const INPUT = 'border border-stone-300 rounded-lg w-full px-3 py-2.5 mt-1 bg-white focus:outline-none focus:ring-2 focus:ring-stone-200 text-stone-800';
 const LABEL = 'block text-sm font-medium text-stone-700';
 
+function parseTint(tint: string): { color: string; opacity: number } {
+  if (!tint) return { color: '#000000', opacity: 0 };
+  const match = tint.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+  if (match) {
+    const hex = '#' + [match[1], match[2], match[3]]
+      .map(n => parseInt(n).toString(16).padStart(2, '0')).join('');
+    return { color: hex, opacity: Math.round((parseFloat(match[4] ?? '1')) * 100) };
+  }
+  if (tint.startsWith('#')) return { color: tint, opacity: 100 };
+  return { color: '#000000', opacity: 40 };
+}
+
+function buildTint(color: string, opacity: number): string {
+  if (opacity === 0) return '';
+  const r = parseInt(color.slice(1, 3), 16);
+  const g = parseInt(color.slice(3, 5), 16);
+  const b = parseInt(color.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${(opacity / 100).toFixed(2)})`;
+}
+
 function getTintStyle(tint: string): React.CSSProperties {
   if (!tint) return {};
   if (tint.startsWith('#') || tint.startsWith('rgb')) return { backgroundColor: tint };
@@ -128,10 +148,13 @@ export default function HeroAdminPage() {
               <input type="checkbox" className="accent-stone-800 w-4 h-4" checked={form.enabled} onChange={e => setForm({ ...form, enabled: e.target.checked })} />
               <span className="text-sm font-medium text-stone-700">Section enabled</span>
             </label>
+
             <div>
-              <label className={LABEL}>Display order</label>
-              <input type="number" className={INPUT} value={form.order} onChange={e => setForm({ ...form, order: parseInt(e.target.value) })} />
+              <label className={LABEL}>Background images</label>
+              <p className="text-xs text-stone-400 mt-0.5 mb-2">Multiple images will cycle automatically every 5 seconds.</p>
+              <ImageUploadList images={images} setImages={setImages} />
             </div>
+
             <div>
               <label className={LABEL}>Title</label>
               <input type="text" className={INPUT} value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
@@ -140,15 +163,53 @@ export default function HeroAdminPage() {
               <label className={LABEL}>Paragraph</label>
               <textarea className={INPUT} rows={3} value={form.paragraph} onChange={e => setForm({ ...form, paragraph: e.target.value })} />
             </div>
+
             <div>
-              <label className={LABEL}>Tint colour <span className="text-xs text-stone-400 font-normal">(e.g. rgba(0,0,0,0.4))</span></label>
-              <input type="text" className={INPUT} value={form.tint} onChange={e => setForm({ ...form, tint: e.target.value })} />
+              <label className={LABEL}>Image overlay</label>
+              <p className="text-xs text-stone-400 mt-0.5 mb-3">Darken the image so the text is easier to read.</p>
+              {(() => {
+                const { color, opacity } = parseTint(form.tint);
+                return (
+                  <div className="flex items-center gap-5">
+                    <div className="flex flex-col items-center gap-1">
+                      <span className="text-xs text-stone-400">Colour</span>
+                      <input
+                        type="color"
+                        value={color}
+                        onChange={e => setForm({ ...form, tint: buildTint(e.target.value, opacity) })}
+                        className="w-11 h-9 rounded cursor-pointer border border-stone-200 p-0.5 bg-white"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between text-xs text-stone-400 mb-1.5">
+                        <span>Darkness</span>
+                        <span>{opacity}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={0}
+                        max={90}
+                        value={opacity}
+                        onChange={e => setForm({ ...form, tint: buildTint(color, parseInt(e.target.value)) })}
+                        className="w-full accent-stone-800"
+                      />
+                      <div className="flex justify-between text-xs text-stone-300 mt-1">
+                        <span>None</span>
+                        <span>Very dark</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
+
             <div>
-              <label className={LABEL}>Images</label>
-              <div className="mt-1"><ImageUploadList images={images} setImages={setImages} /></div>
+              <label className={LABEL}>Display order</label>
+              <p className="text-xs text-stone-400 mt-0.5">Lower numbers appear higher on the home page.</p>
+              <input type="number" className={INPUT} value={form.order} onChange={e => setForm({ ...form, order: parseInt(e.target.value) })} />
             </div>
-            <button className="bg-stone-800 hover:bg-stone-700 text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-50 transition-colors" onClick={handleSave} disabled={saving}>
+
+            <button className="bg-stone-800 hover:bg-stone-700 text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-50 transition-colors w-full" onClick={handleSave} disabled={saving}>
               {saving ? 'Saving…' : 'Save Changes'}
             </button>
           </div>

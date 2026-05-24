@@ -6,15 +6,25 @@ interface Props {
 }
 
 export default function Testimonials({ content }: Props) {
+  const testimonials = content.testimonials ?? [];
+  if (!testimonials.length) return null;
+
   return (
-    <section className="bg-gray-100 w-full py-12">
-      <div className="max-w-5xl mx-auto px-4 text-center">
-        <h2 className="text-3xl font-semibold mb-6">What Our Customers Say</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          {(content.testimonials ?? []).map((t: { comment: string; author: string }, i: number) => (
-            <blockquote key={i} className="bg-white p-6 rounded shadow">
-              {t.comment}
-              <div className="italic mt-2">- {t.author}</div>
+    <section className="bg-stone-50 w-full py-16">
+      <div className="max-w-5xl mx-auto px-6">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-serif text-stone-800">What Our Customers Say</h2>
+          <div className="h-px bg-stone-200 mt-4 max-w-[80px] mx-auto" />
+        </div>
+        <div className="grid md:grid-cols-3 gap-5">
+          {testimonials.map((t, i) => (
+            <blockquote key={i} className="bg-white border border-stone-100 rounded-xl p-6 shadow-sm flex flex-col">
+              <p className="text-stone-600 text-sm leading-relaxed flex-1">
+                &ldquo;{t.comment}&rdquo;
+              </p>
+              <footer className="mt-5 text-xs text-stone-400 font-medium tracking-wide uppercase">
+                — {t.author}
+              </footer>
             </blockquote>
           ))}
         </div>

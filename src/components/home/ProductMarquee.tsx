@@ -65,35 +65,35 @@ export default function ProductMarquee({ products }: Props) {
 
   const doubled = [...products, ...products];
 
+  if (!products.length) return null;
+
   return (
-    <div
-    className="relative overflow-hidden w-full border-y py-4"
-    // style={{ transform: 'rotate(20deg)', transformOrigin: 'left center' }}
-    >
-      <div
-        ref={trackRef}
-        className="flex gap-6 whitespace-nowrap overflow-x-hidden"
-        style={{ willChange: 'transform' }}
-      >
-        {doubled.map((product, idx) => (
-          <Link
-            href={`/gallery/${product._id}`}
-            key={idx}
-            className="flex-shrink-0 w-48"
-          >
-            <div className="w-48 h-64 rounded overflow-hidden shadow-md bg-white" >
-              <Image
-                src={`${API_URL}/api/uploads/${product.images[0]?.thumbnail}`}
-                alt={product.name}
-                width={192}
-                height={256}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {/* <p className="text-sm mt-1 text-center">{product.name}</p> */}
-          </Link>
-        ))}
+    <section className="w-full py-14">
+      <div className="text-center mb-8 px-6">
+        <h2 className="text-3xl font-serif text-stone-800">Our Collection</h2>
+        <div className="h-px bg-stone-200 mt-4 max-w-[80px] mx-auto" />
       </div>
-    </div>
+      <div className="relative overflow-hidden border-y border-stone-200 py-6">
+        <div
+          ref={trackRef}
+          className="flex gap-5 whitespace-nowrap overflow-x-hidden"
+          style={{ willChange: 'transform' }}
+        >
+          {doubled.map((product, idx) => (
+            <Link href={`/gallery/${product._id}`} key={idx} className="flex-shrink-0 w-44 group">
+              <div className="w-44 h-60 rounded-lg overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-md transition-shadow">
+                <Image
+                  src={`${API_URL}/api/uploads/${product.images[0]?.thumbnail}`}
+                  alt={product.name}
+                  width={176}
+                  height={240}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
