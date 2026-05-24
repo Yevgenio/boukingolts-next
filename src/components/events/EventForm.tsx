@@ -168,7 +168,7 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
                   </div>
                   {description && (
                     <p className={`text-sm leading-relaxed line-clamp-2 ${previewImageSrc ? 'text-stone-300' : 'text-stone-500'}`}>
-                      {description.replace(/<[^>]+>/g, '')}
+                      {description.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ')}
                     </p>
                   )}
                 </div>
@@ -197,7 +197,7 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
                 {description && (
                   <div
                     className="prose prose-sm prose-stone max-w-none text-stone-600 leading-relaxed pt-2"
-                    dangerouslySetInnerHTML={{ __html: description }}
+                    dangerouslySetInnerHTML={{ __html: description.replace(/&nbsp;/g, ' ') }}
                   />
                 )}
               </div>
