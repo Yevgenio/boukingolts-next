@@ -56,7 +56,7 @@ export default async function EventPage({ params }: { params: { id: string } }) 
         {event.description && (
           <div
             className="prose prose-stone max-w-none text-stone-700 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: event.description }}
+            dangerouslySetInnerHTML={{ __html: event.description.replace(/&nbsp;/g, ' ') }}
           />
         )}
       </div>

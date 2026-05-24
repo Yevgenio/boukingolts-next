@@ -75,7 +75,7 @@ export default async function GalleryItemPage({ params }: { params: { id: string
           {product.description && (
             <div
               className="prose prose-sm prose-stone max-w-none text-stone-700 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: product.description }}
+              dangerouslySetInnerHTML={{ __html: product.description.replace(/&nbsp;/g, ' ') }}
             />
           )}
 

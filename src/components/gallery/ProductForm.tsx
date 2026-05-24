@@ -113,6 +113,8 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
     }
   };
 
+  const [previewTab, setPreviewTab] = useState<'card' | 'page'>('page');
+
   const tagList = tags.split(',').map(t => t.trim()).filter(Boolean);
   const firstImage = images[0];
   const previewImageSrc = firstImage
@@ -197,55 +199,99 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
 
         {/* Live preview */}
         <div className="lg:sticky lg:top-24">
-          <p className="text-xs font-medium text-stone-400 uppercase tracking-widest mb-3">Preview</p>
-          <div className="border border-stone-200 rounded-xl overflow-hidden bg-white shadow-sm">
-            <div className="aspect-[3/4] bg-stone-100 relative">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-medium text-stone-400 uppercase tracking-widest">Preview</p>
+            <div className="flex gap-1 bg-stone-100 rounded-lg p-1">
+              {(['page', 'card'] as const).map(tab => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setPreviewTab(tab)}
+                  className={`px-3 py-1 text-xs rounded-md transition-colors ${
+                    previewTab === tab
+                      ? 'bg-white text-stone-800 shadow-sm font-medium'
+                      : 'text-stone-500 hover:text-stone-700'
+                  }`}
+                >
+                  {tab === 'page' ? 'Product page' : 'Gallery card'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {previewTab === 'card' ? (
+            /* Gallery card preview — mirrors GalleryItem */
+            <div className="relative rounded-xl overflow-hidden shadow-sm bg-stone-100 aspect-[3/4]">
               {previewImageSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={previewImageSrc} alt="preview" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm italic">
-                  No image yet
-                </div>
+                <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm italic">No image yet</div>
               )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent opacity-80" />
+              <div className="absolute bottom-0 left-0 w-full p-4">
+                <h2 className="text-white font-serif text-lg leading-snug drop-shadow">
+                  {name || <span className="opacity-40 italic">Artwork title</span>}
+                </h2>
+                {tagList.length > 0 && (
+                  <p className="text-stone-300 text-xs mt-1 tracking-wide">
+                    {tagList.slice(0, 3).join(' · ')}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="p-5 space-y-3">
-              <h2 className="font-serif text-2xl text-stone-900 leading-tight">
-                {name || <span className="text-stone-300 font-sans text-base italic">Artwork title</span>}
-              </h2>
-              {category && (
-                <p className="text-xs text-stone-400 uppercase tracking-widest">{category}</p>
-              )}
-              {tagList.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                  {tagList.map((tag) => (
-                    <span key={tag} className="border border-stone-200 text-stone-500 text-xs px-2 py-0.5 rounded-full">
-                      {tag}
-                    </span>
-                  ))}
+          ) : (
+            /* Product page preview — mirrors ProductPage layout */
+            <div className="border border-stone-200 rounded-xl overflow-hidden bg-white shadow-sm">
+              <div className="aspect-[3/4] bg-stone-100 relative">
+                {previewImageSrc ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={previewImageSrc} alt="preview" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm italic">No image yet</div>
+                )}
+              </div>
+              <div className="p-5 space-y-3">
+                <div>
+                  <h2 className="font-serif text-2xl text-stone-900 leading-tight">
+                    {name || <span className="text-stone-300 font-sans text-base italic">Artwork title</span>}
+                  </h2>
+                  <div className="h-px bg-stone-200 mt-3" />
                 </div>
-              )}
-              {price !== '' && (
-                <div className="pt-1">
-                  {finalPrice ? (
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-lg font-medium text-stone-900">₪{finalPrice}</span>
-                      <span className="text-sm text-stone-400 line-through">₪{price}</span>
-                      <span className="text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full">{salePercent}% off</span>
-                    </div>
-                  ) : (
-                    <span className="text-lg font-medium text-stone-900">₪{price}</span>
-                  )}
-                </div>
-              )}
-              {description && (
-                <div
-                  className="prose prose-sm prose-stone max-w-none text-stone-600 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: description }}
-                />
-              )}
+                {category && (
+                  <p className="text-xs text-stone-400 uppercase tracking-widest">{category}</p>
+                )}
+                {tagList.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {tagList.map((tag) => (
+                      <span key={tag} className="border border-stone-200 text-stone-500 text-xs px-2 py-0.5 rounded-full">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {description && (
+                  <div
+                    className="prose prose-sm prose-stone max-w-none text-stone-600 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: description.replace(/&nbsp;/g, ' ') }}
+                  />
+                )}
+                {price !== '' && (
+                  <div className="pt-2 border-t border-stone-100">
+                    {finalPrice ? (
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-lg font-medium text-stone-900">₪{finalPrice}</span>
+                        <span className="text-sm text-stone-400 line-through">₪{price}</span>
+                        <span className="text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full">{salePercent}% off</span>
+                      </div>
+                    ) : (
+                      <span className="text-lg font-medium text-stone-900">₪{price}</span>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
       </div>

@@ -37,7 +37,7 @@ export default function AboutSection({ content }: Props) {
           {content.comment && (
             <div
               className="prose prose-sm prose-stone max-w-none text-stone-600 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: content.comment }}
+              dangerouslySetInnerHTML={{ __html: content.comment.replace(/&nbsp;/g, ' ') }}
             />
           )}
 
