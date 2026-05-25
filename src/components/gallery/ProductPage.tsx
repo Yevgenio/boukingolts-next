@@ -1,8 +1,7 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import API_URL, { IMAGE_URL } from '@/config/config';
+import API_URL from '@/config/config';
 import ProductPageAdminControls from '@/components/gallery/ProductPageAdminControls';
-import ThumbnailSelector from '@/components/gallery/ThumbnailSelector';
+import ProductImageViewer from '@/components/gallery/ProductImageViewer';
 import { Product } from '@/types/Product';
 
 export default async function GalleryItemPage({ params }: { params: { id: string } }) {
@@ -20,7 +19,6 @@ export default async function GalleryItemPage({ params }: { params: { id: string
   }
 
   const product: Product = await res.json();
-  const hasImages = product.images?.length > 0;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -32,26 +30,7 @@ export default async function GalleryItemPage({ params }: { params: { id: string
       <div className="grid md:grid-cols-2 gap-12 items-start">
 
         {/* Image viewer */}
-        <div className="flex flex-col gap-3">
-          <div className="w-full aspect-[3/4] rounded-xl overflow-hidden relative bg-stone-100 shadow-sm">
-            {hasImages ? (
-              product.images.map((img, index) => (
-                <Image
-                  key={img._id}
-                  src={`${IMAGE_URL}/api/uploads/${img.url}`}
-                  alt={product.name}
-                  fill
-                  className={`object-cover transition-opacity duration-300 gallery-main-image ${index === 0 ? 'opacity-100' : 'opacity-0'}`}
-                />
-              ))
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-stone-300 text-sm italic">
-                No image
-              </div>
-            )}
-          </div>
-          {product.images?.length > 1 && <ThumbnailSelector product={product} />}
-        </div>
+        <ProductImageViewer images={product.images ?? []} name={product.name} />
 
         {/* Details */}
         <div className="flex flex-col gap-6 pt-2">
