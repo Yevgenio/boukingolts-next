@@ -33,15 +33,20 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
   useEffect(() => {
     if (mode === 'edit' && eventId) {
       const fetchEvent = async () => {
-        const res = await fetch(`${API_URL}/api/events/id/${eventId}`);
-        const data = await res.json();
-        setName(data.name || '');
-        setDescription(data.description || '');
-        setCategory(data.category || '');
-        setDate(data.date ? data.date.substring(0, 10) : '');
-        setLocation(data.location || '');
-        if (Array.isArray(data.images)) {
-          setImages(data.images.map((img: Image) => ({ url: img.url, id: img._id, isNew: false })));
+        try {
+          const res = await fetch(`${API_URL}/api/events/id/${eventId}`);
+          if (!res.ok) throw new Error('Failed to load event');
+          const data = await res.json();
+          setName(data.name || '');
+          setDescription(data.description || '');
+          setCategory(data.category || '');
+          setDate(data.date ? data.date.substring(0, 10) : '');
+          setLocation(data.location || '');
+          if (Array.isArray(data.images)) {
+            setImages(data.images.map((img: Image) => ({ url: img.url, id: img._id, isNew: false })));
+          }
+        } catch (err: unknown) {
+          setError(err instanceof Error ? err.message : 'Failed to load event');
         }
       };
       fetchEvent();

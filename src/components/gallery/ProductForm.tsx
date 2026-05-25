@@ -34,18 +34,23 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
   useEffect(() => {
     if (mode === 'edit' && productId) {
       const fetchProduct = async () => {
-        const res = await fetch(`${API_URL}/api/products/id/${productId}`);
-        const data = await res.json();
-        setName(data.name || '');
-        setDescription(data.description || '');
-        setCategory(data.category || '');
-        setRank(data.rank ?? '');
-        setFeatured(data.featured ?? '');
-        setTags(Array.isArray(data.tags) ? data.tags.join(', ') : '');
-        setPrice(data.price ?? '');
-        setSalePercent(data.salePercent ?? '');
-        if (Array.isArray(data.images)) {
-          setImages(data.images.map((img: Image) => ({ url: img.url, id: img._id, isNew: false })));
+        try {
+          const res = await fetch(`${API_URL}/api/products/id/${productId}`);
+          if (!res.ok) throw new Error('Failed to load artwork');
+          const data = await res.json();
+          setName(data.name || '');
+          setDescription(data.description || '');
+          setCategory(data.category || '');
+          setRank(data.rank ?? '');
+          setFeatured(data.featured ?? '');
+          setTags(Array.isArray(data.tags) ? data.tags.join(', ') : '');
+          setPrice(data.price ?? '');
+          setSalePercent(data.salePercent ?? '');
+          if (Array.isArray(data.images)) {
+            setImages(data.images.map((img: Image) => ({ url: img.url, id: img._id, isNew: false })));
+          }
+        } catch (err: unknown) {
+          setError(err instanceof Error ? err.message : 'Failed to load artwork');
         }
       };
       fetchProduct();
