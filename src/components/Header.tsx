@@ -18,8 +18,9 @@ export default function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
-  const [visible, setVisible] = useState(true);
+  const [offset, setOffset] = useState(0);
   const accountRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -33,17 +34,15 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    if (mobileOpen) return;
+    if (mobileOpen) {
+      setOffset(0);
+      return;
+    }
     const handleScroll = () => {
       const currentY = window.scrollY;
-      const scrolledDown = currentY > lastScrollY.current + 2;
-      const scrolledUp = currentY < lastScrollY.current - 2;
-      if (currentY < 10 || scrolledUp) {
-        setVisible(true);
-      } else if (scrolledDown) {
-        setVisible(false);
-        setAccountOpen(false);
-      }
+      const delta = currentY - lastScrollY.current;
+      const height = headerRef.current?.offsetHeight ?? 64;
+      setOffset(prev => Math.min(0, Math.max(-height, prev - delta)));
       lastScrollY.current = currentY;
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -56,9 +55,7 @@ export default function Header() {
   const handleLogout = () => { logout(); router.push('/login'); };
 
   return (
-    <header className={`sticky top-0 z-50 transition-transform duration-300 bg-white border-b border-stone-200 ${
-      visible ? 'translate-y-0' : '-translate-y-full'
-    }`}>
+    <header ref={headerRef} className="sticky top-0 z-50 bg-white border-b border-stone-200" style={{ transform: `translateY(${offset}px)` }}>
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
 
         {/* Brand */}
