@@ -23,7 +23,6 @@ function parseTint(tint: string): { color: string; opacity: number } {
 }
 
 function buildTint(color: string, opacity: number): string {
-  if (opacity === 0) return '';
   const r = parseInt(color.slice(1, 3), 16);
   const g = parseInt(color.slice(3, 5), 16);
   const b = parseInt(color.slice(5, 7), 16);
@@ -164,6 +163,9 @@ export default function HeroAdminPage() {
               <p className="text-xs text-stone-400 mt-0.5 mb-3">Darken the image so the text is easier to read.</p>
               {(() => {
                 const { color, opacity } = parseTint(form.tint);
+                const r = parseInt(color.slice(1, 3), 16);
+                const g = parseInt(color.slice(3, 5), 16);
+                const b = parseInt(color.slice(5, 7), 16);
                 return (
                   <div className="flex items-center gap-5">
                     <div className="flex flex-col items-center gap-1">
@@ -180,14 +182,21 @@ export default function HeroAdminPage() {
                         <span>Darkness</span>
                         <span>{opacity}%</span>
                       </div>
-                      <input
-                        type="range"
-                        min={0}
-                        max={90}
-                        value={opacity}
-                        onChange={e => setForm({ ...form, tint: buildTint(color, parseInt(e.target.value)) })}
-                        className="w-full accent-stone-800"
-                      />
+                      <div className="relative flex items-center">
+                        <div
+                          className="absolute inset-0 rounded-full h-2 top-1/2 -translate-y-1/2 pointer-events-none"
+                          style={{ background: `linear-gradient(to right, rgba(${r},${g},${b},0), rgba(${r},${g},${b},0.9))` }}
+                        />
+                        <input
+                          type="range"
+                          min={0}
+                          max={90}
+                          value={opacity}
+                          onChange={e => setForm({ ...form, tint: buildTint(color, parseInt(e.target.value)) })}
+                          className="w-full relative"
+                          style={{ accentColor: color }}
+                        />
+                      </div>
                       <div className="flex justify-between text-xs text-stone-300 mt-1">
                         <span>None</span>
                         <span>Very dark</span>
