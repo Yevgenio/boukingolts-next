@@ -39,7 +39,7 @@ function AboutPreview({ form, images }: { form: AboutContent; images: ImageItem[
         </div>
       </div>
       {form.comment && (
-        <div className="text-sm text-stone-600 leading-relaxed prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: form.comment }} />
+        <div className="text-sm text-stone-600 leading-relaxed prose prose-sm prose-stone max-w-none" dangerouslySetInnerHTML={{ __html: form.comment.replace(/&nbsp;/g, ' ') }} />
       )}
       <div className="flex gap-3 pt-1">
         {form.phone && <CallIcon className="w-5 h-5 text-stone-500" />}
