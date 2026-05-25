@@ -56,9 +56,9 @@ export default function Header() {
   const handleLogout = () => { logout(); router.push('/login'); };
 
   return (
-    <header className={`sticky top-0 z-50 transition-transform duration-300 ${
+    <header className={`sticky top-0 z-50 transition-transform duration-300 bg-white border-b border-stone-200 ${
       visible ? 'translate-y-0' : '-translate-y-full'
-    } bg-white/70 backdrop-blur-md border-b border-stone-200/50`}>
+    }`}>
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
 
         {/* Brand */}
