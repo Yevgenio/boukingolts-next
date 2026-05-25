@@ -20,6 +20,7 @@ export default function ContactSection({ contact }: Props) {
             <a
               href={`https://wa.me/${contact.whatsapp}`}
               target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2.5 bg-white text-stone-900 px-7 py-3 text-sm font-medium hover:bg-stone-100 transition-colors"
             >
               <WhatsappIcon className="w-5 h-5" />

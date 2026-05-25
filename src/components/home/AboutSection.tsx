@@ -48,12 +48,12 @@ export default function AboutSection({ content }: Props) {
               </a>
             )}
             {content.whatsapp && (
-              <a href={`https://wa.me/${content.whatsapp}`} target="_blank" className="text-stone-400 hover:text-stone-700 transition-colors" title="WhatsApp">
+              <a href={`https://wa.me/${content.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-stone-400 hover:text-stone-700 transition-colors" title="WhatsApp">
                 <WhatsappIcon className="w-5 h-5" />
               </a>
             )}
             {content.instagram && (
-              <a href={content.instagram} target="_blank" className="text-stone-400 hover:text-stone-700 transition-colors" title="Instagram">
+              <a href={content.instagram} target="_blank" rel="noopener noreferrer" className="text-stone-400 hover:text-stone-700 transition-colors" title="Instagram">
                 <InstagramIcon className="w-5 h-5" />
               </a>
             )}

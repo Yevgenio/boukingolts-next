@@ -53,12 +53,12 @@ export default async function Footer() {
                     </a>
                   )}
                   {about.whatsapp && (
-                    <a href={`https://wa.me/${about.whatsapp}`} target="_blank" className="text-stone-400 hover:text-white transition-colors" title="WhatsApp">
+                    <a href={`https://wa.me/${about.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-stone-400 hover:text-white transition-colors" title="WhatsApp">
                       <WhatsappIcon className="w-5 h-5" />
                     </a>
                   )}
                   {about.instagram && (
-                    <a href={about.instagram} target="_blank" className="text-stone-400 hover:text-white transition-colors" title="Instagram">
+                    <a href={about.instagram} target="_blank" rel="noopener noreferrer" className="text-stone-400 hover:text-white transition-colors" title="Instagram">
                       <InstagramIcon className="w-5 h-5" />
                     </a>
                   )}
