@@ -25,6 +25,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [library, setLibrary] = useState<ManagedImage[]>([]);
   const [libraryLoading, setLibraryLoading] = useState(false);
+  const [libraryError, setLibraryError] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,9 +53,12 @@ export default function ImageUploadList({ images, setImages }: Props) {
     setPickerOpen(prev => !prev);
     if (!pickerOpen && library.length === 0) {
       setLibraryLoading(true);
+      setLibraryError(false);
       try {
         const imgs = await listImages();
         setLibrary(imgs);
+      } catch {
+        setLibraryError(true);
       } finally {
         setLibraryLoading(false);
       }
@@ -145,6 +149,8 @@ export default function ImageUploadList({ images, setImages }: Props) {
           </div>
           {libraryLoading ? (
             <p className="text-sm text-stone-400 text-center py-6">Loading…</p>
+          ) : libraryError ? (
+            <p className="text-sm text-red-500 text-center py-6">Failed to load image library.</p>
           ) : library.length === 0 ? (
             <p className="text-sm text-stone-400 italic text-center py-6">No images in library</p>
           ) : (
