@@ -44,9 +44,6 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
         setTags(Array.isArray(data.tags) ? data.tags.join(', ') : '');
         setPrice(data.price ?? '');
         setSalePercent(data.salePercent ?? '');
-        if (data.price && data.salePercent) {
-          setSalePrice(Number(data.price) - (Number(data.price) * Number(data.salePercent)) / 100);
-        }
         if (Array.isArray(data.images)) {
           setImages(data.images.map((img: Image) => ({ url: img.url, id: img._id, isNew: false })));
         }
@@ -70,10 +67,12 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
   };
 
   useEffect(() => {
-    if (price !== '' && salePercent !== '') {
+    if (price !== '' && salePercent !== '' && Number(salePercent) > 0) {
       const p = Number(price);
       const perc = Number(salePercent);
       setSalePrice(Number((p - (p * perc) / 100).toFixed(2)));
+    } else if (salePercent === '' || Number(salePercent) === 0) {
+      setSalePrice('');
     }
   }, [price, salePercent]);
 
