@@ -19,6 +19,7 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [offset, setOffset] = useState(0);
+  const [snapping, setSnapping] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
@@ -45,8 +46,18 @@ export default function Header() {
       setOffset(prev => Math.min(0, Math.max(-height, prev - delta)));
       lastScrollY.current = currentY;
     };
+    const handleScrollEnd = () => {
+      const height = headerRef.current?.offsetHeight ?? 64;
+      setSnapping(true);
+      setOffset(prev => (prev < -height / 2 ? -height : 0));
+      setTimeout(() => setSnapping(false), 300);
+    };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scrollend', handleScrollEnd, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scrollend', handleScrollEnd);
+    };
   }, [mobileOpen]);
 
   // Close mobile menu on route change
@@ -55,7 +66,11 @@ export default function Header() {
   const handleLogout = () => { logout(); router.push('/login'); };
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-50 bg-white border-b border-stone-200" style={{ transform: `translateY(${offset}px)` }}>
+    <header
+      ref={headerRef}
+      className={`sticky top-0 z-50 bg-white border-b border-stone-200 ${snapping ? 'transition-transform duration-300' : ''}`}
+      style={{ transform: `translateY(${offset}px)` }}
+    >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
 
         {/* Brand */}
