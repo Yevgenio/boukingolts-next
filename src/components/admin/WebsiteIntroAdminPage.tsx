@@ -5,6 +5,9 @@ import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
+const LABEL = 'block text-xs font-medium text-stone-500 uppercase tracking-wide mb-1';
+const INPUT = 'w-full border border-stone-200 rounded-lg px-3 py-2.5 text-stone-800 bg-white focus:outline-none focus:ring-2 focus:ring-stone-200 text-sm placeholder:text-stone-400';
+
 export default function WebsiteIntroAdminPage() {
   const { isAdmin } = useAuth();
   const router = useRouter();
@@ -57,9 +60,7 @@ export default function WebsiteIntroAdminPage() {
     }
   };
 
-  const handleDelete = (index: number) => {
-    updateParagraphs(paragraphs.filter((_, i) => i !== index));
-  };
+  const handleDelete = (index: number) => updateParagraphs(paragraphs.filter((_, i) => i !== index));
 
   const handleEdit = (index: number) => {
     setEditingIndex(index);
@@ -82,64 +83,88 @@ export default function WebsiteIntroAdminPage() {
   if (loading) return <div className="p-4">Loading...</div>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-4">
-      <button onClick={() => router.push('/admin')} className="text-sm text-gray-500 hover:underline">← Back to Admin</button>
-      <h1 className="text-2xl font-bold">Manage Website Introduction</h1>
+    <div className="min-h-screen bg-stone-50">
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">
+          ← Back to Admin
+        </button>
+        <h1 className="text-2xl font-serif text-stone-800 mb-1">Website Introduction</h1>
+        <div className="h-px bg-stone-200 mb-6" />
 
-
-      {paragraphs.map((text, i) => (
-        <div key={i} className="border rounded p-4 space-y-2">
-          {editingIndex === i ? (
-            <>
-              <textarea
-                className="w-full p-2 border rounded"
-                value={editedText}
-                onChange={(e) => setEditedText(e.target.value)}
-              />
-              <div className="flex gap-2">
-                <button
-                  className="bg-green-600 text-white px-4 py-1 rounded disabled:opacity-50"
-                  onClick={handleEditSave}
-                  disabled={saving}
-                >
-                  {saving ? 'Saving...' : 'Save'}
-                </button>
-                <button className="bg-gray-300 px-4 py-1 rounded" onClick={() => setEditingIndex(null)}>
-                  Cancel
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <p>{text}</p>
-              <div className="flex gap-2">
-                <button className="bg-blue-600 text-white px-4 py-1 rounded" onClick={() => handleEdit(i)}>Edit</button>
-                <button className="bg-red-600 text-white px-4 py-1 rounded" onClick={() => handleDelete(i)}>Delete</button>
-              </div>
-            </>
+        <div className="space-y-3 mb-8">
+          {paragraphs.length === 0 && (
+            <p className="text-sm text-stone-400 italic">No paragraphs yet.</p>
           )}
+          {paragraphs.map((text, i) => (
+            <div key={i} className="bg-white border border-stone-200 rounded-xl p-4 space-y-3">
+              {editingIndex === i ? (
+                <>
+                  <textarea
+                    className={INPUT}
+                    rows={3}
+                    value={editedText}
+                    onChange={(e) => setEditedText(e.target.value)}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleEditSave}
+                      disabled={saving}
+                      className="bg-stone-800 hover:bg-stone-700 text-white text-sm px-4 py-2 rounded-lg disabled:opacity-50 transition-colors"
+                    >
+                      {saving ? 'Saving…' : 'Save'}
+                    </button>
+                    <button
+                      onClick={() => setEditingIndex(null)}
+                      className="border border-stone-200 text-stone-600 hover:bg-stone-50 text-sm px-4 py-2 rounded-lg transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-stone-700 leading-relaxed">{text}</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(i)}
+                      className="text-xs text-stone-400 hover:text-stone-700 underline underline-offset-2 transition-colors"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(i)}
+                      className="text-xs text-red-400 hover:text-red-600 underline underline-offset-2 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
         </div>
-      ))}
 
-      <div className="pt-4 border-t">
-        <h2 className="font-semibold mb-2">Add New Paragraph</h2>
-        <textarea
-          className="w-full p-2 border rounded"
-          value={newParagraph}
-          onChange={(e) => setNewParagraph(e.target.value)}
-          rows={3}
-        />
-        <div className="flex items-center gap-3 mt-2">
-          <button
-            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 disabled:opacity-50"
-            onClick={handleAdd}
-            disabled={saving}
-          >
-            {saving ? 'Adding...' : 'Add Paragraph'}
-          </button>
-          {toast && (
-            <p className={`text-sm ${toast.ok ? 'text-green-700' : 'text-red-600'}`}>{toast.msg}</p>
-          )}
+        <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-3">
+          <label className={LABEL}>Add New Paragraph</label>
+          <textarea
+            className={INPUT}
+            rows={3}
+            value={newParagraph}
+            onChange={(e) => setNewParagraph(e.target.value)}
+            placeholder="Type a paragraph…"
+          />
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleAdd}
+              disabled={saving || !newParagraph.trim()}
+              className="bg-stone-800 hover:bg-stone-700 text-white text-sm px-5 py-2.5 rounded-lg disabled:opacity-50 transition-colors"
+            >
+              {saving ? 'Adding…' : 'Add Paragraph'}
+            </button>
+            {toast && (
+              <p className={`text-sm ${toast.ok ? 'text-green-700' : 'text-red-600'}`}>{toast.msg}</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
