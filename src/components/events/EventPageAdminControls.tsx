@@ -8,6 +8,7 @@ export default function EventPageAdminControls({ eventId }: { eventId: string })
   const { isAdmin } = useAuth();
   const router = useRouter();
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteError, setDeleteError] = useState(false);
 
   if (!isAdmin) return null;
 
@@ -15,10 +16,11 @@ export default function EventPageAdminControls({ eventId }: { eventId: string })
     if (!confirmDelete) { setConfirmDelete(true); setTimeout(() => setConfirmDelete(false), 3000); return; }
     const res = await fetch(`${API_URL}/api/events/id/${eventId}`, { method: 'DELETE', credentials: 'include' });
     if (res.ok) { router.push('/events'); router.refresh(); }
+    else { setConfirmDelete(false); setDeleteError(true); setTimeout(() => setDeleteError(false), 4000); }
   };
 
   return (
-    <div className="flex gap-4 text-xs text-stone-400 mb-4">
+    <div className="flex flex-wrap gap-4 items-center text-xs text-stone-400 mb-4">
       <button onClick={() => router.push(`/events/edit/${eventId}`)} className="hover:text-stone-700 underline underline-offset-2">
         Edit
       </button>
@@ -28,6 +30,7 @@ export default function EventPageAdminControls({ eventId }: { eventId: string })
       >
         {confirmDelete ? 'Confirm delete?' : 'Delete'}
       </button>
+      {deleteError && <span className="text-red-500">Failed to delete.</span>}
     </div>
   );
 }
