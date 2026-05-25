@@ -20,6 +20,7 @@ export default function GalleryItemAdminControls({ productId }: { productId: str
     const router = useRouter();
     const { isAdmin } = useAuth();
     const [inList, setInList] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     useEffect(() => {
         if (!isAdmin) return;
@@ -31,27 +32,34 @@ export default function GalleryItemAdminControls({ productId }: { productId: str
     if (!isAdmin) return null;
 
 
-    const handleEdit = () => {
+    const handleEdit = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
         router.push(`/gallery/edit/${productId}`);
     };
 
-    const handleDelete = async () => {
-        if (!confirm('Are you sure you want to delete this product?'))
+    const handleDelete = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (!confirmDelete) {
+            setConfirmDelete(true);
+            setTimeout(() => setConfirmDelete(false), 3000);
             return;
-
+        }
         const res = await fetch(`${API_URL}/api/products/id/${productId}`, {
             method: 'DELETE',
             credentials: 'include',
         });
-
         if (res.ok) {
-            router.refresh(); // Reload the gallery page
+            router.refresh();
         } else {
-            alert('Failed to delete product');
+            setConfirmDelete(false);
         }
     };
 
-    const toggleMarquee = async () => {
+    const toggleMarquee = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        e.preventDefault();
         const ids = await getMarqueeProductIds().catch(() => [] as string[]);
         let updated: string[];
         if (ids.includes(productId)) {
@@ -78,7 +86,11 @@ export default function GalleryItemAdminControls({ productId }: { productId: str
             </button>
             <button
                 onClick={handleDelete}
-                className="bg-gray-200 hover:bg-gray-300 text-black text-sm px-3 py-3 rounded-full border-black border-1"
+                className={`text-sm px-3 py-3 rounded-full border-1 transition-colors ${
+                    confirmDelete
+                        ? 'bg-red-500 hover:bg-red-600 text-white border-red-500'
+                        : 'bg-gray-200 hover:bg-gray-300 text-black border-black'
+                }`}
             >
                 <DeleteIcon />
             </button>
