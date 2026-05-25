@@ -18,7 +18,9 @@ export default function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [visible, setVisible] = useState(true);
   const accountRef = useRef<HTMLDivElement>(null);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -30,13 +32,33 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  useEffect(() => {
+    if (mobileOpen) return;
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const scrolledDown = currentY > lastScrollY.current + 2;
+      const scrolledUp = currentY < lastScrollY.current - 2;
+      if (currentY < 10 || scrolledUp) {
+        setVisible(true);
+      } else if (scrolledDown) {
+        setVisible(false);
+        setAccountOpen(false);
+      }
+      lastScrollY.current = currentY;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mobileOpen]);
+
   // Close mobile menu on route change
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
   const handleLogout = () => { logout(); router.push('/login'); };
 
   return (
-    <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
+    <header className={`sticky top-0 z-50 transition-transform duration-300 ${
+      visible ? 'translate-y-0' : '-translate-y-full'
+    } bg-white/70 backdrop-blur-md border-b border-stone-200/50`}>
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
 
         {/* Brand */}
