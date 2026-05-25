@@ -83,7 +83,7 @@ export default function HeroSection({ content }: Props) {
             <button
               key={i}
               onClick={() => setIndex(i)}
-              className={`w-1.5 h-1.5 rounded-full transition-all ${i === index ? 'bg-white scale-125' : 'bg-white/40'}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? 'bg-white w-5' : 'bg-white/40 w-1.5'}`}
             />
           ))}
         </div>
