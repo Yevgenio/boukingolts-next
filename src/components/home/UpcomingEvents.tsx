@@ -33,7 +33,7 @@ export default function UpcomingEvents() {
         className="flex h-64 gap-1.5 px-6 max-w-7xl mx-auto"
         onMouseLeave={() => setHover(false)}
       >
-        {events.map((event, idx) => {
+        {events.slice(0, 5).map((event, idx) => {
           const isActive = idx === active;
           const bg = event.images?.[0]
             ? `${API_URL}/api/uploads/${event.images[0].thumbnail || event.images[0].url}`
@@ -97,6 +97,14 @@ export default function UpcomingEvents() {
           );
         })}
       </div>
+
+      {events.length > 5 && (
+        <div className="max-w-7xl mx-auto px-6 mt-4 text-right">
+          <Link href="/events" className="text-sm text-stone-500 hover:text-stone-900 transition-colors">
+            View all events →
+          </Link>
+        </div>
+      )}
     </section>
   );
 }
