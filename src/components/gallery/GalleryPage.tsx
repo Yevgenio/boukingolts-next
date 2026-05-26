@@ -82,13 +82,25 @@ export default function GalleryPage() {
       {products.length === 0 ? (
         <p className="text-center text-stone-400 italic py-16">No artworks found.</p>
       ) : (
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-5">
-          {products.map(product => (
-            <div key={product._id} className="break-inside-avoid mb-5">
-              <GalleryItem product={product} />
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="sm:hidden flex flex-col gap-5">
+            {products.map(p => <GalleryItem key={p._id} product={p} />)}
+          </div>
+          <div className="hidden sm:flex lg:hidden gap-5 items-start">
+            {[0, 1].map(col => (
+              <div key={col} className="flex-1 flex flex-col gap-5">
+                {products.filter((_, i) => i % 2 === col).map(p => <GalleryItem key={p._id} product={p} />)}
+              </div>
+            ))}
+          </div>
+          <div className="hidden lg:flex gap-5 items-start">
+            {[0, 1, 2].map(col => (
+              <div key={col} className="flex-1 flex flex-col gap-5">
+                {products.filter((_, i) => i % 3 === col).map(p => <GalleryItem key={p._id} product={p} />)}
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

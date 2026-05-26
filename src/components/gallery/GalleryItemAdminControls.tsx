@@ -75,8 +75,8 @@ export default function GalleryItemAdminControls({ productId }: { productId: str
 
     return (
         <div
-        className={`absolute top-2 right-2 flex flex-col gap-2 opacity-0 scale-75
-                    transition-all duration-300 group-hover:opacity-100 group-hover:scale-100`}
+        className={`absolute top-2 right-2 flex flex-col gap-2 opacity-0 scale-75 pointer-events-none
+                    transition-all duration-300 group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto`}
         >
             <button
                 onClick={handleEdit}

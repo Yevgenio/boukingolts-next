@@ -28,8 +28,8 @@ export default function GalleryItem({ product }: { product: Product }) {
             )}
           </div>
         </Link>
-        <GalleryItemAdminControls productId={product._id} />
       </div>
+      <GalleryItemAdminControls productId={product._id} />
     </div>
   );
 }
