@@ -54,14 +54,14 @@ export default function ProductMarquee({ products }: Props) {
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [products]);
 
   const doubled = [...products, ...products];
 
