@@ -82,9 +82,9 @@ export default function GalleryPage() {
       {products.length === 0 ? (
         <p className="text-center text-stone-400 italic py-16">No artworks found.</p>
       ) : (
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 space-y-5">
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-5">
           {products.map(product => (
-            <div key={product._id} className="break-inside-avoid">
+            <div key={product._id} className="break-inside-avoid mb-5">
               <GalleryItem product={product} />
             </div>
           ))}
