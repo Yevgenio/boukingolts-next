@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Event } from '@/types/Event';
-import EventCard from '@/components/events/EventCard';
 import { getUpcomingEvents } from '@/api/events';
 import API_URL from '@/config/config';
 
@@ -16,20 +16,11 @@ export default function UpcomingEvents() {
 
   useEffect(() => {
     if (hover || events.length < 2) return;
-    const id = setInterval(() => {
-      setActive((a) => (a + 1) % events.length);
-    }, 5000);
+    const id = setInterval(() => setActive(a => (a + 1) % events.length), 5000);
     return () => clearInterval(id);
   }, [hover, events.length]);
 
   if (!events.length) return null;
-
-  const bgImage =
-    events[active]?.images && events[active].images[0]
-      ? `${API_URL}/api/uploads/${
-          events[active].images[0].thumbnail || events[active].images[0].url
-        }`
-      : undefined;
 
   return (
     <section className="w-full">
@@ -37,32 +28,75 @@ export default function UpcomingEvents() {
         <h2 className="text-3xl font-serif text-stone-800">Upcoming Events</h2>
         <div className="h-px bg-stone-200 mt-4" />
       </div>
-    <div className="relative w-full h-56 md:h-64 items-center flex flex-col" onMouseLeave={() => setHover(false)}>
-      {bgImage && (
-        <div
-          className="absolute inset-0 bg-center bg-cover blur-sm scale-110"
-          style={{ backgroundImage: `url(${bgImage})` }}
-        >
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
-      )}
-      <div className="relative flex w-full max-w-7xl h-full overflow-hidden gap-2 items-center">
-        {events.map((event, idx) => (
-          <div
-            key={event._id}
-            className={`overflow-hidden transition-all duration-[600ms] ${
-              idx === active ? 'flex-auto basis-full' : 'flex-none basis-[125px]'
-            }`}
-            onMouseEnter={() => {
-              setActive(idx);
-              setHover(true);
-            }}
-          >
-            <EventCard event={event} className="w-[745px]" />
-          </div>
-        ))}
+
+      <div
+        className="flex h-64 gap-1.5 px-6 max-w-7xl mx-auto"
+        onMouseLeave={() => setHover(false)}
+      >
+        {events.map((event, idx) => {
+          const isActive = idx === active;
+          const bg = event.images?.[0]
+            ? `${API_URL}/api/uploads/${event.images[0].thumbnail || event.images[0].url}`
+            : undefined;
+
+          const d = new Date(event.date);
+          const day = d.toLocaleDateString('en-GB', { day: '2-digit' });
+          const month = d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase();
+
+          return (
+            <Link
+              key={event._id}
+              href={`/events/${event._id}`}
+              className={`relative overflow-hidden rounded-xl transition-all duration-500 ${
+                isActive ? 'flex-[5]' : 'flex-[1]'
+              }`}
+              onMouseEnter={() => { setActive(idx); setHover(true); }}
+            >
+              {/* background image */}
+              {bg ? (
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500"
+                  style={{ backgroundImage: `url(${bg})` }}
+                />
+              ) : (
+                <div className="absolute inset-0 bg-stone-300" />
+              )}
+
+              {/* overlay */}
+              <div className="absolute inset-0 bg-stone-900/50" />
+
+              {/* collapsed: vertical date label */}
+              <div className={`absolute inset-0 flex flex-col items-center justify-center gap-1 transition-opacity duration-300 ${
+                isActive ? 'opacity-0' : 'opacity-100'
+              }`}>
+                <span className="text-white font-serif text-lg leading-none">{day}</span>
+                <span className="text-stone-300 text-[10px] tracking-widest">{month}</span>
+              </div>
+
+              {/* expanded: full content */}
+              <div className={`absolute inset-0 flex flex-col justify-end p-5 transition-opacity duration-300 ${
+                isActive ? 'opacity-100' : 'opacity-0'
+              }`}>
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <p className="text-stone-300 text-xs tracking-widest mb-1">{day} {month}</p>
+                    <h3 className="font-serif text-white text-xl leading-snug">{event.name}</h3>
+                    {event.location && (
+                      <p className="text-stone-300 text-sm mt-1">{event.location}</p>
+                    )}
+                  </div>
+                  {event.description && (
+                    <p
+                      className="text-stone-400 text-sm leading-relaxed line-clamp-3 max-w-xs text-right hidden lg:block"
+                      dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '') }}
+                    />
+                  )}
+                </div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
-    </div>
     </section>
   );
 }
