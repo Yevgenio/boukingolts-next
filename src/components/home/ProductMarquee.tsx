@@ -28,17 +28,17 @@ export default function ProductMarquee({ products }: Props) {
     };
 
     let animationFrameId: number;
-    // let lastTimestamp = performance.now();
-    const baseSpeed = 0.6;
+    let lastTimestamp = performance.now();
+    const baseSpeed = 0.036; // px/ms — equivalent to 0.6px/frame at 60fps
 
-    const animate = () => {
-      // const delta = timestamp - lastTimestamp;
-      // lastTimestamp = timestamp;
+    const animate = (timestamp: number) => {
+      const delta = timestamp - lastTimestamp;
+      lastTimestamp = timestamp;
 
       const scrollBoost = scrollBoostRef.current;
-      scrollBoostRef.current *= 0.9; // decay
+      scrollBoostRef.current *= Math.pow(0.9, delta / 16.67); // decay normalized to 60fps
 
-      const totalSpeed = baseSpeed + scrollBoost * 0.2;
+      const totalSpeed = (baseSpeed + scrollBoost * 0.2) * delta;
 
       const track = trackRef.current;
       if (!track) return;
