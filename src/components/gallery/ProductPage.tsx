@@ -4,6 +4,13 @@ import ProductPageAdminControls from '@/components/gallery/ProductPageAdminContr
 import ProductImageViewer from '@/components/gallery/ProductImageViewer';
 import { Product } from '@/types/Product';
 
+function formatDims(product: Product): string | null {
+  const d = product.dimensions;
+  if (!d || d.length < 2) return null;
+  const unit = product.dimensionUnit ?? 'cm';
+  return d.length >= 3 ? `${d[0]} × ${d[1]} × ${d[2]} ${unit}` : `${d[0]} × ${d[1]} ${unit}`;
+}
+
 export default async function GalleryItemPage({ params }: { params: { id: string } }) {
   const res = await fetch(`${API_URL}/api/products/id/${params.id}`, { cache: 'no-store' });
 
@@ -19,6 +26,8 @@ export default async function GalleryItemPage({ params }: { params: { id: string
   }
 
   const product: Product = await res.json();
+  const dims = formatDims(product);
+  const cleanSpecs = product.specs?.filter(s => s.key && s.value) ?? [];
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -29,18 +38,34 @@ export default async function GalleryItemPage({ params }: { params: { id: string
 
       <div className="grid md:grid-cols-2 gap-12 items-start">
 
-        {/* Image viewer */}
         <ProductImageViewer images={product.images ?? []} name={product.name} />
 
-        {/* Details */}
-        <div className="flex flex-col gap-6 pt-2">
+        <div className="flex flex-col gap-5 pt-2">
+
+          {/* Title */}
           <div>
             <h1 className="text-4xl font-serif text-stone-900 leading-tight">{product.name}</h1>
             <div className="h-px bg-stone-200 mt-5" />
           </div>
 
+          {/* Metadata row */}
+          <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5">
+            {product.category && (
+              <span className="text-xs text-stone-400 uppercase tracking-widest">{product.category}</span>
+            )}
+            {!!product.year && (
+              <span className="text-xs text-stone-400">{product.year}</span>
+            )}
+            {product.forSale && (
+              <span className="text-[10px] font-semibold tracking-widest uppercase bg-stone-800 text-white px-2.5 py-1 rounded-full">
+                Available
+              </span>
+            )}
+          </div>
+
           <ProductPageAdminControls productId={params.id} />
 
+          {/* Tags */}
           {(product.tags?.length ?? 0) > 0 && (
             <div className="flex flex-wrap gap-2">
               {product.tags!.map((tag: string) => (
@@ -51,6 +76,12 @@ export default async function GalleryItemPage({ params }: { params: { id: string
             </div>
           )}
 
+          {/* Dimensions */}
+          {dims && (
+            <p className="text-sm text-stone-600 tracking-wide">{dims}</p>
+          )}
+
+          {/* Description */}
           {product.description && (
             <div
               className="prose prose-sm prose-stone max-w-none text-stone-700 leading-relaxed"
@@ -58,7 +89,24 @@ export default async function GalleryItemPage({ params }: { params: { id: string
             />
           )}
 
-          {product.price != null && (
+          {/* Specs table */}
+          {cleanSpecs.length > 0 && (
+            <div className="border-t border-stone-100 pt-4">
+              <table className="w-full text-sm">
+                <tbody>
+                  {cleanSpecs.map((s, i) => (
+                    <tr key={i} className="border-b border-stone-100 last:border-0">
+                      <td className="py-2 pr-6 text-stone-400 text-xs uppercase tracking-wide w-2/5">{s.key}</td>
+                      <td className="py-2 text-stone-700 text-sm">{s.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Price */}
+          {product.price != null && product.price > 0 && (
             <div className="pt-2 border-t border-stone-100">
               {product.salePercent ? (
                 <div className="flex items-baseline gap-3">
@@ -75,6 +123,7 @@ export default async function GalleryItemPage({ params }: { params: { id: string
               )}
             </div>
           )}
+
         </div>
       </div>
     </div>

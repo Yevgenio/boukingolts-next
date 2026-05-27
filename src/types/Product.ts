@@ -2,6 +2,11 @@
 
 import { Image } from './Image';
 
+export interface ProductSpec {
+  key: string;
+  value: string;
+}
+
 export interface Product {
   _id: string;
   name: string;
@@ -11,6 +16,11 @@ export interface Product {
   rank?: number;
   featured?: number;
   tags?: string[];
+  dimensions?: number[];
+  dimensionUnit?: string;
+  year?: number;
+  forSale?: boolean;
+  specs?: ProductSpec[];
   price?: number;
   salePercent?: number;
   createdAt?: string;
