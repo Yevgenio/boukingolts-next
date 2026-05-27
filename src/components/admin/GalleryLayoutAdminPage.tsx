@@ -44,7 +44,7 @@ function Preview({ products, settings }: { products: Product[]; settings: Galler
   }, []);
 
   const rows = useMemo(
-    () => width ? buildRows(products, width, settings.targetHeight / 2.5, settings.variance / 2.5) : [],
+    () => width ? buildRows(products, width, settings.targetHeight, settings.variance) : [],
     [products, width, settings]
   );
 
@@ -57,7 +57,7 @@ function Preview({ products, settings }: { products: Product[]; settings: Galler
         <div className="flex flex-col" style={{ gap: PREVIEW_GAP }}>
           {rows.map((row, rowIdx) => {
             const isLast = rowIdx === rows.length - 1;
-            const rh = computeRowHeight(row, width, settings.targetHeight / 2.5, isLast);
+            const rh = computeRowHeight(row, width, settings.targetHeight, isLast);
             return (
               <div key={rowIdx} className="flex" style={{ gap: PREVIEW_GAP, height: rh }}>
                 {row.map(p => (
