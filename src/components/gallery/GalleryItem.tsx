@@ -6,15 +6,15 @@ import { Product } from '@/types/Product';
 
 export default function GalleryItem({ product }: { product: Product }) {
   return (
-    <div className="relative w-full rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 group">
-      <div className="relative w-full rounded-xl overflow-hidden bg-stone-100">
-        <Link href={`/gallery/${product._id}`}>
+    <div className="relative w-full h-full rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300 group">
+      <div className="relative w-full h-full rounded-xl overflow-hidden bg-stone-100">
+        <Link href={`/gallery/${product._id}`} className="block h-full">
           <Image
             src={`${API_URL}/api/uploads/${product.images[0]?.thumbnail}`}
             alt={product.name}
             width={product.images[0]?.width || 400}
             height={product.images[0]?.height || 500}
-            className="w-full h-auto object-cover"
+            className="w-full h-full object-cover"
             placeholder="blur"
             blurDataURL={`${API_URL}/api/uploads/default.jpg`}
           />

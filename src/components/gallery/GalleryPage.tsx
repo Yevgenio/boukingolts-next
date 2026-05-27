@@ -82,25 +82,23 @@ export default function GalleryPage() {
       {products.length === 0 ? (
         <p className="text-center text-stone-400 italic py-16">No artworks found.</p>
       ) : (
-        <>
-          <div className="sm:hidden flex flex-col gap-5">
-            {products.map(p => <GalleryItem key={p._id} product={p} />)}
-          </div>
-          <div className="hidden sm:flex lg:hidden gap-5 items-start">
-            {[0, 1].map(col => (
-              <div key={col} className="flex-1 flex flex-col gap-5">
-                {products.filter((_, i) => i % 2 === col).map(p => <GalleryItem key={p._id} product={p} />)}
+        <div className="flex flex-wrap gap-2">
+          {products.map(p => {
+            const w = p.images[0]?.width ?? 4;
+            const h = p.images[0]?.height ?? 3;
+            const ratio = w / h;
+            const rowHeight = 260;
+            return (
+              <div
+                key={p._id}
+                style={{ flexGrow: ratio, flexBasis: `${ratio * rowHeight}px`, height: `${rowHeight}px` }}
+              >
+                <GalleryItem product={p} />
               </div>
-            ))}
-          </div>
-          <div className="hidden lg:flex gap-5 items-start">
-            {[0, 1, 2].map(col => (
-              <div key={col} className="flex-1 flex flex-col gap-5">
-                {products.filter((_, i) => i % 3 === col).map(p => <GalleryItem key={p._id} product={p} />)}
-              </div>
-            ))}
-          </div>
-        </>
+            );
+          })}
+          <div aria-hidden style={{ flexGrow: 999, flexBasis: 0 }} />
+        </div>
       )}
     </div>
   );
