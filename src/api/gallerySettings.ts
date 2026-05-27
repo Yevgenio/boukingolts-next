@@ -1,23 +1,31 @@
 import API_URL from '@/config/config';
 
-export async function getGalleryColumns(): Promise<2 | 3 | 4> {
+export interface GallerySettings {
+  targetHeight: number;
+  variance: number;
+}
+
+const DEFAULTS: GallerySettings = { targetHeight: 280, variance: 100 };
+
+export async function getGallerySettings(): Promise<GallerySettings> {
   try {
     const res = await fetch(`${API_URL}/api/content/gallery-settings`, { cache: 'no-store' });
-    if (!res.ok) return 3;
+    if (!res.ok) return DEFAULTS;
     const data = await res.json();
-    const col = data.columns;
-    if (col === 2 || col === 4) return col;
-    return 3;
+    return {
+      targetHeight: typeof data.targetHeight === 'number' ? data.targetHeight : DEFAULTS.targetHeight,
+      variance:     typeof data.variance     === 'number' ? data.variance     : DEFAULTS.variance,
+    };
   } catch {
-    return 3;
+    return DEFAULTS;
   }
 }
 
-export async function setGalleryColumns(columns: 2 | 3 | 4): Promise<void> {
+export async function setGallerySettings(s: GallerySettings): Promise<void> {
   await fetch(`${API_URL}/api/content/gallery-settings`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ columns }),
+    body: JSON.stringify(s),
   });
 }

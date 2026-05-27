@@ -5,16 +5,17 @@ import GalleryItem from '@/components/gallery/GalleryItem';
 import GalleryAdminControls from '@/components/gallery/GalleryAdminControls';
 import API_URL from '@/config/config';
 import { Product } from '@/types/Product';
-import { getGalleryColumns } from '@/api/gallerySettings';
+import { getGallerySettings, GallerySettings } from '@/api/gallerySettings';
+import { buildRows, computeRowHeight, itemWidth } from '@/utils/galleryLayout';
 
-const ROW_HEIGHT: Record<2 | 3 | 4, number> = { 2: 300, 3: 240, 4: 180 };
+const DEFAULTS: GallerySettings = { targetHeight: 280, variance: 100 };
 
 export default function GalleryPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [columns, setColumns] = useState<2 | 3 | 4>(3);
+  const [settings, setSettings] = useState<GallerySettings>(DEFAULTS);
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(1232);
 
@@ -26,36 +27,10 @@ export default function GalleryPage() {
     return () => ro.disconnect();
   }, []);
 
-  const rows = useMemo(() => {
-    if (!products.length) return [];
-    const targetHeight = ROW_HEIGHT[columns];
-    const gap = 8;
-    const result: Product[][] = [];
-    let row: Product[] = [];
-    let basisSum = 0;
-
-    for (const p of products) {
-      const ratio = (p.images[0]?.width ?? 4) / (p.images[0]?.height ?? 3);
-      const basis = ratio * targetHeight;
-      const wouldBe = basisSum + (row.length > 0 ? gap : 0) + basis;
-
-      if (row.length > 0 && wouldBe > containerWidth) {
-        result.push(row);
-        row = [p];
-        basisSum = basis;
-      } else {
-        row.push(p);
-        basisSum = wouldBe;
-      }
-    }
-    if (row.length > 0) result.push(row);
-    return result;
-  }, [products, containerWidth, columns]);
-
   useEffect(() => {
     fetch(`${API_URL}/api/products/categories`, { cache: 'no-store' })
       .then(r => r.json()).then(setCategories).catch(() => {});
-    getGalleryColumns().then(setColumns);
+    getGallerySettings().then(setSettings);
   }, []);
 
   const fetchProducts = useCallback(async () => {
@@ -70,6 +45,11 @@ export default function GalleryPage() {
   }, [query, selectedCategory]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
+
+  const rows = useMemo(
+    () => buildRows(products, containerWidth, settings.targetHeight, settings.variance),
+    [products, containerWidth, settings]
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
@@ -119,28 +99,21 @@ export default function GalleryPage() {
         </div>
       )}
 
-      {/* Masonry grid */}
+      {/* Gallery */}
       {products.length === 0 ? (
         <p className="text-center text-stone-400 italic py-16">No artworks found.</p>
       ) : (
         <div ref={containerRef} className="flex flex-col gap-2">
           {rows.map((row, rowIdx) => {
             const isLast = rowIdx === rows.length - 1;
-            const totalRatio = row.reduce((s, p) => s + (p.images[0]?.width ?? 4) / (p.images[0]?.height ?? 3), 0);
-            const rowHeight = isLast && row.length === 1
-              ? ROW_HEIGHT[columns]
-              : (containerWidth - (row.length - 1) * 8) / totalRatio;
-
+            const rh = computeRowHeight(row, containerWidth, settings.targetHeight, isLast);
             return (
               <div key={rowIdx} className="flex gap-2">
-                {row.map(p => {
-                  const ratio = (p.images[0]?.width ?? 4) / (p.images[0]?.height ?? 3);
-                  return (
-                    <div key={p._id} style={{ width: ratio * rowHeight, height: rowHeight, flexShrink: 0 }}>
-                      <GalleryItem product={p} />
-                    </div>
-                  );
-                })}
+                {row.map(p => (
+                  <div key={p._id} style={{ width: itemWidth(p, rh), height: rh, flexShrink: 0 }}>
+                    <GalleryItem product={p} />
+                  </div>
+                ))}
               </div>
             );
           })}
