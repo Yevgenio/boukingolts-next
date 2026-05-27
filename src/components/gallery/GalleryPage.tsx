@@ -5,16 +5,21 @@ import GalleryItem from '@/components/gallery/GalleryItem';
 import GalleryAdminControls from '@/components/gallery/GalleryAdminControls';
 import API_URL from '@/config/config';
 import { Product } from '@/types/Product';
+import { getGalleryColumns } from '@/api/gallerySettings';
+
+const ROW_HEIGHT: Record<2 | 3 | 4, number> = { 2: 450, 3: 260, 4: 180 };
 
 export default function GalleryPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [columns, setColumns] = useState<2 | 3 | 4>(3);
 
   useEffect(() => {
     fetch(`${API_URL}/api/products/categories`, { cache: 'no-store' })
       .then(r => r.json()).then(setCategories).catch(() => {});
+    getGalleryColumns().then(setColumns);
   }, []);
 
   const fetchProducts = useCallback(async () => {
@@ -87,7 +92,7 @@ export default function GalleryPage() {
             const w = p.images[0]?.width ?? 4;
             const h = p.images[0]?.height ?? 3;
             const ratio = w / h;
-            const rowHeight = 260;
+            const rowHeight = ROW_HEIGHT[columns];
             return (
               <div
                 key={p._id}

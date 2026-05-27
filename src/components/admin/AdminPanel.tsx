@@ -12,6 +12,7 @@ import {
   FiGrid,
   FiChevronRight,
   FiFolder,
+  FiLayout,
 } from 'react-icons/fi';
 
 const HOME_ITEMS = [
@@ -53,6 +54,12 @@ const GALLERY_ITEMS = [
     description: 'Add, edit and organise your artworks',
     icon: FiGrid,
     path: '/admin/products',
+  },
+  {
+    label: 'Gallery Layout',
+    description: 'Set how many artworks appear per row',
+    icon: FiLayout,
+    path: '/admin/gallery-layout',
   },
 ];
 
