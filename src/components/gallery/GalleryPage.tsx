@@ -100,25 +100,27 @@ export default function GalleryPage() {
       )}
 
       {/* Gallery */}
-      {products.length === 0 ? (
-        <p className="text-center text-stone-400 italic py-16">No artworks found.</p>
-      ) : (
-        <div ref={containerRef} className="flex flex-col gap-2">
-          {rows.map((row, rowIdx) => {
-            const isLast = rowIdx === rows.length - 1;
-            const rh = computeRowHeight(row, containerWidth, settings.targetHeight, isLast);
-            return (
-              <div key={rowIdx} className="flex gap-2">
-                {row.map(p => (
-                  <div key={p._id} style={{ width: itemWidth(p, rh), height: rh, flexShrink: 0 }}>
-                    <GalleryItem product={p} />
-                  </div>
-                ))}
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <div ref={containerRef}>
+        {products.length === 0 ? (
+          <p className="text-center text-stone-400 italic py-16">No artworks found.</p>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {rows.map((row, rowIdx) => {
+              const isLast = rowIdx === rows.length - 1;
+              const rh = computeRowHeight(row, containerWidth, settings.targetHeight, isLast);
+              return (
+                <div key={rowIdx} className="flex gap-2">
+                  {row.map(p => (
+                    <div key={p._id} style={{ width: itemWidth(p, rh), height: rh, flexShrink: 0 }}>
+                      <GalleryItem product={p} />
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
