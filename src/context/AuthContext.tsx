@@ -13,25 +13,46 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const SESSION_KEY = 'auth';
+
+function readCache(): { isLoggedIn: boolean; isAdmin: boolean } {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    return raw ? JSON.parse(raw) : { isLoggedIn: false, isAdmin: false };
+  } catch { return { isLoggedIn: false, isAdmin: false }; }
+}
+
+function writeCache(state: { isLoggedIn: boolean; isAdmin: boolean }) {
+  try {
+    if (state.isLoggedIn) sessionStorage.setItem(SESSION_KEY, JSON.stringify(state));
+    else sessionStorage.removeItem(SESSION_KEY);
+  } catch {}
+}
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [authState, setAuthState] = useState({ isLoggedIn: false, isAdmin: false });
+  const [authState, setAuthState] = useState<{ isLoggedIn: boolean; isAdmin: boolean }>(() => {
+    if (typeof window === 'undefined') return { isLoggedIn: false, isAdmin: false };
+    return readCache();
+  });
+
+  const setAuth = (state: { isLoggedIn: boolean; isAdmin: boolean }) => {
+    writeCache(state);
+    setAuthState(state);
+  };
 
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/auth/status`, {
-          credentials: 'include',
-        });
-
+        const res = await fetch(`${API_URL}/api/auth/status`, { credentials: 'include' });
         if (!res.ok) throw new Error('Not logged in');
-
         const data = await res.json();
-        setAuthState({ isLoggedIn: true, isAdmin: data.isAdmin });
+        setAuth({ isLoggedIn: true, isAdmin: data.isAdmin });
       } catch {
-        setAuthState({ isLoggedIn: false, isAdmin: false });
+        setAuth({ isLoggedIn: false, isAdmin: false });
       }
     };
     checkStatus();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -45,16 +66,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!res.ok) throw new Error('Login failed');
 
     const data = await res.json();
-    setAuthState({ isLoggedIn: true, isAdmin: data.role === 'admin' });
+    setAuth({ isLoggedIn: true, isAdmin: data.role === 'admin' });
   };
 
   const logout = async () => {
-    await fetch(`${API_URL}/api/auth/logout`, {
-      method: 'GET',
-      credentials: 'include',
-    });
-
-    setAuthState({ isLoggedIn: false, isAdmin: false });
+    await fetch(`${API_URL}/api/auth/logout`, { method: 'GET', credentials: 'include' });
+    setAuth({ isLoggedIn: false, isAdmin: false });
   };
 
   return (
