@@ -63,12 +63,10 @@ export default function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
-  const [accountOpen, setAccountOpen] = useState(false);
   const [offset, setOffset] = useState(0);
   const [snapping, setSnapping] = useState(false);
   const [galleryCategories, setGalleryCategories] = useState<string[]>([]);
   const [eventCategories, setEventCategories] = useState<string[]>([]);
-  const accountRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
 
@@ -77,16 +75,6 @@ export default function Header() {
       .then(r => r.ok ? r.json() : []).then(setGalleryCategories).catch(() => {});
     fetch(`${API_URL}/api/events/categories`)
       .then(r => r.ok ? r.json() : []).then(setEventCategories).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (accountRef.current && !accountRef.current.contains(e.target as Node)) {
-        setAccountOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   useEffect(() => {
@@ -193,34 +181,25 @@ export default function Header() {
             </Link>
           )}
 
-          <div className="relative" ref={accountRef}>
+          <div className="relative group">
             <button
-              onClick={() => setAccountOpen(p => !p)}
-              className={`flex items-center gap-1.5 text-sm transition-colors ${
-                accountOpen ? 'text-stone-900' : 'text-stone-500 hover:text-stone-900'
-              }`}
+              className="flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-900 transition-colors"
               aria-label="Account menu"
             >
               <FiUser className="w-4 h-4" />
-              <FiChevronDown
-                className={`w-3.5 h-3.5 transition-transform duration-200 ${accountOpen ? 'rotate-180' : ''}`}
-              />
+              <FiChevronDown className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" />
             </button>
 
-            {accountOpen && (
-              <div className="absolute right-0 top-full mt-3 w-44 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden">
+            <div className="absolute right-0 top-full pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-150 z-50">
+              <div className="w-44 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden">
                 {isLoggedIn ? (
                   <>
-                    <Link
-                      href="/settings"
-                      className="block px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
-                      onClick={() => setAccountOpen(false)}
-                    >
+                    <Link href="/settings" className="block px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors">
                       Profile
                     </Link>
                     <div className="h-px bg-stone-100" />
                     <button
-                      onClick={() => { setAccountOpen(false); handleLogout(); }}
+                      onClick={handleLogout}
                       className="w-full text-left px-4 py-3 text-sm text-stone-500 hover:bg-stone-50 transition-colors"
                     >
                       Log out
@@ -228,25 +207,17 @@ export default function Header() {
                   </>
                 ) : (
                   <>
-                    <Link
-                      href="/login"
-                      className="block px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
-                      onClick={() => setAccountOpen(false)}
-                    >
+                    <Link href="/login" className="block px-4 py-3 text-sm text-stone-700 hover:bg-stone-50 transition-colors">
                       Log in
                     </Link>
                     <div className="h-px bg-stone-100" />
-                    <Link
-                      href="/signup"
-                      className="block px-4 py-3 text-sm text-stone-500 hover:bg-stone-50 transition-colors"
-                      onClick={() => setAccountOpen(false)}
-                    >
+                    <Link href="/signup" className="block px-4 py-3 text-sm text-stone-500 hover:bg-stone-50 transition-colors">
                       Sign up
                     </Link>
                   </>
                 )}
               </div>
-            )}
+            </div>
           </div>
         </div>
 

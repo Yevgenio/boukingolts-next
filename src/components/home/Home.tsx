@@ -7,7 +7,7 @@ import { Product } from '@/types/Product';
 import HeroSection from '@/components/home/HeroSection';
 import Testimonials from '@/components/home/Testimonials';
 import AboutSection from '@/components/home/AboutSection';
-import ContactSection from '@/components/home/ContactSection';
+
 import FruitAccordion from '@/components/home/UpcomingEvents';
 import {
   HeroContent,
@@ -70,8 +70,6 @@ export default function HomePage() {
           {s.element}
         </div>
       ))}
-
-        <ContactSection contact={about} />
-      </main>
-    );
-  }
+    </main>
+  );
+}
