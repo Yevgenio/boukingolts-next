@@ -8,10 +8,17 @@ interface Props {
   products: Product[];
 }
 
-const BASE_SPEED = 0.04; // px/ms — ~0.67px/frame at 60fps
-const MAX_BOOST  = 3;    // cap so a fast wheel scroll doesn't cause a jump
-const BOOST_GAIN = 0.03; // how much each scrolled-down px adds to boost
-const DECAY_RATE = 0.88; // boost fraction remaining per 16.67ms frame
+const BASE_SPEED  = 0.04;
+const MAX_BOOST   = 3;
+const BOOST_GAIN  = 0.03;
+const DECAY_RATE  = 0.88;
+const CARD_HEIGHT = 220; // px — all cards share this height, widths vary by aspect ratio
+
+function cardWidth(product: Product): number {
+  const img = product.images[0];
+  const ratio = (img?.width ?? 4) / (img?.height ?? 3);
+  return Math.round(CARD_HEIGHT * ratio);
+}
 
 export default function ProductMarquee({ products }: Props) {
   const trackRef    = useRef<HTMLDivElement>(null);
@@ -29,22 +36,19 @@ export default function ProductMarquee({ products }: Props) {
       if (dy > 0) boostRef.current = Math.min(boostRef.current + dy * BOOST_GAIN, MAX_BOOST);
     };
 
+    // Measured once on mount — items are fixed-size so this never changes
+    const half = (track.firstElementChild as HTMLElement)?.offsetWidth ?? track.scrollWidth / 2;
+
     let rafId: number;
     let lastTs = performance.now();
 
     const animate = (ts: number) => {
-      // Cap delta so tab-switching doesn't cause a single giant jump
       const delta = Math.min(ts - lastTs, 50);
       lastTs = ts;
 
       boostRef.current *= Math.pow(DECAY_RATE, delta / 16.67);
 
-      const speed = (BASE_SPEED + boostRef.current) * delta;
-
-      // Measure the true half-width from the first copy div (includes trailing padding)
-      const half = (track.firstElementChild as HTMLElement)?.offsetWidth ?? track.scrollWidth / 2;
-
-      offsetRef.current += speed;
+      offsetRef.current += (BASE_SPEED + boostRef.current) * delta;
       if (offsetRef.current >= half) offsetRef.current -= half;
 
       track.style.transform = `translateX(-${offsetRef.current}px)`;
@@ -69,24 +73,33 @@ export default function ProductMarquee({ products }: Props) {
         <div className="h-px bg-stone-200 mt-4 max-w-[80px] mx-auto" />
       </div>
       <div className="relative overflow-hidden border-y border-stone-200 py-6">
-        {/* Two identical copies side-by-side. pr-5 on each copy adds the trailing gap so
-            the right edge of copy 1 connects seamlessly with the left edge of copy 2. */}
         <div ref={trackRef} className="flex will-change-transform">
           {[0, 1].map(copy => (
-            <div key={copy} className="flex gap-5 pr-5 flex-shrink-0">
-              {products.map((product, idx) => (
-                <Link href={`/gallery/${product._id}`} key={idx} className="flex-shrink-0 w-44 group">
-                  <div className="w-44 h-60 rounded-lg overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-md transition-shadow">
-                    <Image
-                      src={`${API_URL}/api/uploads/${product.images[0]?.thumbnail}`}
-                      alt={product.name}
-                      width={176}
-                      height={240}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                </Link>
-              ))}
+            <div key={copy} className="flex gap-5 pr-5 flex-shrink-0 items-end">
+              {products.map((product, idx) => {
+                const w = cardWidth(product);
+                return (
+                  <Link
+                    key={idx}
+                    href={`/gallery/${product._id}`}
+                    style={{ width: w, height: CARD_HEIGHT, flexShrink: 0 }}
+                    className="group"
+                  >
+                    <div
+                      style={{ width: w, height: CARD_HEIGHT }}
+                      className="rounded-lg overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-md transition-shadow"
+                    >
+                      <Image
+                        src={`${API_URL}/api/uploads/${product.images[0]?.thumbnail}`}
+                        alt={product.name}
+                        width={product.images[0]?.width || 400}
+                        height={product.images[0]?.height || 500}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           ))}
         </div>
