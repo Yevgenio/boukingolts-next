@@ -7,7 +7,6 @@ import {
   FiImage,
   FiSliders,
   FiMessageSquare,
-  FiMapPin,
   FiInfo,
   FiGrid,
   FiChevronRight,
@@ -23,8 +22,8 @@ const HOME_ITEMS = [
     path: '/admin/hero',
   },
   {
-    label: 'Product Marquee',
-    description: 'Choose which products scroll across the homepage',
+    label: 'Homepage Sections',
+    description: 'Toggle and order the product marquee and upcoming events',
     icon: FiSliders,
     path: '/admin/marquee',
   },
@@ -33,12 +32,6 @@ const HOME_ITEMS = [
     description: 'Add, edit or remove customer reviews',
     icon: FiMessageSquare,
     path: '/admin/testimonials',
-  },
-  {
-    label: 'Where to Find Us',
-    description: 'Update event listings and locations',
-    icon: FiMapPin,
-    path: '/admin/events',
   },
   {
     label: 'About Section',

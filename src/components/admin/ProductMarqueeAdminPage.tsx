@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { MarqueeContent } from '@/types/HomeContent';
+import { MarqueeContent, EventsContent } from '@/types/HomeContent';
 import { Product } from '@/types/Product';
 import { getMarqueeProducts, updateMarqueeProductIds } from '@/api/marquee';
 
@@ -35,11 +35,13 @@ function MarqueePreview({ products }: { products: Product[] }) {
 export default function ProductMarqueeAdminPage() {
   const { isAdmin } = useAuth();
   const router = useRouter();
-  const [form, setForm] = useState<MarqueeContent | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+
+  const [marquee, setMarquee] = useState<MarqueeContent | null>(null);
+  const [events, setEvents] = useState<EventsContent | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [newId, setNewId] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   const showToast = (msg: string, ok: boolean) => {
@@ -49,21 +51,33 @@ export default function ProductMarqueeAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/api/content/home-product-marquee`).then(res => res.json()).then(data => setForm(data)).catch(() => {});
-    getMarqueeProducts().then(setProducts).finally(() => setLoading(false));
+    Promise.all([
+      fetch(`${API_URL}/api/content/home-product-marquee`).then(r => r.json()),
+      fetch(`${API_URL}/api/content/home-events`).then(r => r.json()),
+      getMarqueeProducts(),
+    ]).then(([marqueeData, eventsData, productData]) => {
+      setMarquee(marqueeData);
+      setEvents(eventsData);
+      setProducts(productData);
+    }).finally(() => setLoading(false));
   }, [isAdmin]);
 
   const save = async () => {
-    if (!form) return;
+    if (!marquee || !events) return;
     setSaving(true);
     try {
-      const [res] = await Promise.all([
+      const [r1, r2] = await Promise.all([
         fetch(`${API_URL}/api/content/home-product-marquee`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(form),
+          method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+          body: JSON.stringify(marquee),
+        }),
+        fetch(`${API_URL}/api/content/home-events`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+          body: JSON.stringify(events),
         }),
         updateMarqueeProductIds(products.map(p => p._id)),
       ]);
-      if (res.ok) { showToast('Marquee saved!', true); setTimeout(() => router.push('/admin'), 1500); }
+      if (r1.ok && r2.ok) { showToast('Saved!', true); setTimeout(() => router.push('/admin'), 1500); }
       else showToast('Failed to save', false);
     } catch { showToast('Failed to save', false); }
     finally { setSaving(false); }
@@ -90,30 +104,35 @@ export default function ProductMarqueeAdminPage() {
   };
 
   if (!isAdmin) return <div className="p-4">Unauthorized</div>;
-  if (loading || !form) return <div className="p-4">Loading...</div>;
+  if (loading || !marquee || !events) return <div className="p-4">Loading…</div>;
 
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">← Back to Admin</button>
-        <h1 className="text-2xl font-serif text-stone-800 mb-1">Edit Product Marquee</h1>
+        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">
+          ← Back to Admin
+        </button>
+        <h1 className="text-2xl font-serif text-stone-800 mb-1">Homepage Sections</h1>
         <div className="h-px bg-stone-200 mb-6" />
-
 
         <div className="grid lg:grid-cols-2 gap-8 items-start">
           {/* Form */}
           <div className="space-y-4">
+
+            {/* Product Marquee */}
             <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-4">
+              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Product Marquee</h2>
               <label className="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" className="accent-stone-800 w-4 h-4" checked={form.enabled} onChange={e => setForm({ ...form, enabled: e.target.checked })} />
+                <input type="checkbox" className="accent-stone-800 w-4 h-4" checked={marquee.enabled} onChange={e => setMarquee({ ...marquee, enabled: e.target.checked })} />
                 <span className="text-sm font-medium text-stone-700">Section enabled</span>
               </label>
               <div>
                 <label className={LABEL}>Display order</label>
-                <input type="number" className={INPUT} value={form.order} onChange={e => setForm({ ...form, order: parseInt(e.target.value) })} />
+                <input type="number" className={INPUT} value={marquee.order} onChange={e => setMarquee({ ...marquee, order: parseInt(e.target.value) })} />
               </div>
             </div>
 
+            {/* Product list */}
             <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-3">
               <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Products in Marquee</h2>
               {products.length === 0 && <p className="text-sm text-stone-400 italic">No products added yet</p>}
@@ -130,7 +149,6 @@ export default function ProductMarqueeAdminPage() {
                   <button onClick={() => setProducts(products.filter((_, j) => j !== i))} className="px-1.5 text-red-400 hover:text-red-600">✕</button>
                 </div>
               ))}
-
               <div className="flex gap-2 items-center pt-2">
                 <input
                   value={newId} onChange={e => setNewId(e.target.value)} placeholder="Paste a Product ID here"
@@ -144,7 +162,24 @@ export default function ProductMarqueeAdminPage() {
               </div>
             </div>
 
-            <button className="bg-stone-800 hover:bg-stone-700 text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-50 transition-colors w-full" onClick={save} disabled={saving}>
+            {/* Upcoming Events */}
+            <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-4">
+              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Upcoming Events</h2>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" className="accent-stone-800 w-4 h-4" checked={events.enabled} onChange={e => setEvents({ ...events, enabled: e.target.checked })} />
+                <span className="text-sm font-medium text-stone-700">Section enabled</span>
+              </label>
+              <div>
+                <label className={LABEL}>Display order</label>
+                <input type="number" className={INPUT} value={events.order} onChange={e => setEvents({ ...events, order: parseInt(e.target.value) })} />
+              </div>
+            </div>
+
+            <button
+              className="bg-stone-800 hover:bg-stone-700 text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-50 transition-colors w-full"
+              onClick={save}
+              disabled={saving}
+            >
               {saving ? 'Saving…' : 'Save Changes'}
             </button>
             {toast && (
@@ -154,7 +189,7 @@ export default function ProductMarqueeAdminPage() {
 
           {/* Preview */}
           <div className="lg:sticky lg:top-4">
-            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview</p>
+            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Marquee Preview</p>
             <div className="border border-stone-200 rounded-xl bg-white p-4">
               <MarqueePreview products={products} />
             </div>

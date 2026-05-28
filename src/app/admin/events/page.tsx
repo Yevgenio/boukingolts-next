@@ -1,5 +1,5 @@
-import WhereToFindUsAdminPage from '@/components/admin/EventsAdminPage';
+import { redirect } from 'next/navigation';
 
 export default function AdminEvents() {
-  return <WhereToFindUsAdminPage />;
+  redirect('/admin/marquee');
 }
