@@ -1,15 +1,17 @@
 'use client';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import API_URL from '@/config/config';
 import EventCard from './EventCard';
 import EventsAdminControls from './EventsAdminControls';
 import { Event } from '@/types/Event';
 
-export default function EventsPage() {
+function EventsPageInner() {
+  const searchParams = useSearchParams();
   const [events, setEvents] = useState<Event[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [query, setQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') ?? '');
 
   useEffect(() => {
     fetch(`${API_URL}/api/events/categories`, { cache: 'no-store' })
@@ -75,5 +77,13 @@ export default function EventsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function EventsPage() {
+  return (
+    <Suspense>
+      <EventsPageInner />
+    </Suspense>
   );
 }

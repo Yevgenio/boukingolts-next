@@ -5,24 +5,79 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { FiMenu, FiX, FiChevronDown, FiUser } from 'react-icons/fi';
+import API_URL from '@/config/config';
 
-const NAV_LINKS = [
-  { label: 'Home', href: '/home' },
-  { label: 'Gallery', href: '/gallery' },
-  { label: 'Events', href: '/events' },
-];
+function NavDropdown({
+  label,
+  href,
+  active,
+  items,
+}: {
+  label: string;
+  href: string;
+  active: boolean;
+  items: { label: string; href: string }[];
+}) {
+  const hasItems = items.length > 0;
+
+  return (
+    <div className="relative group">
+      <Link
+        href={href}
+        className={`flex items-center gap-0.5 text-sm tracking-wide transition-colors ${
+          active ? 'text-stone-900 font-medium' : 'text-stone-500 hover:text-stone-900'
+        }`}
+      >
+        {label}
+        {hasItems && (
+          <FiChevronDown className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180 ml-0.5" />
+        )}
+      </Link>
+
+      {hasItems && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-150 z-50">
+          <div className="bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden min-w-[160px]">
+            {items.map((item, i) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`block px-4 py-2.5 text-sm hover:bg-stone-50 transition-colors ${
+                  i === 0
+                    ? 'text-stone-500 border-b border-stone-100'
+                    : 'text-stone-700'
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Header() {
   const { isLoggedIn, isAdmin, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
   const [offset, setOffset] = useState(0);
   const [snapping, setSnapping] = useState(false);
+  const [galleryCategories, setGalleryCategories] = useState<string[]>([]);
+  const [eventCategories, setEventCategories] = useState<string[]>([]);
   const accountRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    fetch(`${API_URL}/api/products/categories`)
+      .then(r => r.ok ? r.json() : []).then(setGalleryCategories).catch(() => {});
+    fetch(`${API_URL}/api/events/categories`)
+      .then(r => r.ok ? r.json() : []).then(setEventCategories).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -41,8 +96,6 @@ export default function Header() {
     }
     const handleScroll = () => {
       const currentY = window.scrollY;
-      // At the very top (or during Safari rubber-band where scrollY goes negative)
-      // always show the header and don't let the negative value corrupt the next delta.
       if (currentY <= 0) {
         setOffset(0);
         lastScrollY.current = 0;
@@ -71,10 +124,19 @@ export default function Header() {
     };
   }, [mobileOpen]);
 
-  // Close mobile menu on route change
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
+  useEffect(() => { setMobileOpen(false); setMobileExpanded(null); }, [pathname]);
 
   const handleLogout = () => { logout(); router.push('/login'); };
+
+  const galleryDropdownItems = [
+    { label: 'All works', href: '/gallery' },
+    ...galleryCategories.map(cat => ({ label: cat, href: `/gallery?category=${encodeURIComponent(cat)}` })),
+  ];
+
+  const eventsDropdownItems = [
+    { label: 'All events', href: '/events' },
+    ...eventCategories.map(cat => ({ label: cat, href: `/events?category=${encodeURIComponent(cat)}` })),
+  ];
 
   return (
     <header
@@ -94,19 +156,30 @@ export default function Header() {
 
         {/* Desktop nav — centred */}
         <nav className="hidden md:flex items-center gap-8 flex-1 justify-center">
-          {NAV_LINKS.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`text-sm tracking-wide transition-colors ${
-                pathname.startsWith(link.href)
-                  ? 'text-stone-900 font-medium'
-                  : 'text-stone-500 hover:text-stone-900'
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          <Link
+            href="/home"
+            className={`text-sm tracking-wide transition-colors ${
+              pathname.startsWith('/home')
+                ? 'text-stone-900 font-medium'
+                : 'text-stone-500 hover:text-stone-900'
+            }`}
+          >
+            Home
+          </Link>
+
+          <NavDropdown
+            label="Gallery"
+            href="/gallery"
+            active={pathname.startsWith('/gallery')}
+            items={galleryDropdownItems}
+          />
+
+          <NavDropdown
+            label="Events"
+            href="/events"
+            active={pathname.startsWith('/events')}
+            items={eventsDropdownItems}
+          />
         </nav>
 
         {/* Right: admin pill + account dropdown */}
@@ -191,19 +264,84 @@ export default function Header() {
       {mobileOpen && (
         <div className="md:hidden border-t border-stone-100 bg-white">
           <div className="max-w-7xl mx-auto px-6 py-4 space-y-1">
-            {NAV_LINKS.map(link => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`block py-3 text-sm border-b border-stone-50 transition-colors ${
-                  pathname.startsWith(link.href)
-                    ? 'text-stone-900 font-medium'
-                    : 'text-stone-600'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+
+            <Link
+              href="/home"
+              className={`block py-3 text-sm border-b border-stone-50 transition-colors ${
+                pathname.startsWith('/home') ? 'text-stone-900 font-medium' : 'text-stone-600'
+              }`}
+            >
+              Home
+            </Link>
+
+            {/* Gallery with category accordion */}
+            <div>
+              <div className="flex items-center justify-between py-3 border-b border-stone-50">
+                <Link
+                  href="/gallery"
+                  className={`text-sm ${pathname.startsWith('/gallery') ? 'text-stone-900 font-medium' : 'text-stone-600'}`}
+                >
+                  Gallery
+                </Link>
+                {galleryCategories.length > 0 && (
+                  <button
+                    onClick={() => setMobileExpanded(v => v === 'gallery' ? null : 'gallery')}
+                    className="p-1 text-stone-400"
+                    aria-label="Expand gallery categories"
+                  >
+                    <FiChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileExpanded === 'gallery' ? 'rotate-180' : ''}`} />
+                  </button>
+                )}
+              </div>
+              {mobileExpanded === 'gallery' && (
+                <div className="pl-4 pb-1 pt-1">
+                  {galleryCategories.map(cat => (
+                    <Link
+                      key={cat}
+                      href={`/gallery?category=${encodeURIComponent(cat)}`}
+                      className="block py-2 text-xs text-stone-500 hover:text-stone-800 transition-colors"
+                    >
+                      {cat}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Events with category accordion */}
+            <div>
+              <div className="flex items-center justify-between py-3 border-b border-stone-50">
+                <Link
+                  href="/events"
+                  className={`text-sm ${pathname.startsWith('/events') ? 'text-stone-900 font-medium' : 'text-stone-600'}`}
+                >
+                  Events
+                </Link>
+                {eventCategories.length > 0 && (
+                  <button
+                    onClick={() => setMobileExpanded(v => v === 'events' ? null : 'events')}
+                    className="p-1 text-stone-400"
+                    aria-label="Expand event categories"
+                  >
+                    <FiChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileExpanded === 'events' ? 'rotate-180' : ''}`} />
+                  </button>
+                )}
+              </div>
+              {mobileExpanded === 'events' && (
+                <div className="pl-4 pb-1 pt-1">
+                  {eventCategories.map(cat => (
+                    <Link
+                      key={cat}
+                      href={`/events?category=${encodeURIComponent(cat)}`}
+                      className="block py-2 text-xs text-stone-500 hover:text-stone-800 transition-colors"
+                    >
+                      {cat}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="pt-2 space-y-1">
               {isLoggedIn ? (
                 <>

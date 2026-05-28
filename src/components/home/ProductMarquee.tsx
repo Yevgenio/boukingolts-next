@@ -33,7 +33,7 @@ export default function ProductMarquee({ products }: Props) {
     const handleScroll = () => {
       const dy = window.scrollY - lastScrollY.current;
       lastScrollY.current = window.scrollY;
-      if (dy > 0) boostRef.current = Math.min(boostRef.current + dy * BOOST_GAIN, MAX_BOOST);
+      boostRef.current = Math.max(-MAX_BOOST, Math.min(boostRef.current + dy * BOOST_GAIN, MAX_BOOST));
     };
 
     // Measured once on mount — items are fixed-size so this never changes
@@ -50,6 +50,7 @@ export default function ProductMarquee({ products }: Props) {
 
       offsetRef.current += (BASE_SPEED + boostRef.current) * delta;
       if (offsetRef.current >= half) offsetRef.current -= half;
+      if (offsetRef.current < 0) offsetRef.current += half;
 
       track.style.transform = `translateX(-${offsetRef.current}px)`;
       rafId = requestAnimationFrame(animate);

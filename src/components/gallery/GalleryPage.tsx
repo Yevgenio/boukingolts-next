@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import GalleryItem from '@/components/gallery/GalleryItem';
 import GalleryAdminControls from '@/components/gallery/GalleryAdminControls';
 import API_URL from '@/config/config';
@@ -10,24 +11,83 @@ import { buildRows, computeRowHeight, itemWidth } from '@/utils/galleryLayout';
 
 const DEFAULTS: GallerySettings = { targetHeight: 280, variance: 100 };
 
-const PILL = (active: boolean) =>
-  `px-4 py-1.5 rounded-full text-sm transition-colors ${
-    active
-      ? 'bg-stone-800 text-white'
-      : 'border border-stone-300 text-stone-600 hover:border-stone-500 hover:text-stone-800'
-  }`;
+type DropdownOption = { value: string; label: string };
 
-const FILTER_SELECT =
-  'border border-stone-300 rounded-full px-4 py-1.5 text-sm bg-white text-stone-600 ' +
-  'hover:border-stone-500 hover:text-stone-800 cursor-pointer focus:outline-none transition-colors appearance-none pr-8';
+function FilterDropdown({
+  placeholder,
+  options,
+  selected,
+  onSelect,
+}: {
+  placeholder: string;
+  options: DropdownOption[];
+  selected: string;
+  onSelect: (val: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const active = !!selected;
+  const displayLabel = options.find(o => o.value === selected)?.label ?? placeholder;
 
-export default function GalleryPage() {
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(p => !p)}
+        className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm transition-colors whitespace-nowrap ${
+          active
+            ? 'bg-stone-800 text-white'
+            : 'border border-stone-300 text-stone-600 hover:border-stone-500 hover:text-stone-800'
+        }`}
+      >
+        {displayLabel}
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" className={`transition-transform duration-200 flex-shrink-0 ${open ? 'rotate-180' : ''}`}>
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute top-full left-0 mt-2 min-w-[160px] bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden z-20">
+          {active && (
+            <button
+              onClick={() => { onSelect(''); setOpen(false); }}
+              className="w-full text-left px-4 py-2.5 text-xs text-stone-400 hover:bg-stone-50 transition-colors border-b border-stone-100"
+            >
+              Clear
+            </button>
+          )}
+          {options.map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => { onSelect(opt.value); setOpen(false); }}
+              className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-stone-50 ${
+                selected === opt.value ? 'text-stone-900 font-medium' : 'text-stone-700'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function GalleryPageInner() {
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [seriesList, setSeriesList] = useState<string[]>([]);
   const [query, setQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedSeries, setSelectedSeries] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') ?? '');
+  const [selectedSeries, setSelectedSeries] = useState(searchParams.get('series') ?? '');
   const [availableOnly, setAvailableOnly] = useState(false);
   const [sort, setSort] = useState('');
   const [settings, setSettings] = useState<GallerySettings>(DEFAULTS);
@@ -70,19 +130,22 @@ export default function GalleryPage() {
     [products, containerWidth, settings]
   );
 
-  const activeFilterCount = [selectedSeries, availableOnly, sort].filter(Boolean).length;
+  const activeFilterCount = [selectedCategory, selectedSeries, availableOnly, sort].filter(Boolean).length;
+  const clearFilters = () => { setSelectedCategory(''); setSelectedSeries(''); setAvailableOnly(false); setSort(''); };
+
+  const categoryOptions: DropdownOption[] = categories.map(c => ({ value: c, label: c }));
+  const seriesOptions: DropdownOption[] = seriesList.map(s => ({ value: s, label: s }));
+  const sortOptions: DropdownOption[] = [{ value: 'recent', label: 'Newest first' }];
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
 
-      {/* Header */}
       <div className="flex items-end justify-between mb-2">
         <h1 className="text-4xl font-serif text-stone-800 tracking-tight">Gallery</h1>
         <GalleryAdminControls />
       </div>
       <div className="h-px bg-stone-200 mb-8" />
 
-      {/* Search */}
       <input
         type="text"
         placeholder="Search artworks…"
@@ -91,73 +154,57 @@ export default function GalleryPage() {
         onChange={e => setQuery(e.target.value)}
       />
 
-      {/* Category pills */}
-      {categories.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          <button onClick={() => setSelectedCategory('')} className={PILL(selectedCategory === '')}>All</button>
-          {categories.map(cat => (
-            <button key={cat} onClick={() => setSelectedCategory(cat)} className={PILL(selectedCategory === cat)}>
-              {cat}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Compact single-row filter bar */}
+      <div className="flex items-center gap-2 mb-8 flex-wrap">
+        {categoryOptions.length > 0 && (
+          <FilterDropdown
+            placeholder="Category"
+            options={categoryOptions}
+            selected={selectedCategory}
+            onSelect={setSelectedCategory}
+          />
+        )}
+        {seriesOptions.length > 0 && (
+          <FilterDropdown
+            placeholder="Series"
+            options={seriesOptions}
+            selected={selectedSeries}
+            onSelect={setSelectedSeries}
+          />
+        )}
+        <button
+          onClick={() => setAvailableOnly(v => !v)}
+          className={`px-4 py-1.5 rounded-full text-sm transition-colors ${
+            availableOnly
+              ? 'bg-stone-800 text-white'
+              : 'border border-stone-300 text-stone-600 hover:border-stone-500 hover:text-stone-800'
+          }`}
+        >
+          Available
+        </button>
+        <FilterDropdown
+          placeholder="Sort"
+          options={sortOptions}
+          selected={sort}
+          onSelect={setSort}
+        />
 
-      {/* Secondary filter bar */}
-      <div className="flex items-center justify-between flex-wrap gap-3 mb-8 pt-3 border-t border-stone-100">
-        <div className="flex items-center gap-2 flex-wrap">
-
-          {/* Series dropdown */}
-          {seriesList.length > 0 && (
-            <div className="relative">
-              <select
-                value={selectedSeries}
-                onChange={e => setSelectedSeries(e.target.value)}
-                className={FILTER_SELECT}
-              >
-                <option value="">All series</option>
-                {seriesList.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs">▾</span>
-            </div>
-          )}
-
-          {/* Available toggle */}
-          <button
-            onClick={() => setAvailableOnly(v => !v)}
-            className={PILL(availableOnly)}
-          >
-            Available
-          </button>
-
-          {/* Sort */}
-          <div className="relative">
-            <select
-              value={sort}
-              onChange={e => setSort(e.target.value)}
-              className={FILTER_SELECT}
-            >
-              <option value="">Default order</option>
-              <option value="recent">Newest first</option>
-            </select>
-            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs">▾</span>
-          </div>
-
-          {/* Clear active filters */}
+        <div className="ml-auto flex items-center gap-3">
+          <span className="text-xs text-stone-400">
+            {products.length} {products.length === 1 ? 'work' : 'works'}
+          </span>
           {activeFilterCount > 0 && (
             <button
-              onClick={() => { setSelectedSeries(''); setAvailableOnly(false); setSort(''); }}
+              onClick={clearFilters}
               className="text-xs text-stone-400 hover:text-stone-700 transition-colors underline underline-offset-2"
             >
-              Clear filters
+              Clear all
             </button>
           )}
         </div>
-
-        <span className="text-xs text-stone-400">{products.length} {products.length === 1 ? 'work' : 'works'}</span>
       </div>
 
-      {/* Gallery */}
+      {/* Gallery grid */}
       <div ref={containerRef}>
         {products.length === 0 ? (
           <p className="text-center text-stone-400 italic py-16">No artworks found.</p>
@@ -180,5 +227,13 @@ export default function GalleryPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function GalleryPage() {
+  return (
+    <Suspense>
+      <GalleryPageInner />
+    </Suspense>
   );
 }
