@@ -26,6 +26,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
   const [rank, setRank] = useState<number | ''>('');
   const [featured, setFeatured] = useState<number | ''>('');
   const [tags, setTags] = useState('');
+  const [series, setSeries] = useState('');
   const [year, setYear] = useState<number | ''>('');
   const [forSale, setForSale] = useState(false);
   const [dimW, setDimW] = useState('');
@@ -53,6 +54,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
           setRank(data.rank ?? '');
           setFeatured(data.featured ?? '');
           setTags(Array.isArray(data.tags) ? data.tags.join(', ') : '');
+          setSeries(data.series ?? '');
           setYear(data.year || '');
           setForSale(data.forSale ?? false);
           if (Array.isArray(data.dimensions) && data.dimensions.length >= 2) {
@@ -116,6 +118,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
     if (rank !== '') formData.append('rank', String(rank));
     formData.append('featured', String(featured));
     if (tags.trim()) formData.append('tags', tags);
+    formData.append('series', series);
     if (year !== '') formData.append('year', String(year));
     formData.append('forSale', String(forSale));
 
@@ -193,6 +196,11 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
           <div>
             <label className={LABEL}>Tags</label>
             <input type="text" value={tags} onChange={e => setTags(e.target.value)} className={INPUT} placeholder="oil, landscape, blue — comma separated" />
+          </div>
+
+          <div>
+            <label className={LABEL}>Series</label>
+            <input type="text" value={series} onChange={e => setSeries(e.target.value)} className={INPUT} placeholder="e.g. Mediterranean Coast, Urban Sketches" />
           </div>
 
           {/* Year + For Sale */}

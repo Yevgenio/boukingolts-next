@@ -2,6 +2,7 @@ import Link from 'next/link';
 import API_URL from '@/config/config';
 import ProductPageAdminControls from '@/components/gallery/ProductPageAdminControls';
 import ProductImageViewer from '@/components/gallery/ProductImageViewer';
+import RelatedProductsRow from '@/components/gallery/RelatedProductsRow';
 import { Product } from '@/types/Product';
 
 function formatDims(product: Product): string | null {
@@ -9,6 +10,16 @@ function formatDims(product: Product): string | null {
   if (!d || d.length < 2) return null;
   const unit = product.dimensionUnit ?? 'cm';
   return d.length >= 3 ? `${d[0]} × ${d[1]} × ${d[2]} ${unit}` : `${d[0]} × ${d[1]} ${unit}`;
+}
+
+async function fetchRelated(params: Record<string, string>): Promise<Product[]> {
+  const qs = new URLSearchParams(params).toString();
+  try {
+    const res = await fetch(`${API_URL}/api/products/search?${qs}&limit=16`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.data ?? [];
+  } catch { return []; }
 }
 
 export default async function GalleryItemPage({ params }: { params: { id: string } }) {
@@ -29,6 +40,15 @@ export default async function GalleryItemPage({ params }: { params: { id: string
   const dims = formatDims(product);
   const cleanSpecs = product.specs?.filter(s => s.key && s.value) ?? [];
 
+  const [seriesProducts, categoryProducts] = await Promise.all([
+    product.series
+      ? fetchRelated({ series: product.series, exclude: product._id })
+      : Promise.resolve([] as Product[]),
+    product.category
+      ? fetchRelated({ category: product.category, exclude: product._id })
+      : Promise.resolve([] as Product[]),
+  ]);
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
 
@@ -42,19 +62,25 @@ export default async function GalleryItemPage({ params }: { params: { id: string
 
         <div className="flex flex-col gap-5 pt-2">
 
-          {/* Title */}
           <div>
             <h1 className="text-4xl font-serif text-stone-900 leading-tight">{product.name}</h1>
             <div className="h-px bg-stone-200 mt-5" />
           </div>
 
-          {/* Metadata row */}
           <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5">
             {product.category && (
               <span className="text-xs text-stone-400 uppercase tracking-widest">{product.category}</span>
             )}
             {!!product.year && (
               <span className="text-xs text-stone-400">{product.year}</span>
+            )}
+            {product.series && (
+              <Link
+                href={`/gallery?series=${encodeURIComponent(product.series)}`}
+                className="text-xs text-stone-500 hover:text-stone-800 transition-colors underline underline-offset-2"
+              >
+                {product.series}
+              </Link>
             )}
             {product.forSale && (
               <span className="text-[10px] font-semibold tracking-widest uppercase bg-stone-800 text-white px-2.5 py-1 rounded-full">
@@ -65,7 +91,6 @@ export default async function GalleryItemPage({ params }: { params: { id: string
 
           <ProductPageAdminControls productId={params.id} />
 
-          {/* Tags */}
           {(product.tags?.length ?? 0) > 0 && (
             <div className="flex flex-wrap gap-2">
               {product.tags!.map((tag: string) => (
@@ -76,12 +101,8 @@ export default async function GalleryItemPage({ params }: { params: { id: string
             </div>
           )}
 
-          {/* Dimensions */}
-          {dims && (
-            <p className="text-sm text-stone-600 tracking-wide">{dims}</p>
-          )}
+          {dims && <p className="text-sm text-stone-600 tracking-wide">{dims}</p>}
 
-          {/* Description */}
           {product.description && (
             <div
               className="prose prose-sm prose-stone max-w-none text-stone-700 leading-relaxed"
@@ -89,7 +110,6 @@ export default async function GalleryItemPage({ params }: { params: { id: string
             />
           )}
 
-          {/* Specs table */}
           {cleanSpecs.length > 0 && (
             <div className="border-t border-stone-100 pt-4">
               <table className="w-full text-sm">
@@ -105,7 +125,6 @@ export default async function GalleryItemPage({ params }: { params: { id: string
             </div>
           )}
 
-          {/* Price */}
           {product.price != null && product.price > 0 && (
             <div className="pt-2 border-t border-stone-100">
               {product.salePercent ? (
@@ -126,6 +145,24 @@ export default async function GalleryItemPage({ params }: { params: { id: string
 
         </div>
       </div>
+
+      {(seriesProducts.length > 0 || categoryProducts.length > 0) && (
+        <div className="mt-20 space-y-14 border-t border-stone-100 pt-14">
+          {seriesProducts.length > 0 && (
+            <RelatedProductsRow
+              title={`More from "${product.series}"`}
+              products={seriesProducts}
+            />
+          )}
+          {categoryProducts.length > 0 && (
+            <RelatedProductsRow
+              title={`More ${product.category} works`}
+              products={categoryProducts}
+            />
+          )}
+        </div>
+      )}
+
     </div>
   );
 }

@@ -16,6 +16,7 @@ export interface Product {
   rank?: number;
   featured?: number;
   tags?: string[];
+  series?: string;
   dimensions?: number[];
   dimensionUnit?: string;
   year?: number;
