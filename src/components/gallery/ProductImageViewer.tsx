@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import API_URL from '@/config/config';
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Image as ImageType } from '@/types/Image';
 
 interface Props {
@@ -10,20 +10,34 @@ interface Props {
   name: string;
 }
 
+const ZOOM = 2.5;
+
 export default function ProductImageViewer({ images, name }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [zoomed, setZoomed] = useState(false);
-  const [cursor, setCursor] = useState({ x: 0.5, y: 0.5 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const lensRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const applyTransform = useCallback((scale: number, tx = 0, ty = 0, animated = false) => {
+    if (!lensRef.current) return;
+    lensRef.current.style.transition = animated ? 'transform 0.2s ease-out' : 'none';
+    lensRef.current.style.transform = `scale(${scale}) translate(${tx}%, ${ty}%)`;
+  }, []);
+
+  const handleMouseEnter = useCallback(() => {
+    applyTransform(ZOOM, 0, 0, true);
+  }, [applyTransform]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
-    setCursor({
-      x: (e.clientX - rect.left) / rect.width,
-      y: (e.clientY - rect.top) / rect.height,
-    });
-  };
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    applyTransform(ZOOM, (0.5 - x) * 100, (0.5 - y) * 100, false);
+  }, [applyTransform]);
+
+  const handleMouseLeave = useCallback(() => {
+    applyTransform(1, 0, 0, true);
+  }, [applyTransform]);
 
   if (!images.length) {
     return (
@@ -33,29 +47,23 @@ export default function ProductImageViewer({ images, name }: Props) {
     );
   }
 
-  // When zoomed 2.5x, translate so the cursor point stays centred in view
-  const tx = (0.5 - cursor.x) * 100;
-  const ty = (0.5 - cursor.y) * 100;
-
   return (
     <div className="flex flex-col gap-3">
       <div
         ref={containerRef}
         className="w-full aspect-square rounded-xl overflow-hidden relative bg-stone-100 shadow-sm cursor-crosshair"
-        onMouseEnter={() => setZoomed(true)}
-        onMouseLeave={() => setZoomed(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         onMouseMove={handleMouseMove}
       >
-        <Image
-          src={`${API_URL}/api/uploads/${images[activeIndex].url}`}
-          alt={name}
-          fill
-          className="object-contain"
-          style={{
-            transform: zoomed ? `scale(2.5) translate(${tx}%, ${ty}%)` : 'scale(1)',
-            transition: 'transform 0.15s ease-out',
-          }}
-        />
+        <div ref={lensRef} className="absolute inset-0" style={{ willChange: 'transform' }}>
+          <Image
+            src={`${API_URL}/api/uploads/${images[activeIndex].url}`}
+            alt={name}
+            fill
+            className="object-contain"
+          />
+        </div>
       </div>
 
       {images.length > 1 && (
