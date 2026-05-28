@@ -88,6 +88,7 @@ function GalleryPageInner() {
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') ?? '');
   const [selectedSeries, setSelectedSeries] = useState(searchParams.get('series') ?? '');
+  const [selectedTag, setSelectedTag] = useState(searchParams.get('tag') ?? '');
   const [availableOnly, setAvailableOnly] = useState(false);
   const [sort, setSort] = useState('');
   const [settings, setSettings] = useState<GallerySettings>(DEFAULTS);
@@ -115,13 +116,14 @@ function GalleryPageInner() {
     if (query) params.set('query', query);
     if (selectedCategory) params.set('category', selectedCategory);
     if (selectedSeries) params.set('series', selectedSeries);
+    if (selectedTag) params.set('tag', selectedTag);
     if (availableOnly) params.set('forSale', 'true');
     if (sort) params.set('sort', sort);
     const qs = params.toString();
     const res = await fetch(`${API_URL}/api/products/search${qs ? `?${qs}` : ''}`, { cache: 'no-store' });
     const result = await res.json();
     setProducts(result.data);
-  }, [query, selectedCategory, selectedSeries, availableOnly, sort]);
+  }, [query, selectedCategory, selectedSeries, selectedTag, availableOnly, sort]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
@@ -130,8 +132,8 @@ function GalleryPageInner() {
     [products, containerWidth, settings]
   );
 
-  const activeFilterCount = [selectedCategory, selectedSeries, availableOnly, sort].filter(Boolean).length;
-  const clearFilters = () => { setSelectedCategory(''); setSelectedSeries(''); setAvailableOnly(false); setSort(''); };
+  const activeFilterCount = [selectedCategory, selectedSeries, selectedTag, availableOnly, sort].filter(Boolean).length;
+  const clearFilters = () => { setSelectedCategory(''); setSelectedSeries(''); setSelectedTag(''); setAvailableOnly(false); setSort(''); };
 
   const categoryOptions: DropdownOption[] = categories.map(c => ({ value: c, label: c }));
   const seriesOptions: DropdownOption[] = seriesList.map(s => ({ value: s, label: s }));
@@ -171,6 +173,17 @@ function GalleryPageInner() {
             selected={selectedSeries}
             onSelect={setSelectedSeries}
           />
+        )}
+        {selectedTag && (
+          <button
+            onClick={() => setSelectedTag('')}
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm bg-stone-800 text-white"
+          >
+            #{selectedTag}
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
         )}
         <button
           onClick={() => setAvailableOnly(v => !v)}

@@ -40,20 +40,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAuthState(state);
   };
 
-  useEffect(() => {
-    const checkStatus = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/auth/status`, { credentials: 'include' });
-        if (!res.ok) throw new Error('Not logged in');
-        const data = await res.json();
-        setAuth({ isLoggedIn: true, isAdmin: data.isAdmin });
-      } catch {
-        setAuth({ isLoggedIn: false, isAdmin: false });
-      }
-    };
-    checkStatus();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const checkStatus = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/auth/status`, { credentials: 'include' });
+      if (!res.ok) throw new Error('Not logged in');
+      const data = await res.json();
+      setAuth({ isLoggedIn: true, isAdmin: data.isAdmin });
+    } catch {
+      setAuth({ isLoggedIn: false, isAdmin: false });
+    }
+  };
+
+  useEffect(() => { checkStatus(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const login = async (email: string, password: string) => {
     const res = await fetch(`${API_URL}/api/auth/login`, {
@@ -62,11 +60,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       body: JSON.stringify({ email, password }),
       credentials: 'include',
     });
-
     if (!res.ok) throw new Error('Login failed');
-
-    const data = await res.json();
-    setAuth({ isLoggedIn: true, isAdmin: data.role === 'admin' });
+    await checkStatus();
   };
 
   const logout = async () => {

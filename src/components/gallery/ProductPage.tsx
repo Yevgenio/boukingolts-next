@@ -69,7 +69,12 @@ export default async function GalleryItemPage({ params }: { params: { id: string
 
           <div className="flex items-center flex-wrap gap-x-4 gap-y-1.5">
             {product.category && (
-              <span className="text-xs text-stone-400 uppercase tracking-widest">{product.category}</span>
+              <Link
+                href={`/gallery?category=${encodeURIComponent(product.category)}`}
+                className="text-xs text-stone-400 uppercase tracking-widest hover:text-stone-700 transition-colors"
+              >
+                {product.category}
+              </Link>
             )}
             {!!product.year && (
               <span className="text-xs text-stone-400">{product.year}</span>
@@ -94,9 +99,13 @@ export default async function GalleryItemPage({ params }: { params: { id: string
           {(product.tags?.length ?? 0) > 0 && (
             <div className="flex flex-wrap gap-2">
               {product.tags!.map((tag: string) => (
-                <span key={tag} className="border border-stone-300 text-stone-600 text-xs px-3 py-1 rounded-full">
+                <Link
+                  key={tag}
+                  href={`/gallery?tag=${encodeURIComponent(tag)}`}
+                  className="border border-stone-300 text-stone-600 text-xs px-3 py-1 rounded-full hover:border-stone-500 hover:text-stone-900 transition-colors"
+                >
                   {tag}
-                </span>
+                </Link>
               ))}
             </div>
           )}
