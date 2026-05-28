@@ -41,6 +41,13 @@ export default function Header() {
     }
     const handleScroll = () => {
       const currentY = window.scrollY;
+      // At the very top (or during Safari rubber-band where scrollY goes negative)
+      // always show the header and don't let the negative value corrupt the next delta.
+      if (currentY <= 0) {
+        setOffset(0);
+        lastScrollY.current = 0;
+        return;
+      }
       const delta = currentY - lastScrollY.current;
       const height = headerRef.current?.offsetHeight ?? 64;
       setOffset(prev => Math.min(0, Math.max(-height, prev - delta)));
@@ -49,7 +56,11 @@ export default function Header() {
     const handleScrollEnd = () => {
       const height = headerRef.current?.offsetHeight ?? 64;
       setSnapping(true);
-      setOffset(prev => (prev < -height / 2 ? -height : 0));
+      if (window.scrollY <= 0) {
+        setOffset(0);
+      } else {
+        setOffset(prev => (prev < -height / 2 ? -height : 0));
+      }
       setTimeout(() => setSnapping(false), 300);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
