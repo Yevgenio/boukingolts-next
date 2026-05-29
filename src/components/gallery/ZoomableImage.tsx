@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React, { useState } from 'react';
-import API_URL from '@/config/config';
+import { IMAGE_URL } from '@/config/config';
 
 interface ZoomableImageProps {
   src: string;
@@ -25,7 +25,7 @@ export default function ZoomableImage({ src, alt }: ZoomableImageProps) {
       className="relative w-full h-full overflow-hidden"
     >
       <Image
-        src={`${API_URL}/api/uploads/${src}`}
+        src={`${IMAGE_URL}/api/uploads/${src}`}
         alt={alt}
         fill
         className="object-cover transition-transform duration-300"

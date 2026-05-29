@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import API_URL from '@/config/config';
+import { IMAGE_URL } from '@/config/config';
 import { LocationIcon, CallIcon, EmailIcon, WhatsappIcon, InstagramIcon } from '@/components/icons';
 import { AboutContent } from '@/types/HomeContent';
 
@@ -15,7 +15,7 @@ export default function AboutSection({ content }: Props) {
         {content.images?.[0] && (
           <div className="flex-shrink-0">
             <Image
-              src={`${API_URL}/api/uploads/${content.images[0].thumbnail}`}
+              src={`${IMAGE_URL}/api/uploads/${content.images[0].thumbnail}`}
               alt={content.name}
               width={256}
               height={256}

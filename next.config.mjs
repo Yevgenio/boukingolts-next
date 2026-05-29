@@ -2,17 +2,16 @@
 const nextConfig = {
   output: "standalone",
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "source-code.click",
+        hostname: "images.source-code.click",
         pathname: "/api/uploads/**",
       },
       {
         protocol: "http",
         hostname: "localhost",
-        port: "5000",
+        port: "5001",
         pathname: "/api/uploads/**",
       },
     ],

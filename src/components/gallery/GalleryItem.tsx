@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import GalleryItemAdminControls from './GalleryItemAdminControls';
-import API_URL from '@/config/config';
+import { IMAGE_URL } from '@/config/config';
 import { Product } from '@/types/Product';
 
 function formatDims(product: Product): string | null {
@@ -21,13 +21,13 @@ export default function GalleryItem({ product }: { product: Product }) {
       <div className="relative w-full h-full rounded-xl overflow-hidden bg-stone-100">
         <Link href={`/gallery/${product._id}`} className="block h-full">
           <Image
-            src={`${API_URL}/api/uploads/${product.images[0]?.thumbnail}`}
+            src={`${IMAGE_URL}/api/uploads/${product.images[0]?.thumbnail}`}
             alt={product.name}
             width={product.images[0]?.width || 400}
             height={product.images[0]?.height || 500}
             className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.04]"
             placeholder="blur"
-            blurDataURL={`${API_URL}/api/uploads/default.jpg`}
+            blurDataURL={`${IMAGE_URL}/api/uploads/default.jpg`}
           />
 
           {/* Gradient — subtle by default, deepens on hover */}

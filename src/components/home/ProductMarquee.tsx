@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import API_URL from '@/config/config';
+import { IMAGE_URL } from '@/config/config';
 import Image from 'next/image';
 import { Product } from '@/types/Product';
 import Link from 'next/link';
@@ -91,7 +91,7 @@ export default function ProductMarquee({ products }: Props) {
                       className="rounded-lg overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-md transition-shadow"
                     >
                       <Image
-                        src={`${API_URL}/api/uploads/${product.images[0]?.thumbnail}`}
+                        src={`${IMAGE_URL}/api/uploads/${product.images[0]?.thumbnail}`}
                         alt={product.name}
                         width={product.images[0]?.width || 400}
                         height={product.images[0]?.height || 500}
