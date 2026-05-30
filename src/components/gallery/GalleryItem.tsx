@@ -24,7 +24,7 @@ export default function GalleryItem({ product }: { product: Product }) {
             src={`${IMAGE_URL}/${product.images[0]?.thumbnail ?? 'default.jpg'}`}
             alt={product.name}
             width={product.images[0]?.width || 400}
-            height={product.images[0]?.height || 500}
+            height={product.images[0]?.height || 400}
             className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.04]"
             placeholder="blur"
             blurDataURL={`${IMAGE_URL}/default.jpg`}

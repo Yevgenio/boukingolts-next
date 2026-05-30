@@ -19,7 +19,7 @@ export function buildRows(
   let ratioSum = 0;
 
   for (const p of products) {
-    const r = (p.images[0]?.width ?? 4) / (p.images[0]?.height ?? 3);
+    const r = (p.images[0]?.width ?? 1) / (p.images[0]?.height ?? 1);
 
     if (row.length === 0) {
       row.push(p);
@@ -59,7 +59,7 @@ export function computeRowHeight(
   isLast: boolean
 ): number {
   const ratioSum = row.reduce(
-    (s, p) => s + (p.images[0]?.width ?? 4) / (p.images[0]?.height ?? 3),
+    (s, p) => s + (p.images[0]?.width ?? 1) / (p.images[0]?.height ?? 1),
     0
   );
   if (isLast && row.length === 1) return targetHeight;
@@ -67,6 +67,6 @@ export function computeRowHeight(
 }
 
 export function itemWidth(product: Product, rowHeight: number): number {
-  const r = (product.images[0]?.width ?? 4) / (product.images[0]?.height ?? 3);
+  const r = (product.images[0]?.width ?? 1) / (product.images[0]?.height ?? 1);
   return r * rowHeight;
 }
