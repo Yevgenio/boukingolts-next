@@ -41,8 +41,8 @@ export default function ProductImageViewer({ images, name }: Props) {
 
   if (!images.length) {
     return (
-      <div className="w-full aspect-square rounded-xl overflow-hidden bg-stone-100 shadow-sm flex items-center justify-center text-stone-300 text-sm italic">
-        No image
+      <div className="w-full aspect-square rounded-xl overflow-hidden bg-stone-100 shadow-sm relative">
+        <Image src={`${IMAGE_URL}/default.jpg`} alt={name} fill className="object-contain" />
       </div>
     );
   }
