@@ -40,19 +40,22 @@ export default function GalleryItem({ product, previewMode = false }: { product:
             </div>
           )}
 
-          {/* Info panel — title always visible, tags/dims reveal on hover */}
-          <div className="absolute bottom-0 left-0 w-full p-4">
+          {/* Info panel — title slides down when not hovered, extra info expands above on hover */}
+          <div className="absolute bottom-0 left-0 w-full p-4 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 ease-out">
+            {/* Extra info in collapsed wrapper — takes no space when hidden, grows upward on hover */}
+            <div className="overflow-hidden max-h-0 group-hover:max-h-20 transition-all duration-300 ease-out">
+              {(product.tags?.length ?? 0) > 0 && (
+                <p className="text-stone-300 text-xs tracking-wide mb-1">
+                  {product.tags!.slice(0, 3).join(' · ')}
+                </p>
+              )}
+              {dims && (
+                <p className="text-stone-400 text-[11px] tracking-wider mb-1.5">
+                  {dims}
+                </p>
+              )}
+            </div>
             <h2 className="text-white font-serif text-lg leading-snug drop-shadow">{product.name}</h2>
-            {(product.tags?.length ?? 0) > 0 && (
-              <p className="text-stone-300 text-xs mt-1 tracking-wide opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                {product.tags!.slice(0, 3).join(' · ')}
-              </p>
-            )}
-            {dims && (
-              <p className="text-stone-400 text-[11px] mt-1.5 tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
-                {dims}
-              </p>
-            )}
           </div>
         </Link>
       </div>
