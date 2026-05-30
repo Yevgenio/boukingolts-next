@@ -6,9 +6,9 @@ import EventCard from './EventCard';
 import EventsAdminControls from './EventsAdminControls';
 import { Event } from '@/types/Event';
 
-function EventsPageInner() {
+function EventsPageInner({ initialEvents }: { initialEvents?: Event[] }) {
   const searchParams = useSearchParams();
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<Event[]>(initialEvents ?? []);
   const [categories, setCategories] = useState<string[]>([]);
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') ?? '');
@@ -80,10 +80,10 @@ function EventsPageInner() {
   );
 }
 
-export default function EventsPage() {
+export default function EventsPage({ initialEvents }: { initialEvents?: Event[] }) {
   return (
     <Suspense>
-      <EventsPageInner />
+      <EventsPageInner initialEvents={initialEvents} />
     </Suspense>
   );
 }

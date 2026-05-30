@@ -4,6 +4,7 @@ import ProductPageAdminControls from '@/components/gallery/ProductPageAdminContr
 import ProductImageViewer from '@/components/gallery/ProductImageViewer';
 import RelatedProductsRow from '@/components/gallery/RelatedProductsRow';
 import { Product } from '@/types/Product';
+import { AboutContent } from '@/types/HomeContent';
 
 function formatDims(product: Product): string | null {
   const d = product.dimensions;
@@ -23,7 +24,10 @@ async function fetchRelated(params: Record<string, string>, limit = 16): Promise
 }
 
 export default async function GalleryItemPage({ params }: { params: { id: string } }) {
-  const res = await fetch(`${API_URL}/api/products/id/${params.id}`, { cache: 'no-store' });
+  const [res, aboutRes] = await Promise.all([
+    fetch(`${API_URL}/api/products/id/${params.id}`, { cache: 'no-store' }),
+    fetch(`${API_URL}/api/content/about-boukingolts`, { cache: 'no-store' }),
+  ]);
 
   if (!res.ok) {
     return (
@@ -37,6 +41,7 @@ export default async function GalleryItemPage({ params }: { params: { id: string
   }
 
   const product: Product = await res.json();
+  const about: AboutContent | null = aboutRes.ok ? await aboutRes.json() : null;
   const dims = formatDims(product);
   const cleanSpecs = product.specs?.filter(s => s.key && s.value) ?? [];
 
@@ -150,6 +155,36 @@ export default async function GalleryItemPage({ params }: { params: { id: string
               ) : (
                 <span className="text-2xl font-medium text-stone-900">₪{product.price}</span>
               )}
+            </div>
+          )}
+
+          {product.forSale && (
+            <div className="pt-4 border-t border-stone-100 space-y-3">
+              <p className="text-xs font-medium text-stone-400 uppercase tracking-widest">Interested in this piece?</p>
+              <div className="flex flex-wrap gap-2">
+                {about?.email && (
+                  <a
+                    href={`mailto:${about.email}?subject=${encodeURIComponent(`Inquiry about "${product.name}"`)}`}
+                    className="inline-flex items-center gap-2 bg-stone-800 text-white text-sm font-medium tracking-wide px-4 py-2.5 rounded-xl hover:bg-stone-700 transition-colors"
+                  >
+                    Email us
+                  </a>
+                )}
+                {about?.phone && (
+                  <a
+                    href={`tel:${about.phone}`}
+                    className="inline-flex items-center gap-2 border border-stone-300 text-stone-700 text-sm font-medium tracking-wide px-4 py-2.5 rounded-xl hover:border-stone-500 hover:text-stone-900 transition-colors"
+                  >
+                    Call / WhatsApp
+                  </a>
+                )}
+                <Link
+                  href="/events"
+                  className="inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-800 transition-colors pt-0.5"
+                >
+                  See it in person at our next event →
+                </Link>
+              </div>
             </div>
           )}
 

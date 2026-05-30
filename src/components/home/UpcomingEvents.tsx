@@ -2,17 +2,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Event } from '@/types/Event';
-import { getUpcomingEvents } from '@/api/events';
-import API_URL, { resolveImageUrl } from '@/config/config';
+import { resolveImageUrl } from '@/config/config';
 
-export default function UpcomingEvents() {
-  const [events, setEvents] = useState<Event[]>([]);
+export default function UpcomingEvents({ events }: { events: Event[] }) {
   const [active, setActive] = useState(0);
   const [hover, setHover] = useState(false);
-
-  useEffect(() => {
-    getUpcomingEvents().then(setEvents).catch(() => setEvents([]));
-  }, []);
 
   useEffect(() => {
     if (hover || events.length < 2) return;

@@ -80,9 +80,9 @@ function FilterDropdown({
   );
 }
 
-function GalleryPageInner() {
+function GalleryPageInner({ initialProducts }: { initialProducts?: Product[] }) {
   const searchParams = useSearchParams();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>(initialProducts ?? []);
   const [categories, setCategories] = useState<string[]>([]);
   const [seriesList, setSeriesList] = useState<string[]>([]);
   const [query, setQuery] = useState('');
@@ -243,10 +243,10 @@ function GalleryPageInner() {
   );
 }
 
-export default function GalleryPage() {
+export default function GalleryPage({ initialProducts }: { initialProducts?: Product[] }) {
   return (
     <Suspense>
-      <GalleryPageInner />
+      <GalleryPageInner initialProducts={initialProducts} />
     </Suspense>
   );
 }
