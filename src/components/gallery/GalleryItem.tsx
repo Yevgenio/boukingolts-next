@@ -27,7 +27,7 @@ export default function GalleryItem({ product, previewMode = false }: { product:
             height={product.images[0]?.height || 400}
             className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.04]"
             placeholder="blur"
-            blurDataURL={`${IMAGE_URL}/default.jpg`}
+            blurDataURL={resolveImageUrl('default.jpg')}
           />
 
           {/* Gradient — subtle by default, deepens on hover */}
