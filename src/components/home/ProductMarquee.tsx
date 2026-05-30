@@ -10,11 +10,13 @@ interface Props {
   products: Product[];
 }
 
-const BASE_SPEED  = 0.04;
-const MAX_BOOST   = 3;
-const BOOST_GAIN  = 0.03;
-const DECAY_RATE  = 0.88;
-const CARD_HEIGHT = 220; // px — all cards share this height, widths vary by aspect ratio
+const BASE_SPEED   = 0.04;
+const MAX_BOOST    = 2.5;
+const SCROLL_GAIN  = 0.025; // how much each scroll event adds to target boost
+const MAX_DELTA    = 30;    // clamp per-event dy: kills mouse-wheel spikes (~100px), passes touchpad (~5px)
+const TARGET_DECAY = 0.90;  // target boost decays toward 0 each frame
+const LERP_RATE    = 0.10;  // actual boost lerps toward target (lower = smoother ramp)
+const CARD_HEIGHT  = 220;   // px — all cards share this height, widths vary by aspect ratio
 
 function cardWidth(product: Product): number {
   const img = product.images[0];
@@ -25,7 +27,8 @@ function cardWidth(product: Product): number {
 export default function ProductMarquee({ products }: Props) {
   const trackRef    = useRef<HTMLDivElement>(null);
   const offsetRef   = useRef(0);
-  const boostRef    = useRef(0);
+  const boostRef    = useRef(0);   // actual current boost — lerps toward target
+  const targetRef   = useRef(0);   // desired boost — set by scroll, decays over time
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -35,7 +38,9 @@ export default function ProductMarquee({ products }: Props) {
     const handleScroll = () => {
       const dy = window.scrollY - lastScrollY.current;
       lastScrollY.current = window.scrollY;
-      boostRef.current = Math.max(-MAX_BOOST, Math.min(boostRef.current + dy * BOOST_GAIN, MAX_BOOST));
+      // Clamp individual delta so mouse-wheel clicks (dy ~100) don't spike more than touchpad swipes
+      const clamped = Math.sign(dy) * Math.min(Math.abs(dy), MAX_DELTA);
+      targetRef.current = Math.max(-MAX_BOOST, Math.min(targetRef.current + clamped * SCROLL_GAIN, MAX_BOOST));
     };
 
     const half = (track.firstElementChild as HTMLElement)?.offsetWidth ?? track.scrollWidth / 2;
@@ -47,7 +52,11 @@ export default function ProductMarquee({ products }: Props) {
       const delta = Math.min(ts - lastTs, 50);
       lastTs = ts;
 
-      boostRef.current *= Math.pow(DECAY_RATE, delta / 16.67);
+      const t = delta / 16.67;
+      // Target decays toward 0 (user stops scrolling → speed returns to base)
+      targetRef.current *= Math.pow(TARGET_DECAY, t);
+      // Actual boost lerps toward target → smooth acceleration, no sudden jumps
+      boostRef.current += (targetRef.current - boostRef.current) * (1 - Math.pow(1 - LERP_RATE, t));
 
       offsetRef.current += (BASE_SPEED + boostRef.current) * delta;
       if (offsetRef.current >= half) offsetRef.current -= half;
@@ -69,7 +78,7 @@ export default function ProductMarquee({ products }: Props) {
   if (!products.length) return null;
 
   const applyBoost = (dir: 'left' | 'right') => {
-    boostRef.current = dir === 'right' ? MAX_BOOST : -MAX_BOOST;
+    targetRef.current = dir === 'right' ? MAX_BOOST : -MAX_BOOST;
   };
 
   return (
