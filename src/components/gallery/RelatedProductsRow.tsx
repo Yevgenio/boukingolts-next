@@ -66,7 +66,7 @@ export default function RelatedProductsRow({ title, products, href }: { title: s
         <div
           ref={rowRef}
           className="flex gap-4 overflow-x-auto pb-1 items-start"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', paddingRight: '2.5rem' }}
         >
           {products.map(p => {
             const w = cardWidth(p);
