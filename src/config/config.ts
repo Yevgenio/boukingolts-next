@@ -16,3 +16,11 @@ export default API_URL;
 // Always empty in production so <img src> renders as a relative path the browser
 // can reach via the reverse proxy — even when rendered in a server component.
 export const IMAGE_URL = isProd ? 'https://images.source-code.click/gallery' : 'http://10.0.0.105:9000/gallery';
+
+// Resolves any image path to a full URL.
+// Handles blob: URLs (new local uploads), absolute http URLs, and relative MinIO keys.
+export const resolveImageUrl = (path: string): string => {
+  if (!path) return `${IMAGE_URL}/default.jpg`;
+  if (path.startsWith('blob:') || path.startsWith('http') || path.startsWith('/')) return path;
+  return `${IMAGE_URL}/${path}`;
+};

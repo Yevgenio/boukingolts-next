@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import GalleryItemAdminControls from './GalleryItemAdminControls';
-import { IMAGE_URL } from '@/config/config';
+import { resolveImageUrl } from '@/config/config';
 import { Product } from '@/types/Product';
 
 function formatDims(product: Product): string | null {
@@ -13,15 +13,15 @@ function formatDims(product: Product): string | null {
     : `${d[0]} × ${d[1]} ${unit}`;
 }
 
-export default function GalleryItem({ product }: { product: Product }) {
+export default function GalleryItem({ product, previewMode = false }: { product: Product; previewMode?: boolean }) {
   const dims = formatDims(product);
 
   return (
     <div className="relative w-full h-full rounded-xl shadow-sm hover:shadow-2xl transition-shadow duration-500 group">
       <div className="relative w-full h-full rounded-xl overflow-hidden bg-stone-100">
-        <Link href={`/gallery/${product._id}`} className="block h-full">
+        <Link href={previewMode ? '#' : `/gallery/${product._id}`} className="block h-full">
           <Image
-            src={`${IMAGE_URL}/${product.images[0]?.thumbnail ?? 'default.jpg'}`}
+            src={resolveImageUrl(product.images[0]?.thumbnail ?? 'default.jpg')}
             alt={product.name}
             width={product.images[0]?.width || 400}
             height={product.images[0]?.height || 400}
@@ -56,7 +56,7 @@ export default function GalleryItem({ product }: { product: Product }) {
           </div>
         </Link>
       </div>
-      <GalleryItemAdminControls productId={product._id} />
+      {!previewMode && <GalleryItemAdminControls productId={product._id} />}
     </div>
   );
 }

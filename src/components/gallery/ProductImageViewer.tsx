@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { IMAGE_URL } from '@/config/config';
+import { resolveImageUrl } from '@/config/config';
 import { useState, useRef, useCallback } from 'react';
 import { Image as ImageType } from '@/types/Image';
 
@@ -42,7 +42,7 @@ export default function ProductImageViewer({ images, name }: Props) {
   if (!images.length) {
     return (
       <div className="w-full aspect-square rounded-xl overflow-hidden bg-stone-100 shadow-sm relative">
-        <Image src={`${IMAGE_URL}/default.jpg`} alt={name} fill className="object-contain" />
+        <Image src={resolveImageUrl('default.jpg')} alt={name} fill className="object-contain" />
       </div>
     );
   }
@@ -58,7 +58,7 @@ export default function ProductImageViewer({ images, name }: Props) {
       >
         <div ref={lensRef} className="absolute inset-0" style={{ willChange: 'transform' }}>
           <Image
-            src={`${IMAGE_URL}/${images[activeIndex].url}`}
+            src={resolveImageUrl(images[activeIndex].url)}
             alt={name}
             fill
             className="object-contain"
@@ -79,7 +79,7 @@ export default function ProductImageViewer({ images, name }: Props) {
               }`}
             >
               <Image
-                src={`${IMAGE_URL}/${img.thumbnail}`}
+                src={resolveImageUrl(img.thumbnail)}
                 alt={`View ${index + 1}`}
                 width={72}
                 height={72}
