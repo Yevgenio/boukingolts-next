@@ -1,11 +1,14 @@
 'use client';
-import { useEffect, useState } from 'react';
-import API_URL, { IMAGE_URL } from '@/config/config';
+import { useEffect, useState, useRef } from 'react';
+import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { HeroContent } from '@/types/HomeContent';
 import { Image } from '@/types/Image';
 import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
 import { useRouter } from 'next/navigation';
+import HeroSection from '@/components/home/HeroSection';
+
+const REAL_W = 900;
 
 const INPUT = 'border border-stone-300 rounded-lg w-full px-3 py-2.5 mt-1 bg-white focus:outline-none focus:ring-2 focus:ring-stone-200 text-stone-800';
 const LABEL = 'block text-sm font-medium text-stone-700';
@@ -41,38 +44,6 @@ function getImageUrl(item: ImageItem): string | null {
   return null;
 }
 
-function HeroPreview({ form, images }: { form: HeroContent; images: ImageItem[] }) {
-  const firstUrl = images.length ? getImageUrl(images[0]) : null;
-  return (
-    <div className="relative h-48 rounded-lg overflow-hidden text-white bg-stone-400">
-      {firstUrl && (
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${firstUrl}')` }} />
-      )}
-      <div className="absolute inset-0" style={getTintStyle(form.tint)} />
-      <div className="relative z-10 flex items-center justify-center h-full text-center px-6">
-        <div>
-          <h3 className="text-xl font-bold leading-tight mb-2">
-            {form.title || <span className="opacity-40 italic">Title…</span>}
-          </h3>
-          <p className="text-sm opacity-90">
-            {form.paragraph || <span className="opacity-40 italic">Paragraph…</span>}
-          </p>
-          <div className="flex gap-2 justify-center mt-3">
-            <span className="border border-white px-3 py-1 text-xs">Explore Shop</span>
-            <span className="border border-white px-3 py-1 text-xs">Future Events</span>
-          </div>
-        </div>
-      </div>
-      {images.length > 1 && (
-        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
-          {images.map((_, i) => (
-            <span key={i} className={`inline-block w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-white' : 'bg-white/40'}`} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function HeroAdminPage() {
   const { isAdmin } = useAuth();
@@ -82,6 +53,27 @@ export default function HeroAdminPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [previewW, setPreviewW] = useState(450);
+  const [previewImages, setPreviewImages] = useState<Image[]>([]);
+
+  useEffect(() => {
+    const el = previewRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setPreviewW(e.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const blobUrls: string[] = [];
+    const next: Image[] = images.map((img, i) => {
+      const url = img.isNew && img.file ? (blobUrls.push(URL.createObjectURL(img.file)), blobUrls[blobUrls.length - 1]) : (img.url ?? '');
+      return { _id: `preview-${i}`, url, thumbnail: url };
+    });
+    setPreviewImages(next);
+    return () => { blobUrls.forEach(u => URL.revokeObjectURL(u)); };
+  }, [images]);
 
   const showToast = (msg: string, ok: boolean) => {
     setToast({ msg, ok });
@@ -222,10 +214,12 @@ export default function HeroAdminPage() {
           </div>
 
           {/* Preview */}
-          <div className="lg:sticky lg:top-4">
-            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview</p>
-            <div className="border border-stone-200 rounded-xl overflow-hidden bg-white p-3">
-              <HeroPreview form={form} images={images} />
+          <div ref={previewRef} className="lg:sticky lg:top-4">
+            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview — {Math.round(previewW / REAL_W * 100)}% scale</p>
+            <div className="rounded-xl overflow-hidden border border-stone-200" style={{ height: 320 }}>
+              <div style={{ width: REAL_W, transformOrigin: 'top left', transform: `scale(${previewW / REAL_W})`, pointerEvents: 'none' }}>
+                <HeroSection content={{ ...form, images: previewImages }} />
+              </div>
             </div>
           </div>
         </div>

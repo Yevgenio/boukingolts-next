@@ -1,34 +1,30 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { TestimonialItem } from '@/types/HomeContent';
 import { useRouter } from 'next/navigation';
+import Testimonials from '@/components/home/Testimonials';
+
+const REAL_W = 900;
 
 const INPUT = 'border border-stone-300 rounded-lg w-full px-3 py-2.5 mt-1 bg-white focus:outline-none focus:ring-2 focus:ring-stone-200 text-stone-800';
 const LABEL = 'block text-sm font-medium text-stone-700';
 
-function TestimonialsPreview({ comments }: { comments: TestimonialItem[] }) {
-  if (!comments.length)
-    return <p className="text-sm text-stone-400 italic text-center py-6">No testimonials yet</p>;
-  return (
-    <div className="bg-gray-100 rounded-lg p-4">
-      <h3 className="text-base font-semibold text-center mb-3">What Our Customers Say</h3>
-      <div className="space-y-2">
-        {comments.map((t, i) => (
-          <blockquote key={i} className="bg-white rounded p-3 shadow-sm text-sm">
-            <p className="text-stone-700">{t.comment || <span className="italic text-stone-300">Comment…</span>}</p>
-            <p className="italic text-stone-400 text-xs mt-1">— {t.author || 'Author'}</p>
-          </blockquote>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export default function TestimonialsAdminPage() {
   const { isAdmin } = useAuth();
   const router = useRouter();
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [previewW, setPreviewW] = useState(450);
+  useEffect(() => {
+    const el = previewRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setPreviewW(e.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const [comments, setComments] = useState<TestimonialItem[]>([]);
   const [enabled, setEnabled] = useState(false);
   const [order, setOrder] = useState(0);
@@ -178,10 +174,12 @@ export default function TestimonialsAdminPage() {
           </div>
 
           {/* Preview */}
-          <div className="lg:sticky lg:top-4">
-            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview</p>
-            <div className="border border-stone-200 rounded-xl bg-white p-4">
-              <TestimonialsPreview comments={previewComments} />
+          <div ref={previewRef} className="lg:sticky lg:top-4">
+            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview — {Math.round(previewW / REAL_W * 100)}% scale</p>
+            <div className="rounded-xl overflow-hidden border border-stone-200" style={{ height: 320 }}>
+              <div style={{ width: REAL_W, transformOrigin: 'top left', transform: `scale(${previewW / REAL_W})`, pointerEvents: 'none' }}>
+                <Testimonials content={{ enabled: true, order: 0, testimonials: previewComments }} />
+              </div>
             </div>
           </div>
         </div>

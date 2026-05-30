@@ -1,40 +1,32 @@
 'use client';
-import { useEffect, useState } from 'react';
-import API_URL, { IMAGE_URL } from '@/config/config';
+import { useEffect, useState, useRef } from 'react';
+import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { MarqueeContent, EventsContent } from '@/types/HomeContent';
 import { Product } from '@/types/Product';
 import { getMarqueeProducts, updateMarqueeProductIds } from '@/api/marquee';
+import ProductMarquee from '@/components/home/ProductMarquee';
+
+const REAL_W = 900;
 
 const INPUT = 'border border-stone-300 rounded-lg w-full px-3 py-2.5 mt-1 bg-white focus:outline-none focus:ring-2 focus:ring-stone-200 text-stone-800';
 const LABEL = 'block text-sm font-medium text-stone-700';
 
-function MarqueePreview({ products }: { products: Product[] }) {
-  if (!products.length)
-    return <p className="text-sm text-stone-400 italic text-center py-6">No products selected yet</p>;
-  return (
-    <div className="border-y border-stone-200 py-3 overflow-x-auto">
-      <div className="flex gap-3 px-2" style={{ minWidth: 'max-content' }}>
-        {products.map((p) => (
-          <div key={p._id} className="flex-shrink-0 w-24 text-center">
-            <div className="w-24 h-32 rounded overflow-hidden shadow-sm bg-stone-200">
-              {p.images?.[0]?.thumbnail && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={`${IMAGE_URL}/${p.images[0].thumbnail}`} alt={p.name} className="w-full h-full object-cover" />
-              )}
-            </div>
-            <p className="text-xs text-stone-600 mt-1 truncate">{p.name}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export default function ProductMarqueeAdminPage() {
   const { isAdmin } = useAuth();
   const router = useRouter();
+
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [previewW, setPreviewW] = useState(450);
+  useEffect(() => {
+    const el = previewRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setPreviewW(e.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const [marquee, setMarquee] = useState<MarqueeContent | null>(null);
   const [events, setEvents] = useState<EventsContent | null>(null);
@@ -188,10 +180,12 @@ export default function ProductMarqueeAdminPage() {
           </div>
 
           {/* Preview */}
-          <div className="lg:sticky lg:top-4">
-            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Marquee Preview</p>
-            <div className="border border-stone-200 rounded-xl bg-white p-4">
-              <MarqueePreview products={products} />
+          <div ref={previewRef} className="lg:sticky lg:top-4">
+            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Marquee Preview — {Math.round(previewW / REAL_W * 100)}% scale</p>
+            <div className="rounded-xl overflow-hidden border border-stone-200" style={{ height: 240 }}>
+              <div style={{ width: REAL_W, transformOrigin: 'top left', transform: `scale(${previewW / REAL_W})`, pointerEvents: 'none' }}>
+                <ProductMarquee products={products} />
+              </div>
             </div>
           </div>
         </div>

@@ -1,55 +1,18 @@
 'use client';
-import { useEffect, useState } from 'react';
-import API_URL, { IMAGE_URL } from '@/config/config';
+import { useEffect, useState, useRef } from 'react';
+import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { AboutContent } from '@/types/HomeContent';
 import { Image } from '@/types/Image';
 import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
 import RichTextEditor from '@/components/common/RichTextEditor';
 import { useRouter } from 'next/navigation';
-import { LocationIcon, CallIcon, EmailIcon, WhatsappIcon, InstagramIcon } from '@/components/icons';
+import AboutSection from '@/components/home/AboutSection';
+
+const REAL_W = 900;
 
 const INPUT = 'border border-stone-300 rounded-lg w-full px-3 py-2.5 mt-1 bg-white focus:outline-none focus:ring-2 focus:ring-stone-200 text-stone-800';
 const LABEL = 'block text-sm font-medium text-stone-700';
-
-function getImageUrl(item: ImageItem): string | null {
-  if (item.isNew && item.file) return URL.createObjectURL(item.file);
-  if (item.url) return `${IMAGE_URL}/${item.url}`;
-  return null;
-}
-
-function AboutPreview({ form, images }: { form: AboutContent; images: ImageItem[] }) {
-  const avatarUrl = images.length ? getImageUrl(images[0]) : null;
-  return (
-    <div className="flex flex-col gap-3 p-2">
-      <div className="flex items-center gap-4">
-        {avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={avatarUrl} alt="profile" className="w-16 h-16 rounded-full object-cover flex-shrink-0" />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-stone-200 flex-shrink-0" />
-        )}
-        <div>
-          <p className="font-semibold text-stone-800">{form.name || <span className="text-stone-300 italic">Name…</span>}</p>
-          {form.address && (
-            <p className="text-xs text-stone-500 flex items-center gap-1 mt-0.5">
-              <LocationIcon className="w-3 h-3" /> {form.address}
-            </p>
-          )}
-        </div>
-      </div>
-      {form.comment && (
-        <div className="text-sm text-stone-600 leading-relaxed prose prose-sm prose-stone max-w-none" dangerouslySetInnerHTML={{ __html: form.comment.replace(/&nbsp;/g, ' ') }} />
-      )}
-      <div className="flex gap-3 pt-1">
-        {form.phone && <CallIcon className="w-5 h-5 text-stone-500" />}
-        {form.whatsapp && <WhatsappIcon className="w-5 h-5 text-stone-500" />}
-        {form.instagram && <InstagramIcon className="w-5 h-5 text-stone-500" />}
-        {form.email && <EmailIcon className="w-5 h-5 text-stone-500" />}
-      </div>
-    </div>
-  );
-}
 
 export default function AboutAdminPage() {
   const { isAdmin } = useAuth();
@@ -59,6 +22,27 @@ export default function AboutAdminPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [previewW, setPreviewW] = useState(450);
+  const [previewImages, setPreviewImages] = useState<Image[]>([]);
+
+  useEffect(() => {
+    const el = previewRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([e]) => setPreviewW(e.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const blobUrls: string[] = [];
+    const next: Image[] = images.map((img, i) => {
+      const url = img.isNew && img.file ? (blobUrls.push(URL.createObjectURL(img.file)), blobUrls[blobUrls.length - 1]) : (img.url ?? '');
+      return { _id: `preview-${i}`, url, thumbnail: url };
+    });
+    setPreviewImages(next);
+    return () => { blobUrls.forEach(u => URL.revokeObjectURL(u)); };
+  }, [images]);
 
   const showToast = (msg: string, ok: boolean) => {
     setToast({ msg, ok });
@@ -162,10 +146,12 @@ export default function AboutAdminPage() {
           </div>
 
           {/* Preview */}
-          <div className="lg:sticky lg:top-4">
-            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview</p>
-            <div className="border border-stone-200 rounded-xl bg-white p-4">
-              <AboutPreview form={form} images={images} />
+          <div ref={previewRef} className="lg:sticky lg:top-4">
+            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview — {Math.round(previewW / REAL_W * 100)}% scale</p>
+            <div className="rounded-xl overflow-hidden border border-stone-200" style={{ height: 380 }}>
+              <div style={{ width: REAL_W, transformOrigin: 'top left', transform: `scale(${previewW / REAL_W})`, pointerEvents: 'none' }}>
+                <AboutSection content={{ ...form, images: previewImages }} />
+              </div>
             </div>
           </div>
         </div>
