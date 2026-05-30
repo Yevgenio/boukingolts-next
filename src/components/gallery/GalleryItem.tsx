@@ -21,7 +21,7 @@ export default function GalleryItem({ product }: { product: Product }) {
       <div className="relative w-full h-full rounded-xl overflow-hidden bg-stone-100">
         <Link href={`/gallery/${product._id}`} className="block h-full">
           <Image
-            src={`${IMAGE_URL}/${product.images[0]?.thumbnail}`}
+            src={`${IMAGE_URL}/${product.images[0]?.thumbnail ?? 'default.jpg'}`}
             alt={product.name}
             width={product.images[0]?.width || 400}
             height={product.images[0]?.height || 500}
