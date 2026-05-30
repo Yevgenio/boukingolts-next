@@ -93,7 +93,7 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
   const previewImageSrc = firstImage
     ? firstImage.isNew && firstImage.file
       ? URL.createObjectURL(firstImage.file)
-      : resolveImageUrl(firstImage.url)
+      : resolveImageUrl(firstImage.url ?? '')
     : null;
 
   const d = date ? new Date(date) : null;
