@@ -10,8 +10,12 @@ interface Props {
 
 export default function AboutSection({ content }: Props) {
   return (
-    <section className="w-full py-16 px-6 bg-white">
-      <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center md:items-start gap-10">
+    <section className="w-full py-16 bg-white">
+      <div className="text-center mb-10 px-6">
+        <h2 className="text-3xl font-serif text-stone-800">About the Artist</h2>
+        <div className="h-px bg-stone-200 mt-4 max-w-[80px] mx-auto" />
+      </div>
+      <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center md:items-start gap-10">
         {content.images?.[0] && (
           <div className="flex-shrink-0">
             <Image
@@ -25,7 +29,7 @@ export default function AboutSection({ content }: Props) {
         )}
         <div className="flex-1 min-w-0 flex flex-col gap-4 text-center md:text-left">
           <div>
-            <h2 className="text-3xl font-serif text-stone-900">{content.name}</h2>
+            <h3 className="text-2xl font-serif text-stone-900">{content.name}</h3>
             {content.address && (
               <p className="flex items-center justify-center md:justify-start gap-1.5 text-sm text-stone-400 mt-2">
                 <LocationIcon className="w-4 h-4 flex-shrink-0" />

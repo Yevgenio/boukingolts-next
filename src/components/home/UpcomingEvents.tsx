@@ -23,14 +23,14 @@ export default function UpcomingEvents() {
   if (!events.length) return null;
 
   return (
-    <section className="w-full">
-      <div className="max-w-7xl mx-auto px-6 py-8">
+    <section className="w-full bg-stone-50 py-14">
+      <div className="text-center mb-8 px-6">
         <h2 className="text-3xl font-serif text-stone-800">Upcoming Events</h2>
-        <div className="h-px bg-stone-200 mt-4" />
+        <div className="h-px bg-stone-200 mt-4 max-w-[80px] mx-auto" />
       </div>
 
       <div
-        className="flex h-64 gap-1.5 px-6 max-w-7xl mx-auto"
+        className="flex h-80 gap-1.5 px-6 max-w-7xl mx-auto"
         onMouseLeave={() => setHover(false)}
       >
         {events.slice(0, 5).map((event, idx) => {
