@@ -10,7 +10,7 @@ const CARD_HEIGHT = 200;
 
 function cardWidth(product: Product): number {
   const img = product.images[0];
-  const ratio = (img?.width ?? 4) / (img?.height ?? 3);
+  const ratio = (img?.width ?? 1) / (img?.height ?? 1);
   // Min 120px so portrait-heavy cards still have readable title text
   return Math.max(Math.round(CARD_HEIGHT * ratio), 120);
 }
@@ -77,7 +77,7 @@ export default function RelatedProductsRow({ title, products }: { title: string;
                   className="rounded-xl overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-lg transition-shadow duration-300 mb-2.5"
                 >
                   <Image
-                    src={`${IMAGE_URL}/${p.images[0]?.thumbnail}`}
+                    src={`${IMAGE_URL}/${p.images[0]?.thumbnail ?? 'default.jpg'}`}
                     alt={p.name}
                     width={p.images[0]?.width || 400}
                     height={p.images[0]?.height || 500}

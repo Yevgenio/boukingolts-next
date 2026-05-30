@@ -12,10 +12,10 @@ function formatDims(product: Product): string | null {
   return d.length >= 3 ? `${d[0]} × ${d[1]} × ${d[2]} ${unit}` : `${d[0]} × ${d[1]} ${unit}`;
 }
 
-async function fetchRelated(params: Record<string, string>): Promise<Product[]> {
-  const qs = new URLSearchParams(params).toString();
+async function fetchRelated(params: Record<string, string>, limit = 16): Promise<Product[]> {
+  const qs = new URLSearchParams({ ...params, limit: String(limit) }).toString();
   try {
-    const res = await fetch(`${API_URL}/api/products/search?${qs}&limit=16`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/api/products/search?${qs}`, { cache: 'no-store' });
     if (!res.ok) return [];
     const data = await res.json();
     return data.data ?? [];
@@ -40,13 +40,14 @@ export default async function GalleryItemPage({ params }: { params: { id: string
   const dims = formatDims(product);
   const cleanSpecs = product.specs?.filter(s => s.key && s.value) ?? [];
 
-  const [seriesProducts, categoryProducts] = await Promise.all([
+  const [seriesProducts, categoryProducts, recentProducts] = await Promise.all([
     product.series
       ? fetchRelated({ series: product.series, exclude: product._id })
       : Promise.resolve([] as Product[]),
     product.category
       ? fetchRelated({ category: product.category, exclude: product._id })
       : Promise.resolve([] as Product[]),
+    fetchRelated({ sort: 'recent', exclude: product._id }, 10),
   ]);
 
   return (
@@ -155,7 +156,7 @@ export default async function GalleryItemPage({ params }: { params: { id: string
         </div>
       </div>
 
-      {(seriesProducts.length > 0 || categoryProducts.length > 0) && (
+      {(seriesProducts.length > 0 || categoryProducts.length > 0 || recentProducts.length > 0) && (
         <div className="mt-20 space-y-14 border-t border-stone-100 pt-14">
           {seriesProducts.length > 0 && (
             <RelatedProductsRow
@@ -167,6 +168,12 @@ export default async function GalleryItemPage({ params }: { params: { id: string
             <RelatedProductsRow
               title={`More ${product.category} works`}
               products={categoryProducts}
+            />
+          )}
+          {recentProducts.length > 0 && (
+            <RelatedProductsRow
+              title="More Art"
+              products={recentProducts}
             />
           )}
         </div>
