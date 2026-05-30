@@ -40,8 +40,8 @@ export default function GalleryItem({ product, previewMode = false }: { product:
             </div>
           )}
 
-          {/* Info panel — slides up on hover */}
-          <div className="absolute bottom-0 left-0 w-full p-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-300 ease-out">
+          {/* Info panel — title always visible, tags/dims reveal on hover */}
+          <div className="absolute bottom-0 left-0 w-full p-4">
             <h2 className="text-white font-serif text-lg leading-snug drop-shadow">{product.name}</h2>
             {(product.tags?.length ?? 0) > 0 && (
               <p className="text-stone-300 text-xs mt-1 tracking-wide opacity-0 group-hover:opacity-100 transition-opacity duration-300">
