@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { getGallerySettings, setGallerySettings, GallerySettings } from '@/api/gallerySettings';
 import { buildRows, computeRowHeight, itemWidth } from '@/utils/galleryLayout';
 import { Product } from '@/types/Product';
-import API_URL, { IMAGE_URL } from '@/config/config';
+import API_URL, { resolveImageUrl } from '@/config/config';
 
 const PREVIEW_GAP = 3;
 
@@ -64,7 +64,7 @@ function Preview({ products, settings }: { products: Product[]; settings: Galler
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     key={p._id}
-                    src={`${IMAGE_URL}/${p.images[0]?.thumbnail}`}
+                    src={resolveImageUrl(p.images[0]?.thumbnail ?? '')}
                     alt={p.name}
                     style={{ width: itemWidth(p, rh), height: rh, flexShrink: 0, objectFit: 'cover' }}
                   />

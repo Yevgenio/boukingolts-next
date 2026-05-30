@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import API_URL, { IMAGE_URL } from '@/config/config';
+import API_URL, { resolveImageUrl } from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { Product } from '@/types/Product';
 import { getMarqueeProductIds, updateMarqueeProductIds } from '@/api/marquee';
@@ -65,7 +65,7 @@ export default function ProductsAdminPage() {
           <div key={p._id} className="flex items-center gap-2 border p-2 rounded">
             {p.images?.[0]?.thumbnail && (
               <img
-                src={`${IMAGE_URL}/${p.images[0].thumbnail}`}
+                src={resolveImageUrl(p.images[0].thumbnail)}
                 alt={p.name}
                 className="w-10 h-10 object-cover rounded"
               />

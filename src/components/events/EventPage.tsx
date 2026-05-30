@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import API_URL, { IMAGE_URL } from '@/config/config';
+import API_URL, { resolveImageUrl } from '@/config/config';
 import EventPageAdminControls from './EventPageAdminControls';
 import { Event } from '@/types/Event';
 
@@ -33,7 +33,7 @@ export default async function EventPage({ params }: { params: { id: string } }) 
       {event.images?.[0] && (
         <div className="w-full aspect-[16/7] rounded-xl overflow-hidden relative bg-stone-100 shadow-sm mb-8">
           <Image
-            src={`${IMAGE_URL}/${event.images[0].url}`}
+            src={resolveImageUrl(event.images[0].url)}
             alt={event.name}
             fill
             className="object-cover"

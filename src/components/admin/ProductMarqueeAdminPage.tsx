@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import API_URL from '@/config/config';
+import API_URL, { resolveImageUrl } from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { MarqueeContent, EventsContent } from '@/types/HomeContent';
@@ -132,7 +132,7 @@ export default function ProductMarqueeAdminPage() {
                 <div key={p._id} className="flex items-center gap-3 border border-stone-100 rounded-lg p-2 bg-stone-50">
                   {p.images?.[0]?.thumbnail && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`${IMAGE_URL}/${p.images[0].thumbnail}`} alt={p.name} className="w-10 h-10 object-cover rounded" />
+                    <img src={resolveImageUrl(p.images[0].thumbnail)} alt={p.name} className="w-10 h-10 object-cover rounded" />
                   )}
                   <span className="flex-1 text-sm text-stone-700">{p.name}</span>
                   <button onClick={() => router.push(`/gallery/${p._id}`)} className="text-xs text-stone-400 underline">View</button>

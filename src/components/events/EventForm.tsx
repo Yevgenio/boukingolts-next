@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import API_URL, { IMAGE_URL } from '@/config/config';
+import API_URL, { resolveImageUrl } from '@/config/config';
 import { useRouter } from 'next/navigation';
 import { Image } from '@/types/Image';
 import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
@@ -93,7 +93,7 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
   const previewImageSrc = firstImage
     ? firstImage.isNew && firstImage.file
       ? URL.createObjectURL(firstImage.file)
-      : `${IMAGE_URL}/${firstImage.url}`
+      : resolveImageUrl(firstImage.url)
     : null;
 
   const d = date ? new Date(date) : null;

@@ -38,11 +38,6 @@ function getTintStyle(tint: string): React.CSSProperties {
   return {};
 }
 
-function getImageUrl(item: ImageItem): string | null {
-  if (item.isNew && item.file) return URL.createObjectURL(item.file);
-  if (item.url) return `${IMAGE_URL}/${item.url}`;
-  return null;
-}
 
 
 export default function HeroAdminPage() {

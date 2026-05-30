@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useCallback } from 'react';
-import API_URL, { IMAGE_URL } from '@/config/config';
+import API_URL, { resolveImageUrl } from '@/config/config';
 import { listImages, ManagedImage } from '@/api/images';
 
 export interface ImageItem {
@@ -111,8 +111,8 @@ export default function ImageUploadList({ images, setImages }: Props) {
                   item.isNew && item.file
                     ? URL.createObjectURL(item.file)
                     : item.url
-                    ? `${IMAGE_URL}/${item.url}`
-                    : `${IMAGE_URL}/default.jpg`
+                    ? resolveImageUrl(item.url ?? '')
+                    : resolveImageUrl('default.jpg')
                 }
                 alt="preview"
                 className="w-12 h-12 object-cover rounded flex-shrink-0"
@@ -173,7 +173,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={`${IMAGE_URL}/${img.thumbnail}`} alt={img.url} className="w-full h-full object-cover" />
+                    <img src={resolveImageUrl(img.thumbnail)} alt={img.url} className="w-full h-full object-cover" />
                     {isSelected && (
                       <div className="absolute inset-0 bg-stone-900/30 flex items-center justify-center">
                         <span className="text-white text-lg font-bold">✓</span>
