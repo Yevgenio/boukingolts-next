@@ -15,7 +15,7 @@ function cardWidth(product: Product): number {
   return Math.max(Math.round(CARD_HEIGHT * ratio), 120);
 }
 
-export default function RelatedProductsRow({ title, products }: { title: string; products: Product[] }) {
+export default function RelatedProductsRow({ title, products, href }: { title: string; products: Product[]; href?: string }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
@@ -80,7 +80,7 @@ export default function RelatedProductsRow({ title, products }: { title: string;
                     src={`${IMAGE_URL}/${p.images[0]?.thumbnail ?? 'default.jpg'}`}
                     alt={p.name}
                     width={p.images[0]?.width || 400}
-                    height={p.images[0]?.height || 500}
+                    height={p.images[0]?.height || 400}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                   />
                 </div>
@@ -93,6 +93,23 @@ export default function RelatedProductsRow({ title, products }: { title: string;
               </Link>
             );
           })}
+          {href && (
+            <Link
+              href={href}
+              style={{ width: 120, flexShrink: 0 }}
+              className="group flex flex-col items-center justify-center"
+            >
+              <div
+                style={{ width: 120, height: CARD_HEIGHT }}
+                className="rounded-xl border border-stone-200 bg-stone-50 flex flex-col items-center justify-center gap-2 group-hover:bg-stone-100 group-hover:border-stone-300 transition-colors duration-200 mb-2.5"
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" className="text-stone-400 group-hover:text-stone-700 transition-colors">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+                <span className="text-xs text-stone-400 group-hover:text-stone-700 tracking-wide transition-colors">See all</span>
+              </div>
+            </Link>
+          )}
         </div>
 
         <button

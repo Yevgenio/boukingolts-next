@@ -162,18 +162,21 @@ export default async function GalleryItemPage({ params }: { params: { id: string
             <RelatedProductsRow
               title={`More from "${product.series}"`}
               products={seriesProducts}
+              href={`/gallery?series=${encodeURIComponent(product.series!)}`}
             />
           )}
           {categoryProducts.length > 0 && (
             <RelatedProductsRow
               title={`More ${product.category} works`}
               products={categoryProducts}
+              href={`/gallery?category=${encodeURIComponent(product.category!)}`}
             />
           )}
           {recentProducts.length > 0 && (
             <RelatedProductsRow
               title="More Art"
               products={recentProducts}
+              href="/gallery"
             />
           )}
         </div>

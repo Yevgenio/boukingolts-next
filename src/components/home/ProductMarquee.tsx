@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
 import { IMAGE_URL } from '@/config/config';
 import Image from 'next/image';
@@ -16,7 +18,7 @@ const CARD_HEIGHT = 220; // px — all cards share this height, widths vary by a
 
 function cardWidth(product: Product): number {
   const img = product.images[0];
-  const ratio = (img?.width ?? 4) / (img?.height ?? 3);
+  const ratio = (img?.width ?? 1) / (img?.height ?? 1);
   return Math.round(CARD_HEIGHT * ratio);
 }
 
@@ -36,7 +38,6 @@ export default function ProductMarquee({ products }: Props) {
       boostRef.current = Math.max(-MAX_BOOST, Math.min(boostRef.current + dy * BOOST_GAIN, MAX_BOOST));
     };
 
-    // Measured once on mount — items are fixed-size so this never changes
     const half = (track.firstElementChild as HTMLElement)?.offsetWidth ?? track.scrollWidth / 2;
 
     let rafId: number;
@@ -67,6 +68,10 @@ export default function ProductMarquee({ products }: Props) {
 
   if (!products.length) return null;
 
+  const applyBoost = (dir: 'left' | 'right') => {
+    boostRef.current = dir === 'right' ? MAX_BOOST : -MAX_BOOST;
+  };
+
   return (
     <section className="w-full py-14">
       <div className="text-center mb-8 px-6">
@@ -74,6 +79,20 @@ export default function ProductMarquee({ products }: Props) {
         <div className="h-px bg-stone-200 mt-4 max-w-[80px] mx-auto" />
       </div>
       <div className="relative overflow-hidden border-y border-stone-200 py-6">
+
+        <button
+          onClick={() => applyBoost('left')}
+          aria-label="Scroll left"
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9
+            bg-white/90 border border-stone-200 shadow-md rounded-full
+            flex items-center justify-center text-stone-500 hover:text-stone-900
+            transition-colors duration-200"
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+
         <div ref={trackRef} className="flex will-change-transform">
           {[0, 1].map(copy => (
             <div key={copy} className="flex gap-5 pr-5 flex-shrink-0 items-end">
@@ -94,7 +113,7 @@ export default function ProductMarquee({ products }: Props) {
                         src={`${IMAGE_URL}/${product.images[0]?.thumbnail ?? 'default.jpg'}`}
                         alt={product.name}
                         width={product.images[0]?.width || 400}
-                        height={product.images[0]?.height || 500}
+                        height={product.images[0]?.height || 400}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
@@ -104,6 +123,20 @@ export default function ProductMarquee({ products }: Props) {
             </div>
           ))}
         </div>
+
+        <button
+          onClick={() => applyBoost('right')}
+          aria-label="Scroll right"
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9
+            bg-white/90 border border-stone-200 shadow-md rounded-full
+            flex items-center justify-center text-stone-500 hover:text-stone-900
+            transition-colors duration-200"
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+
       </div>
     </section>
   );
