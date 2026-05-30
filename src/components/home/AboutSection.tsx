@@ -15,7 +15,7 @@ export default function AboutSection({ content }: Props) {
         {content.images?.[0] && (
           <div className="flex-shrink-0">
             <Image
-              src={`${IMAGE_URL}/api/uploads/${content.images[0].thumbnail}`}
+              src={`${IMAGE_URL}/${content.images[0].thumbnail}`}
               alt={content.name}
               width={256}
               height={256}

@@ -1,12 +1,12 @@
 'use client';
 import Link from 'next/link';
-import API_URL from '@/config/config';
+import API_URL, { IMAGE_URL } from '@/config/config';
 import { Event } from '@/types/Event';
 import EventItemAdminControls from './EventItemAdminControls';
 
 export default function EventCard({ event, className = '' }: { event: Event; className?: string }) {
   const bgImage = event.images?.[0]
-    ? `${API_URL}/api/uploads/${event.images[0].thumbnail || event.images[0].url}`
+    ? `${IMAGE_URL}/${event.images[0].thumbnail || event.images[0].url}`
     : undefined;
 
   const d = new Date(event.date);

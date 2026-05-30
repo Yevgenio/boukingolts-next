@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import API_URL from '@/config/config';
+import API_URL, { IMAGE_URL } from '@/config/config';
 import { listImages, deleteImage, ManagedImage } from '@/api/images';
 
 const CONTENT_LABELS: Record<string, string> = {
@@ -57,7 +57,7 @@ function ImageCard({ img, onDeleted }: { img: ManagedImage; onDeleted: () => voi
       <div className="aspect-square bg-stone-100 overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`${API_URL}/api/uploads/${img.thumbnail}`}
+          src={`${IMAGE_URL}/${img.thumbnail}`}
           alt={img.url}
           className="w-full h-full object-cover"
         />

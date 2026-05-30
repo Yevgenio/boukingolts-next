@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import API_URL from '@/config/config';
+import API_URL, { IMAGE_URL } from '@/config/config';
 import { useRouter } from 'next/navigation';
 import { Image } from '@/types/Image';
 import { ProductSpec } from '@/types/Product';
@@ -164,7 +164,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
   const previewImageSrc = firstImage
     ? firstImage.isNew && firstImage.file
       ? URL.createObjectURL(firstImage.file)
-      : `${API_URL}/api/uploads/${firstImage.url}`
+      : `${IMAGE_URL}/${firstImage.url}`
     : null;
   const finalPrice = price !== '' && salePercent !== ''
     ? (Number(price) * (1 - Number(salePercent) / 100)).toFixed(0)

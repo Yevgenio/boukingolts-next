@@ -58,7 +58,7 @@ export default function ProductImageViewer({ images, name }: Props) {
       >
         <div ref={lensRef} className="absolute inset-0" style={{ willChange: 'transform' }}>
           <Image
-            src={`${IMAGE_URL}/api/uploads/${images[activeIndex].url}`}
+            src={`${IMAGE_URL}/${images[activeIndex].url}`}
             alt={name}
             fill
             className="object-contain"
@@ -79,7 +79,7 @@ export default function ProductImageViewer({ images, name }: Props) {
               }`}
             >
               <Image
-                src={`${IMAGE_URL}/api/uploads/${img.thumbnail}`}
+                src={`${IMAGE_URL}/${img.thumbnail}`}
                 alt={`View ${index + 1}`}
                 width={72}
                 height={72}

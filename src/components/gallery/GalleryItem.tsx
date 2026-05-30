@@ -21,13 +21,13 @@ export default function GalleryItem({ product }: { product: Product }) {
       <div className="relative w-full h-full rounded-xl overflow-hidden bg-stone-100">
         <Link href={`/gallery/${product._id}`} className="block h-full">
           <Image
-            src={`${IMAGE_URL}/api/uploads/${product.images[0]?.thumbnail}`}
+            src={`${IMAGE_URL}/${product.images[0]?.thumbnail}`}
             alt={product.name}
             width={product.images[0]?.width || 400}
             height={product.images[0]?.height || 500}
             className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-[1.04]"
             placeholder="blur"
-            blurDataURL={`${IMAGE_URL}/api/uploads/default.jpg`}
+            blurDataURL={`${IMAGE_URL}/default.jpg`}
           />
 
           {/* Gradient — subtle by default, deepens on hover */}

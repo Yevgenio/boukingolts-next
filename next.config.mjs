@@ -6,13 +6,13 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "images.source-code.click",
-        pathname: "/api/uploads/**",
+        pathname: "/gallery/**",
       },
       {
         protocol: "http",
-        hostname: "localhost",
-        port: "5001",
-        pathname: "/api/uploads/**",
+        hostname: "10.0.0.105",
+        port: "9000",
+        pathname: "/gallery/**",
       },
     ],
   },

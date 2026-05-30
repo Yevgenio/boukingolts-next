@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import API_URL from '@/config/config';
+import API_URL, { IMAGE_URL } from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
 import { HeroContent } from '@/types/HomeContent';
 import { Image } from '@/types/Image';
@@ -37,7 +37,7 @@ function getTintStyle(tint: string): React.CSSProperties {
 
 function getImageUrl(item: ImageItem): string | null {
   if (item.isNew && item.file) return URL.createObjectURL(item.file);
-  if (item.url) return `${API_URL}/api/uploads/${item.url}`;
+  if (item.url) return `${IMAGE_URL}/${item.url}`;
   return null;
 }
 

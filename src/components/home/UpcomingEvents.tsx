@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Event } from '@/types/Event';
 import { getUpcomingEvents } from '@/api/events';
-import API_URL from '@/config/config';
+import API_URL, { IMAGE_URL } from '@/config/config';
 
 export default function UpcomingEvents() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -36,7 +36,7 @@ export default function UpcomingEvents() {
         {events.slice(0, 5).map((event, idx) => {
           const isActive = idx === active;
           const bg = event.images?.[0]
-            ? `${API_URL}/api/uploads/${event.images[0].thumbnail || event.images[0].url}`
+            ? `${IMAGE_URL}/${event.images[0].thumbnail || event.images[0].url}`
             : undefined;
 
           const d = new Date(event.date);

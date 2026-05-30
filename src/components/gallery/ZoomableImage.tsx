@@ -25,7 +25,7 @@ export default function ZoomableImage({ src, alt }: ZoomableImageProps) {
       className="relative w-full h-full overflow-hidden"
     >
       <Image
-        src={`${IMAGE_URL}/api/uploads/${src}`}
+        src={`${IMAGE_URL}/${src}`}
         alt={alt}
         fill
         className="object-cover transition-transform duration-300"

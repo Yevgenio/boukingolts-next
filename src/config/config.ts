@@ -15,4 +15,4 @@ export default API_URL;
 
 // Always empty in production so <img src> renders as a relative path the browser
 // can reach via the reverse proxy — even when rendered in a server component.
-export const IMAGE_URL = isProd ? 'https://images.source-code.click' : 'http://localhost:5001';
+export const IMAGE_URL = isProd ? 'https://images.source-code.click/gallery' : 'http://10.0.0.105:9000/gallery';

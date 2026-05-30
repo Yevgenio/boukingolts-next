@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import API_URL from '@/config/config';
+import API_URL, { IMAGE_URL } from '@/config/config';
 import gsap from 'gsap';
 import Link from 'next/link';
 import { HeroContent } from '@/types/HomeContent';
@@ -43,7 +43,7 @@ export default function HeroSection({ content }: Props) {
           key={i}
           className="absolute inset-0 bg-cover bg-center transition-transform duration-700"
           style={{
-            backgroundImage: `url('${API_URL}/api/uploads/${img.url}')`,
+            backgroundImage: `url('${IMAGE_URL}/${img.url}')`,
             transform: `translateX(${(i - index) * 100}%)`,
           }}
         />

@@ -91,7 +91,7 @@ export default function ProductMarquee({ products }: Props) {
                       className="rounded-lg overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-md transition-shadow"
                     >
                       <Image
-                        src={`${IMAGE_URL}/api/uploads/${product.images[0]?.thumbnail}`}
+                        src={`${IMAGE_URL}/${product.images[0]?.thumbnail}`}
                         alt={product.name}
                         width={product.images[0]?.width || 400}
                         height={product.images[0]?.height || 500}

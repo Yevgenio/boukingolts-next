@@ -77,7 +77,7 @@ export default function RelatedProductsRow({ title, products }: { title: string;
                   className="rounded-xl overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-lg transition-shadow duration-300 mb-2.5"
                 >
                   <Image
-                    src={`${IMAGE_URL}/api/uploads/${p.images[0]?.thumbnail}`}
+                    src={`${IMAGE_URL}/${p.images[0]?.thumbnail}`}
                     alt={p.name}
                     width={p.images[0]?.width || 400}
                     height={p.images[0]?.height || 500}
