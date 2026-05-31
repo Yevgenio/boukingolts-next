@@ -2,12 +2,11 @@
 const nextConfig = {
   output: "standalone",
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.source-code.click",
-        pathname: "/gallery/**",
+        hostname: "objectstorage.il-jerusalem-1.oraclecloud.com",
+        pathname: "/n/axmemlyrscvh/b/gallery/o/**",
       },
       {
         protocol: "http",
