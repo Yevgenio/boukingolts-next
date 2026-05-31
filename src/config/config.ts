@@ -4,9 +4,12 @@ const isServer = typeof window === 'undefined';
 let API_URL: string;
 
 if (isProd) {
-  // Server-side: use internal k8s service URL injected at runtime via API_URL env var.
-  // Client-side (browser): empty string so calls become relative paths like /api/...
-  API_URL = isServer ? (process.env.API_URL ?? '') : '';
+  // Server-side: prefer internal URL (k8s cluster DNS), fall back to public URL.
+  // Client-side: must use NEXT_PUBLIC_API_URL (baked in at build time) — relative
+  // paths only work when a proxy (Traefik/nginx) routes /api/... to the backend.
+  API_URL = isServer
+    ? (process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? '')
+    : (process.env.NEXT_PUBLIC_API_URL ?? '');
 } else {
   API_URL = 'http://localhost:5001';
 }
