@@ -89,7 +89,7 @@ export default function GalleryLayoutAdminPage() {
   useEffect(() => {
     if (!isAdmin) return;
     getGallerySettings().then(setSettings);
-    fetch(`${API_URL}/api/products/search`, { cache: 'no-store' })
+    fetch(`${API_URL}/products/search`, { cache: 'no-store' })
       .then(r => r.json()).then((d: { data: Product[] }) => setProducts(d.data ?? [])).catch(() => {});
   }, [isAdmin]);
 

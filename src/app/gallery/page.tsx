@@ -28,7 +28,7 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
 
   let initialProducts: Product[] = [];
   try {
-    const res = await fetch(`${API_URL}/api/products/search${qs.size ? `?${qs}` : ''}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/products/search${qs.size ? `?${qs}` : ''}`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       initialProducts = data.data ?? [];

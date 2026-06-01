@@ -71,9 +71,9 @@ export default function Header() {
   const lastScrollY = useRef(0);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/products/categories`)
+    fetch(`${API_URL}/products/categories`)
       .then(r => r.ok ? r.json() : []).then(setGalleryCategories).catch(() => {});
-    fetch(`${API_URL}/api/events/categories`)
+    fetch(`${API_URL}/events/categories`)
       .then(r => r.ok ? r.json() : []).then(setEventCategories).catch(() => {});
   }, []);
 

@@ -77,7 +77,7 @@ export default function HeroAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/api/content/home-hero`)
+    fetch(`${API_URL}/content/home-hero`)
       .then(res => res.json())
       .then(data => {
         setForm(data);
@@ -104,7 +104,7 @@ export default function HeroAdminPage() {
       images.filter(img => img.isNew && img.file).forEach(img => formData.append('images', img.file as File));
     }
     try {
-      const res = await fetch(`${API_URL}/api/content/home-hero`, { method: 'PUT', credentials: 'include', body: formData });
+      const res = await fetch(`${API_URL}/content/home-hero`, { method: 'PUT', credentials: 'include', body: formData });
       if (res.ok) showToast('Hero section saved!', true);
       else showToast('Failed to save', false);
     } catch { showToast('Failed to save', false); }

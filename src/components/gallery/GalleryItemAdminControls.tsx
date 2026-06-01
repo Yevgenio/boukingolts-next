@@ -32,7 +32,7 @@ export default function GalleryItemAdminControls({ productId }: { productId: str
       setTimeout(() => setConfirmDelete(false), 3000);
       return;
     }
-    const res = await fetch(`${API_URL}/api/products/id/${productId}`, {
+    const res = await fetch(`${API_URL}/products/id/${productId}`, {
       method: 'DELETE', credentials: 'include',
     });
     if (res.ok) router.refresh();

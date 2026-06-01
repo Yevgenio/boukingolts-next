@@ -12,12 +12,12 @@ export interface ManagedImage {
 }
 
 export async function listImages(): Promise<ManagedImage[]> {
-  const res = await fetch(`${API_URL}/api/images`, { credentials: 'include', cache: 'no-store' });
+  const res = await fetch(`${API_URL}/images`, { credentials: 'include', cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch images');
   return res.json();
 }
 
 export async function deleteImage(id: string): Promise<void> {
-  const res = await fetch(`${API_URL}/api/images/id/${id}`, { method: 'DELETE', credentials: 'include' });
+  const res = await fetch(`${API_URL}/images/id/${id}`, { method: 'DELETE', credentials: 'include' });
   if (!res.ok) throw new Error('Failed to delete image');
 }

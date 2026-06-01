@@ -33,7 +33,7 @@ export default function Settings() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/auth/settings`, {
+        const res = await fetch(`${API_URL}/auth/settings`, {
           method: 'GET',
           credentials: 'include',
         });
@@ -54,7 +54,7 @@ export default function Settings() {
     setProfileSaving(true);
     setProfileMessage(null);
     try {
-      const res = await fetch(`${API_URL}/api/auth/profile`, {
+      const res = await fetch(`${API_URL}/auth/profile`, {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -80,7 +80,7 @@ export default function Settings() {
     setPasswordSaving(true);
     setPasswordMessage(null);
     try {
-      const res = await fetch(`${API_URL}/api/auth/password`, {
+      const res = await fetch(`${API_URL}/auth/password`, {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

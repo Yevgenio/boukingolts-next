@@ -34,7 +34,7 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
     if (mode === 'edit' && eventId) {
       const fetchEvent = async () => {
         try {
-          const res = await fetch(`${API_URL}/api/events/id/${eventId}`);
+          const res = await fetch(`${API_URL}/events/id/${eventId}`);
           if (!res.ok) throw new Error('Failed to load event');
           const data = await res.json();
           setName(data.name || '');
@@ -76,9 +76,9 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
     try {
       let res;
       if (mode === 'create') {
-        res = await fetch(`${API_URL}/api/events`, { method: 'POST', credentials: 'include', body: formData });
+        res = await fetch(`${API_URL}/events`, { method: 'POST', credentials: 'include', body: formData });
       } else if (mode === 'edit' && eventId) {
-        res = await fetch(`${API_URL}/api/events/id/${eventId}`, { method: 'PUT', credentials: 'include', body: formData });
+        res = await fetch(`${API_URL}/events/id/${eventId}`, { method: 'PUT', credentials: 'include', body: formData });
       }
       if (!res || !res.ok) throw new Error('Failed to submit event');
       router.push('/events');

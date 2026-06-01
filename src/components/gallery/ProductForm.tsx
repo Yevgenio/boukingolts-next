@@ -80,7 +80,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
 
   useEffect(() => {
     if (mode === 'edit' && productId) {
-      fetch(`${API_URL}/api/products/id/${productId}`)
+      fetch(`${API_URL}/products/id/${productId}`)
         .then(r => { if (!r.ok) throw new Error('Failed to load artwork'); return r.json(); })
         .then(data => {
           setName(data.name || '');
@@ -163,8 +163,8 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
     }
     try {
       let res;
-      if (mode === 'create') res = await fetch(`${API_URL}/api/products`, { method: 'POST', credentials: 'include', body: formData });
-      else if (mode === 'edit' && productId) res = await fetch(`${API_URL}/api/products/id/${productId}`, { method: 'PUT', credentials: 'include', body: formData });
+      if (mode === 'create') res = await fetch(`${API_URL}/products`, { method: 'POST', credentials: 'include', body: formData });
+      else if (mode === 'edit' && productId) res = await fetch(`${API_URL}/products/id/${productId}`, { method: 'PUT', credentials: 'include', body: formData });
       if (!res || !res.ok) throw new Error('Failed to submit product');
       router.push('/gallery');
       router.refresh();

@@ -14,7 +14,7 @@ function EventsPageInner({ initialEvents }: { initialEvents?: Event[] }) {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') ?? '');
 
   useEffect(() => {
-    fetch(`${API_URL}/api/events/categories`, { cache: 'no-store' })
+    fetch(`${API_URL}/events/categories`, { cache: 'no-store' })
       .then(r => r.ok ? r.json() : []).then(setCategories).catch(() => {});
   }, []);
 
@@ -23,7 +23,7 @@ function EventsPageInner({ initialEvents }: { initialEvents?: Event[] }) {
     if (query) params.set('query', query);
     if (selectedCategory) params.set('category', selectedCategory);
     const qs = params.toString();
-    const url = `${API_URL}/api/events/search${qs ? `?${qs}` : ''}`;
+    const url = `${API_URL}/events/search${qs ? `?${qs}` : ''}`;
     const res = await fetch(url, { cache: 'no-store' });
     const result = await res.json();
     const sorted = (result.data as Event[]).sort(

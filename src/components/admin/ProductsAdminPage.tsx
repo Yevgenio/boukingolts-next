@@ -16,7 +16,7 @@ export default function ProductsAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/api/products`, { cache: 'no-store' })
+    fetch(`${API_URL}/products`, { cache: 'no-store' })
       .then(res => res.json())
       .then(data => setProducts(data))
       .catch(() => {});
@@ -37,7 +37,7 @@ export default function ProductsAdminPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
-    const res = await fetch(`${API_URL}/api/products/id/${id}`, {
+    const res = await fetch(`${API_URL}/products/id/${id}`, {
       method: 'DELETE',
       credentials: 'include',
     });

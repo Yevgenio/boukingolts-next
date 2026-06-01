@@ -1,7 +1,7 @@
 import API_URL from '@/config/config';
 
 export async function login(email: string, password: string) {
-  const res = await fetch(`${API_URL}/api/auth/login`, {
+  const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -13,7 +13,7 @@ export async function login(email: string, password: string) {
 }
 
 export async function getCurrentUser() {
-  const res = await fetch(`${API_URL}/api/auth/me`, {
+  const res = await fetch(`${API_URL}/auth/me`, {
     credentials: 'include',
   });
 
@@ -22,7 +22,7 @@ export async function getCurrentUser() {
 }
 
 export async function logout() {
-  const res = await fetch(`${API_URL}/api/auth/logout`, {
+  const res = await fetch(`${API_URL}/auth/logout`, {
     method: 'POST',
     credentials: 'include',
   });

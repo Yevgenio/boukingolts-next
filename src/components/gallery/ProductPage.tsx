@@ -16,7 +16,7 @@ function formatDims(product: Product): string | null {
 async function fetchRelated(params: Record<string, string>, limit = 16): Promise<Product[]> {
   const qs = new URLSearchParams({ ...params, limit: String(limit) }).toString();
   try {
-    const res = await fetch(`${API_URL}/api/products/search?${qs}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/products/search?${qs}`, { cache: 'no-store' });
     if (!res.ok) return [];
     const data = await res.json();
     return data.data ?? [];
@@ -25,8 +25,8 @@ async function fetchRelated(params: Record<string, string>, limit = 16): Promise
 
 export default async function GalleryItemPage({ params }: { params: { id: string } }) {
   const [res, aboutRes] = await Promise.all([
-    fetch(`${API_URL}/api/products/id/${params.id}`, { cache: 'no-store' }),
-    fetch(`${API_URL}/api/content/about-boukingolts`, { cache: 'no-store' }),
+    fetch(`${API_URL}/products/id/${params.id}`, { cache: 'no-store' }),
+    fetch(`${API_URL}/content/about-boukingolts`, { cache: 'no-store' }),
   ]);
 
   if (!res.ok) {

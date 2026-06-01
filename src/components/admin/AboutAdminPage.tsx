@@ -51,7 +51,7 @@ export default function AboutAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/api/content/about-boukingolts`)
+    fetch(`${API_URL}/content/about-boukingolts`)
       .then(res => res.json())
       .then(data => {
         setForm(data);
@@ -76,7 +76,7 @@ export default function AboutAdminPage() {
       images.filter(img => img.isNew && img.file).forEach(img => formData.append('images', img.file as File));
     }
     try {
-      const res = await fetch(`${API_URL}/api/content/about-boukingolts`, { method: 'PUT', credentials: 'include', body: formData });
+      const res = await fetch(`${API_URL}/content/about-boukingolts`, { method: 'PUT', credentials: 'include', body: formData });
       if (res.ok) showToast('About section saved!', true);
       else showToast('Failed to save', false);
     } catch { showToast('Failed to save', false); }

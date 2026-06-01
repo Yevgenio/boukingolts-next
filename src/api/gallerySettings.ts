@@ -9,7 +9,7 @@ const DEFAULTS: GallerySettings = { targetHeight: 280, variance: 100 };
 
 export async function getGallerySettings(): Promise<GallerySettings> {
   try {
-    const res = await fetch(`${API_URL}/api/content/gallery-settings`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/content/gallery-settings`, { cache: 'no-store' });
     if (!res.ok) return DEFAULTS;
     const data = await res.json();
     return {
@@ -22,7 +22,7 @@ export async function getGallerySettings(): Promise<GallerySettings> {
 }
 
 export async function setGallerySettings(s: GallerySettings): Promise<void> {
-  await fetch(`${API_URL}/api/content/gallery-settings`, {
+  await fetch(`${API_URL}/content/gallery-settings`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

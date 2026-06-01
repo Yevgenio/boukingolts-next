@@ -2,7 +2,7 @@ import API_URL from '@/config/config';
 import { Event } from '@/types/Event';
 
 export async function getUpcomingEvents(count = 5): Promise<Event[]> {
-  const res = await fetch(`${API_URL}/api/events/search`, { cache: 'no-store' });
+  const res = await fetch(`${API_URL}/events/search`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch events');
   const result = await res.json();
   const events = (result.data as Event[])

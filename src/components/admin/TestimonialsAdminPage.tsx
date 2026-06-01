@@ -42,7 +42,7 @@ export default function TestimonialsAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/api/content/home-testimonials`)
+    fetch(`${API_URL}/content/home-testimonials`)
       .then(res => res.json())
       .then(data => { setComments(data.testimonials || []); setEnabled(data.enabled ?? false); setOrder(data.order ?? 0); setLoading(false); })
       .catch(() => setLoading(false));
@@ -51,7 +51,7 @@ export default function TestimonialsAdminPage() {
   const updateComments = async (updated: TestimonialItem[]) => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_URL}/api/content/home-testimonials`, {
+      const res = await fetch(`${API_URL}/content/home-testimonials`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({ enabled, order, testimonials: updated }),
       });
@@ -64,7 +64,7 @@ export default function TestimonialsAdminPage() {
   const saveSettings = async () => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_URL}/api/content/home-testimonials`, {
+      const res = await fetch(`${API_URL}/content/home-testimonials`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({ enabled, order, testimonials: comments }),
       });

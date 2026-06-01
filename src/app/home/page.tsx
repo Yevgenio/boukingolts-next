@@ -31,13 +31,13 @@ async function fetchJson<T>(url: string, fallback: T): Promise<T> {
 export default async function Page() {
   const [hero, testimonials, about, marqueeSettings, eventsContent, marqueeProducts, eventsResult] =
     await Promise.all([
-      fetchJson<HeroContent | null>(`${API_URL}/api/content/home-hero`, null),
-      fetchJson<TestimonialsContent | null>(`${API_URL}/api/content/home-testimonials`, null),
-      fetchJson<AboutContent | null>(`${API_URL}/api/content/about-boukingolts`, null),
-      fetchJson<MarqueeContent | null>(`${API_URL}/api/content/home-product-marquee`, null),
-      fetchJson<EventsContent | null>(`${API_URL}/api/content/home-events`, null),
-      fetchJson<Product[]>(`${API_URL}/api/products/marquee`, []),
-      fetchJson<{ data: Event[] }>(`${API_URL}/api/events/search`, { data: [] }),
+      fetchJson<HeroContent | null>(`${API_URL}/content/home-hero`, null),
+      fetchJson<TestimonialsContent | null>(`${API_URL}/content/home-testimonials`, null),
+      fetchJson<AboutContent | null>(`${API_URL}/content/about-boukingolts`, null),
+      fetchJson<MarqueeContent | null>(`${API_URL}/content/home-product-marquee`, null),
+      fetchJson<EventsContent | null>(`${API_URL}/content/home-events`, null),
+      fetchJson<Product[]>(`${API_URL}/products/marquee`, []),
+      fetchJson<{ data: Event[] }>(`${API_URL}/events/search`, { data: [] }),
     ]);
 
   const upcomingEvents = (eventsResult.data ?? [])

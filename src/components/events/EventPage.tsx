@@ -9,7 +9,7 @@ function formatDate(dateStr: string) {
 }
 
 export default async function EventPage({ params }: { params: { id: string } }) {
-  const res = await fetch(`${API_URL}/api/events/id/${params.id}`, { cache: 'no-store' });
+  const res = await fetch(`${API_URL}/events/id/${params.id}`, { cache: 'no-store' });
   if (!res.ok) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-20 text-center">

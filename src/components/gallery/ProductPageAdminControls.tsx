@@ -30,7 +30,7 @@ export default function ProductPageAdminControls({ productId }: { productId: str
 
   const handleDelete = async () => {
     if (!confirmDelete) { setConfirmDelete(true); setTimeout(() => setConfirmDelete(false), 3000); return; }
-    const res = await fetch(`${API_URL}/api/products/id/${productId}`, { method: 'DELETE', credentials: 'include' });
+    const res = await fetch(`${API_URL}/products/id/${productId}`, { method: 'DELETE', credentials: 'include' });
     if (res.ok) { router.push('/gallery'); router.refresh(); }
     else { setConfirmDelete(false); setDeleteError(true); setTimeout(() => setDeleteError(false), 4000); }
   };

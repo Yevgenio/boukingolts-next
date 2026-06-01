@@ -34,7 +34,7 @@ export default function EventsAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/api/content/home-events`)
+    fetch(`${API_URL}/content/home-events`)
       .then(res => res.json())
       .then(data => { setForm(data); setLoading(false); })
       .catch(() => setLoading(false));
@@ -44,7 +44,7 @@ export default function EventsAdminPage() {
     if (!form) return;
     setSaving(true);
     try {
-      const res = await fetch(`${API_URL}/api/content/home-events`, {
+      const res = await fetch(`${API_URL}/content/home-events`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(form),
       });
       if (res.ok) showToast('Saved!', true); else showToast('Failed to save', false);

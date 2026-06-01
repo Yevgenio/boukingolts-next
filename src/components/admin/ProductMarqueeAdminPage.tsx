@@ -44,8 +44,8 @@ export default function ProductMarqueeAdminPage() {
   useEffect(() => {
     if (!isAdmin) return;
     Promise.all([
-      fetch(`${API_URL}/api/content/home-product-marquee`).then(r => r.json()),
-      fetch(`${API_URL}/api/content/home-events`).then(r => r.json()),
+      fetch(`${API_URL}/content/home-product-marquee`).then(r => r.json()),
+      fetch(`${API_URL}/content/home-events`).then(r => r.json()),
       getMarqueeProducts(),
     ]).then(([marqueeData, eventsData, productData]) => {
       setMarquee(marqueeData);
@@ -59,11 +59,11 @@ export default function ProductMarqueeAdminPage() {
     setSaving(true);
     try {
       const [r1, r2] = await Promise.all([
-        fetch(`${API_URL}/api/content/home-product-marquee`, {
+        fetch(`${API_URL}/content/home-product-marquee`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
           body: JSON.stringify(marquee),
         }),
-        fetch(`${API_URL}/api/content/home-events`, {
+        fetch(`${API_URL}/content/home-events`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
           body: JSON.stringify(events),
         }),
@@ -87,7 +87,7 @@ export default function ProductMarqueeAdminPage() {
   const addProduct = async () => {
     if (!newId.trim()) return;
     try {
-      const res = await fetch(`${API_URL}/api/products/id/${newId.trim()}`);
+      const res = await fetch(`${API_URL}/products/id/${newId.trim()}`);
       if (!res.ok) throw new Error();
       const prod: Product = await res.json();
       setProducts([...products, prod]);

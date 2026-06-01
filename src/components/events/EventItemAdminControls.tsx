@@ -20,7 +20,7 @@ export default function EventItemAdminControls({ eventId }: { eventId: string })
     e.stopPropagation();
     e.preventDefault();
     if (!confirm('Are you sure you want to delete this event?')) return;
-    await fetch(`${API_URL}/api/events/id/${eventId}`, {
+    await fetch(`${API_URL}/events/id/${eventId}`, {
       method: 'DELETE',
       credentials: 'include',
     });

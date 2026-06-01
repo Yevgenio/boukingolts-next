@@ -27,7 +27,7 @@ export default function WebsiteIntroAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/api/content/website-introduction`)
+    fetch(`${API_URL}/content/website-introduction`)
       .then(res => res.json())
       .then(data => {
         setParagraphs(data.paragraphs || []);
@@ -38,7 +38,7 @@ export default function WebsiteIntroAdminPage() {
   const updateParagraphs = async (updated: string[]) => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_URL}/api/content/website-introduction`, {
+      const res = await fetch(`${API_URL}/content/website-introduction`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

@@ -12,7 +12,7 @@ function stripHtml(html: string): string {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   try {
-    const res = await fetch(`${API_URL}/api/products/id/${id}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/products/id/${id}`, { cache: 'no-store' });
     if (!res.ok) return { title: 'Artwork' };
     const product: Product = await res.json();
     const description = product.description

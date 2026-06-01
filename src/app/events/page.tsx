@@ -26,7 +26,7 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
 
   let initialEvents: Event[] = [];
   try {
-    const res = await fetch(`${API_URL}/api/events/search${qs.size ? `?${qs}` : ''}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/events/search${qs.size ? `?${qs}` : ''}`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       initialEvents = (data.data as Event[]).sort(

@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 async function getAbout(): Promise<AboutContent | null> {
   try {
-    const res = await fetch(`${API_URL}/api/content/about-boukingolts`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/content/about-boukingolts`, { cache: 'no-store' });
     if (!res.ok) return null;
     return res.json();
   } catch { return null; }

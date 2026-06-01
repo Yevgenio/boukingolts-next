@@ -104,9 +104,9 @@ function GalleryPageInner({ initialProducts }: { initialProducts?: Product[] }) 
   }, []);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/products/categories`, { cache: 'no-store' })
+    fetch(`${API_URL}/products/categories`, { cache: 'no-store' })
       .then(r => r.json()).then(setCategories).catch(() => {});
-    fetch(`${API_URL}/api/products/series`, { cache: 'no-store' })
+    fetch(`${API_URL}/products/series`, { cache: 'no-store' })
       .then(r => r.json()).then(setSeriesList).catch(() => {});
     getGallerySettings().then(setSettings);
   }, []);
@@ -120,7 +120,7 @@ function GalleryPageInner({ initialProducts }: { initialProducts?: Product[] }) 
     if (availableOnly) params.set('forSale', 'true');
     if (sort) params.set('sort', sort);
     const qs = params.toString();
-    const res = await fetch(`${API_URL}/api/products/search${qs ? `?${qs}` : ''}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/products/search${qs ? `?${qs}` : ''}`, { cache: 'no-store' });
     const result = await res.json();
     setProducts(result.data);
   }, [query, selectedCategory, selectedSeries, selectedTag, availableOnly, sort]);
