@@ -54,7 +54,7 @@ function FilterDropdown({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-2 min-w-[160px] bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden z-20">
+        <div className="absolute top-full left-0 mt-2 min-w-[160px] max-w-[220px] bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden z-20">
           {active && (
             <button
               onClick={() => { onSelect(''); setOpen(false); }}
@@ -67,7 +67,7 @@ function FilterDropdown({
             <button
               key={opt.value}
               onClick={() => { onSelect(opt.value); setOpen(false); }}
-              className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-stone-50 ${
+              className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-stone-50 truncate ${
                 selected === opt.value ? 'text-stone-900 font-medium' : 'text-stone-700'
               }`}
             >

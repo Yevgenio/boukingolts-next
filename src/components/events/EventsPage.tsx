@@ -61,7 +61,7 @@ function EventsPageInner({ initialEvents }: { initialEvents?: Event[] }) {
           </button>
           {categories.map(cat => (
             <button key={cat} onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-1.5 rounded-full text-sm transition-colors ${selectedCategory === cat ? 'bg-stone-800 text-white' : 'border border-stone-300 text-stone-600 hover:border-stone-500 hover:text-stone-800'}`}
+              className={`px-4 py-1.5 rounded-full text-sm transition-colors max-w-[160px] truncate ${selectedCategory === cat ? 'bg-stone-800 text-white' : 'border border-stone-300 text-stone-600 hover:border-stone-500 hover:text-stone-800'}`}
             >
               {cat}
             </button>

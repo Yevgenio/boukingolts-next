@@ -36,12 +36,12 @@ function NavDropdown({
 
       {hasItems && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-150 z-50">
-          <div className="bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden min-w-[160px]">
+          <div className="bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden min-w-[160px] max-w-[220px]">
             {items.map((item, i) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block px-4 py-2.5 text-sm hover:bg-stone-50 transition-colors whitespace-nowrap ${
+                className={`block px-4 py-2.5 text-sm hover:bg-stone-50 transition-colors truncate ${
                   i === 0
                     ? 'text-stone-500 border-b border-stone-100'
                     : 'text-stone-700'
