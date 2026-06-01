@@ -18,9 +18,9 @@ export default function UpcomingEvents({ events }: { events: Event[] }) {
 
   useEffect(() => {
     if (hover || events.length < 2) return;
-    const id = setInterval(() => setActive(a => (a + 1) % events.length), 5000);
-    return () => clearInterval(id);
-  }, [hover, events.length]);
+    const id = setTimeout(() => setActive(a => (a + 1) % events.length), 5000);
+    return () => clearTimeout(id);
+  }, [active, hover, events.length]);
 
   if (!events.length) return null;
 
@@ -98,7 +98,7 @@ export default function UpcomingEvents({ events }: { events: Event[] }) {
                       {event.description && (
                         <p
                           className="text-stone-300/70 text-xs leading-relaxed mt-1.5 line-clamp-2"
-                          dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '') }}
+                          dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ') }}
                         />
                       )}
                     </div>
@@ -172,7 +172,7 @@ export default function UpcomingEvents({ events }: { events: Event[] }) {
                   {event.description && (
                     <p
                       className="text-stone-400 text-sm leading-relaxed line-clamp-3 max-w-xs text-right"
-                      dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '') }}
+                      dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ') }}
                     />
                   )}
                 </div>

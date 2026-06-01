@@ -43,7 +43,7 @@ export default function EventCard({ event, className = '' }: { event: Event; cla
                 <div className="flex-1 min-h-0 overflow-hidden mt-2">
                   <p
                     className={`text-sm leading-relaxed ${bgImage ? 'text-stone-300' : 'text-stone-500'}`}
-                    dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '') }}
+                    dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ') }}
                   />
                 </div>
               )}
