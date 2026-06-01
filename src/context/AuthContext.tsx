@@ -43,9 +43,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkStatus = async () => {
     try {
       const res = await fetch(`${API_URL}/auth/status`, { credentials: 'include' });
-      if (!res.ok) throw new Error('Not logged in');
+      if (!res.ok) throw new Error();
       const data = await res.json();
-      setAuth({ isLoggedIn: true, isAdmin: data.isAdmin });
+      if (data.isLoggedIn) {
+        setAuth({ isLoggedIn: true, isAdmin: data.isAdmin });
+      } else {
+        setAuth({ isLoggedIn: false, isAdmin: false });
+      }
     } catch {
       setAuth({ isLoggedIn: false, isAdmin: false });
     }
