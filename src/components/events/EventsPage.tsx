@@ -14,6 +14,10 @@ function EventsPageInner({ initialEvents }: { initialEvents?: Event[] }) {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') ?? '');
 
   useEffect(() => {
+    setSelectedCategory(searchParams.get('category') ?? '');
+  }, [searchParams]);
+
+  useEffect(() => {
     fetch(`${API_URL}/events/categories`, { cache: 'no-store' })
       .then(r => r.ok ? r.json() : []).then(setCategories).catch(() => {});
   }, []);
