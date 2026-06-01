@@ -90,10 +90,16 @@ export default function UpcomingEvents({ events }: { events: Event[] }) {
                 }`}>
                   <p className="text-stone-300 text-xs tracking-widest mb-1">{day} {month}</p>
                   <div className="flex items-end justify-between gap-4">
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <h3 className="font-serif text-white text-xl leading-snug line-clamp-2">{event.name}</h3>
                       {event.location && (
                         <p className="text-stone-300 text-sm mt-1 truncate">{event.location}</p>
+                      )}
+                      {event.description && (
+                        <p
+                          className="text-stone-300/70 text-xs leading-relaxed mt-1.5 line-clamp-2"
+                          dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '') }}
+                        />
                       )}
                     </div>
                     <span className="text-white/60 text-xl flex-shrink-0">→</span>
@@ -165,7 +171,7 @@ export default function UpcomingEvents({ events }: { events: Event[] }) {
                   </div>
                   {event.description && (
                     <p
-                      className="text-stone-400 text-sm leading-relaxed line-clamp-3 max-w-xs text-right hidden lg:block"
+                      className="text-stone-400 text-sm leading-relaxed line-clamp-3 max-w-xs text-right"
                       dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '') }}
                     />
                   )}

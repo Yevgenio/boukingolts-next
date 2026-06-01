@@ -32,7 +32,7 @@ export default function EventCard({ event, className = '' }: { event: Event; cla
             style={bgImage ? { backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
           >
             {bgImage && <div className="absolute inset-0 bg-stone-900/65" />}
-            <div className={`relative z-10 h-full flex flex-col justify-between p-5 ${bgImage ? 'text-white' : 'text-stone-800 bg-stone-50'}`}>
+            <div className={`relative z-10 h-full flex flex-col p-5 ${bgImage ? 'text-white' : 'text-stone-800 bg-stone-50'}`}>
               <div className="flex-shrink-0 min-w-0">
                 <h2 className="font-serif text-xl leading-snug mb-1 line-clamp-2">{event.name}</h2>
                 {event.location && (
@@ -40,10 +40,12 @@ export default function EventCard({ event, className = '' }: { event: Event; cla
                 )}
               </div>
               {event.description && (
-                <p
-                  className={`text-sm leading-relaxed flex-shrink-0 ${bgImage ? 'text-stone-300' : 'text-stone-500'}`}
-                  dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '') }}
-                />
+                <div className="flex-1 min-h-0 overflow-hidden mt-2">
+                  <p
+                    className={`text-sm leading-relaxed ${bgImage ? 'text-stone-300' : 'text-stone-500'}`}
+                    dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '') }}
+                  />
+                </div>
               )}
             </div>
           </div>
