@@ -22,7 +22,7 @@ export default function Testimonials({ content }: Props) {
               <p className="text-stone-600 text-sm leading-relaxed flex-1">
                 &ldquo;{t.comment}&rdquo;
               </p>
-              <footer className="mt-5 text-xs text-stone-400 font-medium tracking-wide uppercase">
+              <footer className="mt-5 text-xs text-stone-400 font-medium tracking-wide uppercase truncate">
                 — {t.author}
               </footer>
             </blockquote>

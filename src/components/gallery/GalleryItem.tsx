@@ -55,7 +55,7 @@ export default function GalleryItem({ product, previewMode = false }: { product:
                 </p>
               )}
             </div>
-            <h2 className="text-white font-serif text-lg leading-snug drop-shadow">{product.name}</h2>
+            <h2 className="text-white font-serif text-lg leading-snug drop-shadow truncate">{product.name}</h2>
           </div>
         </Link>
       </div>

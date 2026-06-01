@@ -34,14 +34,14 @@ export default function EventCard({ event, className = '' }: { event: Event; cla
             {bgImage && <div className="absolute inset-0 bg-stone-900/65" />}
             <div className={`relative z-10 h-full flex flex-col justify-between p-5 ${bgImage ? 'text-white' : 'text-stone-800 bg-stone-50'}`}>
               <div>
-                <h2 className="font-serif text-xl leading-snug mb-1">{event.name}</h2>
+                <h2 className="font-serif text-xl leading-snug mb-1 line-clamp-2">{event.name}</h2>
                 {event.location && (
-                  <p className={`text-sm ${bgImage ? 'text-stone-300' : 'text-stone-500'}`}>{event.location}</p>
+                  <p className={`text-sm truncate ${bgImage ? 'text-stone-300' : 'text-stone-500'}`}>{event.location}</p>
                 )}
               </div>
               {event.description && (
                 <p
-                  className={`text-sm leading-relaxed line-clamp-2 ${bgImage ? 'text-stone-300' : 'text-stone-500'}`}
+                  className={`text-sm leading-relaxed overflow-hidden ${bgImage ? 'text-stone-300' : 'text-stone-500'}`}
                   dangerouslySetInnerHTML={{ __html: event.description.replace(/<[^>]+>/g, '') }}
                 />
               )}

@@ -46,7 +46,7 @@ export default function RelatedProductsRow({ title, products, href }: { title: s
 
   return (
     <div>
-      <h3 className="text-xl font-serif text-stone-800 mb-5">{title}</h3>
+      <h3 className="text-xl font-serif text-stone-800 mb-5 truncate">{title}</h3>
       <div className="relative">
 
         <button
@@ -71,9 +71,9 @@ export default function RelatedProductsRow({ title, products, href }: { title: s
           {products.map(p => {
             const w = cardWidth(p);
             return (
-              <Link key={p._id} href={`/gallery/${p._id}`} style={{ width: w, flexShrink: 0 }} className="group">
+              <Link key={p._id} href={`/gallery/${p._id}`} style={{ width: `min(${w}px, 100%)`, flexShrink: 0 }} className="group">
                 <div
-                  style={{ width: w, height: CARD_HEIGHT }}
+                  style={{ width: '100%', height: CARD_HEIGHT }}
                   className="rounded-xl overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-lg transition-shadow duration-300 mb-2.5"
                 >
                   <Image

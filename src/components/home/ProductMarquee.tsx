@@ -10,13 +10,14 @@ interface Props {
   products: Product[];
 }
 
-const BASE_SPEED   = 0.04;
-const MAX_BOOST    = 2.5;
-const SCROLL_GAIN  = 0.025; // how much each scroll event adds to target boost
-const MAX_DELTA    = 30;    // clamp per-event dy: kills mouse-wheel spikes (~100px), passes touchpad (~5px)
-const TARGET_DECAY = 0.90;  // target boost decays toward 0 each frame
-const LERP_RATE    = 0.10;  // actual boost lerps toward target (lower = smoother ramp)
-const CARD_HEIGHT  = 220;   // px — all cards share this height, widths vary by aspect ratio
+const BASE_SPEED      = 0.04;
+const MAX_BOOST       = 2.5;
+const SCROLL_GAIN     = 0.025; // how much each scroll event adds to target boost
+const MAX_DELTA       = 30;    // clamp per-event dy: kills mouse-wheel spikes (~100px), passes touchpad (~5px)
+const TARGET_DECAY    = 0.90;  // target boost decays toward 0 each frame
+const LERP_RATE       = 0.10;  // actual boost lerps toward target (lower = smoother ramp)
+const CARD_HEIGHT     = 220;   // px — all cards share this height, widths vary by aspect ratio
+const REFERENCE_WIDTH = 1200;  // desktop baseline — narrower screens get proportionally slower speed
 
 function cardWidth(product: Product): number {
   const img = product.images[0];
@@ -25,22 +26,31 @@ function cardWidth(product: Product): number {
 }
 
 export default function ProductMarquee({ products }: Props) {
-  const trackRef    = useRef<HTMLDivElement>(null);
-  const offsetRef   = useRef(0);
-  const boostRef    = useRef(0);   // actual current boost — lerps toward target
-  const targetRef   = useRef(0);   // desired boost — set by scroll, decays over time
-  const lastScrollY = useRef(0);
+  const trackRef     = useRef<HTMLDivElement>(null);
+  const offsetRef    = useRef(0);
+  const boostRef     = useRef(0);   // actual current boost — lerps toward target
+  const targetRef    = useRef(0);   // desired boost — set by scroll, decays over time
+  const lastScrollY  = useRef(0);
+  const speedScale   = useRef(1);   // viewport-width ratio — slows marquee on narrow screens
 
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
 
+    const updateScale = () => {
+      speedScale.current = Math.min(window.innerWidth / REFERENCE_WIDTH, 1);
+    };
+    updateScale();
+    window.addEventListener('resize', updateScale);
+
     const handleScroll = () => {
       const dy = window.scrollY - lastScrollY.current;
       lastScrollY.current = window.scrollY;
+      const scale = speedScale.current;
       // Clamp individual delta so mouse-wheel clicks (dy ~100) don't spike more than touchpad swipes
       const clamped = Math.sign(dy) * Math.min(Math.abs(dy), MAX_DELTA);
-      targetRef.current = Math.max(-MAX_BOOST, Math.min(targetRef.current + clamped * SCROLL_GAIN, MAX_BOOST));
+      const maxBoost = MAX_BOOST * scale;
+      targetRef.current = Math.max(-maxBoost, Math.min(targetRef.current + clamped * SCROLL_GAIN * scale, maxBoost));
     };
 
     const half = (track.firstElementChild as HTMLElement)?.offsetWidth ?? track.scrollWidth / 2;
@@ -58,7 +68,7 @@ export default function ProductMarquee({ products }: Props) {
       // Actual boost lerps toward target → smooth acceleration, no sudden jumps
       boostRef.current += (targetRef.current - boostRef.current) * (1 - Math.pow(1 - LERP_RATE, t));
 
-      offsetRef.current += (BASE_SPEED + boostRef.current) * delta;
+      offsetRef.current += (BASE_SPEED * speedScale.current + boostRef.current) * delta;
       if (offsetRef.current >= half) offsetRef.current -= half;
       if (offsetRef.current < 0) offsetRef.current += half;
 
@@ -71,6 +81,7 @@ export default function ProductMarquee({ products }: Props) {
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', updateScale);
       cancelAnimationFrame(rafId);
     };
   }, [products]);
@@ -78,7 +89,8 @@ export default function ProductMarquee({ products }: Props) {
   if (!products.length) return null;
 
   const applyBoost = (dir: 'left' | 'right') => {
-    targetRef.current = dir === 'right' ? MAX_BOOST : -MAX_BOOST;
+    const maxBoost = MAX_BOOST * speedScale.current;
+    targetRef.current = dir === 'right' ? maxBoost : -maxBoost;
   };
 
   return (
@@ -111,11 +123,11 @@ export default function ProductMarquee({ products }: Props) {
                   <Link
                     key={idx}
                     href={`/gallery/${product._id}`}
-                    style={{ width: w, height: CARD_HEIGHT, flexShrink: 0 }}
+                    style={{ width: `min(${w}px, calc(100vw - 6rem))`, height: CARD_HEIGHT, flexShrink: 0 }}
                     className="group"
                   >
                     <div
-                      style={{ width: w, height: CARD_HEIGHT }}
+                      style={{ width: '100%', height: CARD_HEIGHT }}
                       className="rounded-lg overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-md transition-shadow"
                     >
                       <Image

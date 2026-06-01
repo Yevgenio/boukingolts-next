@@ -31,9 +31,9 @@ export default function AboutSection({ content }: Props) {
           <div>
             <h3 className="text-2xl font-serif text-stone-900">{content.name}</h3>
             {content.address && (
-              <p className="flex items-center justify-center md:justify-start gap-1.5 text-sm text-stone-400 mt-2">
+              <p className="flex items-center justify-center md:justify-start gap-1.5 text-sm text-stone-400 mt-2 min-w-0">
                 <LocationIcon className="w-4 h-4 flex-shrink-0" />
-                {content.address}
+                <span className="truncate">{content.address}</span>
               </p>
             )}
           </div>

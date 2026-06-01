@@ -41,7 +41,7 @@ function NavDropdown({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block px-4 py-2.5 text-sm hover:bg-stone-50 transition-colors ${
+                className={`block px-4 py-2.5 text-sm hover:bg-stone-50 transition-colors whitespace-nowrap ${
                   i === 0
                     ? 'text-stone-500 border-b border-stone-100'
                     : 'text-stone-700'

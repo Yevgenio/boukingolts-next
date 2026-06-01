@@ -62,7 +62,10 @@ export function computeRowHeight(
     (s, p) => s + (p.images[0]?.width ?? 1) / (p.images[0]?.height ?? 1),
     0
   );
-  if (isLast && row.length === 1) return targetHeight;
+  if (isLast && row.length === 1) {
+    const r = (row[0].images[0]?.width ?? 1) / (row[0].images[0]?.height ?? 1);
+    return Math.min(targetHeight, containerWidth / r);
+  }
   return (containerWidth - (row.length - 1) * GAP) / ratioSum;
 }
 
