@@ -89,6 +89,13 @@ function GalleryPageInner({ initialProducts }: { initialProducts?: Product[] }) 
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') ?? '');
   const [selectedSeries, setSelectedSeries] = useState(searchParams.get('series') ?? '');
   const [selectedTag, setSelectedTag] = useState(searchParams.get('tag') ?? '');
+
+  // Sync URL params → state when navigating here from the header dropdown
+  useEffect(() => {
+    setSelectedCategory(searchParams.get('category') ?? '');
+    setSelectedSeries(searchParams.get('series') ?? '');
+    setSelectedTag(searchParams.get('tag') ?? '');
+  }, [searchParams]);
   const [availableOnly, setAvailableOnly] = useState(false);
   const [sort, setSort] = useState('');
   const [settings, setSettings] = useState<GallerySettings>(DEFAULTS);

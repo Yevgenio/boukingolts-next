@@ -63,7 +63,7 @@ export default function HeroSection({ content }: Props) {
         <div ref={buttonRef} className="flex flex-wrap justify-center gap-4">
           <Link
             href="/gallery"
-            className="bg-white text-stone-900 px-8 py-3 text-sm font-medium tracking-wide hover:bg-stone-100 transition-colors"
+            className="bg-white text-stone-900 px-8 py-3 text-sm font-medium tracking-wide hover:bg-stone-800 hover:text-white transition-colors"
           >
             Explore Gallery
           </Link>
