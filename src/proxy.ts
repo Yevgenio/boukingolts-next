@@ -1,44 +1,52 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-// import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
+  const host = request.headers.get('host') || '';
+  let artist = 'all';
+  if (host.startsWith('elena.')) artist = 'elena';
+  else if (host.startsWith('alexey.')) artist = 'alexey';
+  else if (host.startsWith('archive.')) artist = 'archive';
+
+  // Archive is admin-only: verify JWT and check role === 'admin'
+  if (artist === 'archive') {
+    const token = request.cookies.get('access_token')?.value;
+    if (!token) {
+      return NextResponse.redirect(new URL('https://alexey.boukingolts.art/auth/login'));
+    }
+    try {
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+      const { payload } = await jwtVerify(token, secret);
+      if (payload.role !== 'admin') throw new Error('not admin');
+    } catch {
+      return NextResponse.redirect(new URL('https://alexey.boukingolts.art/auth/login'));
+    }
+  }
+
+  // Protect /settings — require login
+  const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get('access_token')?.value;
   const userRole = request.cookies.get('user_role')?.value;
 
-  // If no access_token cookie, redirect to login
-  if (!accessToken) {
+  if (protectedPaths.some(p => pathname.startsWith(p)) && !accessToken) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  const { pathname } = request.nextUrl;
-
-  // If trying to access /admin but not an admin, redirect to home
-  if (adminPaths.some((path) => pathname.startsWith(path)) && userRole !== 'admin') {
+  // Protect /admin — require admin role
+  if (adminPaths.some(p => pathname.startsWith(p)) && userRole !== 'admin') {
     return NextResponse.redirect(new URL('/home', request.url));
   }
 
-//   try {
-//     const payload = jwt.verify(accessToken, process.env.JWT_SECRET);
-//     // You could even check payload roles here (like admin/user)
-//   } catch (err) {
-//     // Token invalid
-//     return NextResponse.redirect(new URL('/login', request.url));
-//   }
-
-  // Otherwise, allow the user to continue
-  return NextResponse.next();
+  // Forward x-artist header to all server components
+  const headers = new Headers(request.headers);
+  headers.set('x-artist', artist);
+  return NextResponse.next({ request: { headers } });
 }
 
-// Tell Next.js which paths to protect
 export const config = {
-  matcher: [
-    //'/home/:path*', // protect /home and all subpaths
-    // '/dashboard/:path*',
-    // '/profile/:path*', // protect /profile and all subpaths
-    '/settings/:path*', // protect /settings and all subpaths
-  ],
+  matcher: '/((?!_next/static|_next/image|favicon.ico).*)',
 };
 
-// List of paths that only admins can access
-const adminPaths = ['/admin', '/admin/:path*'];
+const protectedPaths = ['/settings'];
+const adminPaths = ['/admin'];
