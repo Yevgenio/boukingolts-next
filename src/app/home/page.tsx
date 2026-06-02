@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { headers } from 'next/headers';
 import API_URL from '@/config/config';
 import HeroSection from '@/components/home/HeroSection';
 import Testimonials from '@/components/home/Testimonials';
@@ -12,11 +13,8 @@ import { Event } from '@/types/Event';
 
 export const metadata: Metadata = {
   title: 'Home',
-  description: 'Welcome to Boukingolts — original paintings, sculptures, and mixed media artwork available for sale.',
-  openGraph: {
-    title: 'Boukingolts',
-    description: 'Original artwork — paintings, sculptures, and mixed media.',
-  },
+  description: 'Welcome — original paintings, sculptures, and mixed media artwork.',
+  openGraph: { title: 'Home', description: 'Original artwork — paintings, sculptures, and mixed media.' },
 };
 
 async function fetchJson<T>(url: string, fallback: T): Promise<T> {
@@ -29,15 +27,21 @@ async function fetchJson<T>(url: string, fallback: T): Promise<T> {
 }
 
 export default async function Page() {
+  const h = await headers();
+  const artist = h.get('x-artist') || 'all';
+  // For combined apex, home page content falls back to 'alexey'
+  const contentArtist = artist === 'all' ? 'alexey' : artist;
+  const qs = `?artist=${contentArtist}`;
+
   const [hero, testimonials, about, marqueeSettings, eventsContent, marqueeProducts, eventsResult] =
     await Promise.all([
-      fetchJson<HeroContent | null>(`${API_URL}/content/home-hero`, null),
-      fetchJson<TestimonialsContent | null>(`${API_URL}/content/home-testimonials`, null),
-      fetchJson<AboutContent | null>(`${API_URL}/content/about-boukingolts`, null),
-      fetchJson<MarqueeContent | null>(`${API_URL}/content/home-product-marquee`, null),
-      fetchJson<EventsContent | null>(`${API_URL}/content/home-events`, null),
-      fetchJson<Product[]>(`${API_URL}/products/marquee`, []),
-      fetchJson<{ data: Event[] }>(`${API_URL}/events/search`, { data: [] }),
+      fetchJson<HeroContent | null>(`${API_URL}/content/home-hero${qs}`, null),
+      fetchJson<TestimonialsContent | null>(`${API_URL}/content/home-testimonials${qs}`, null),
+      fetchJson<AboutContent | null>(`${API_URL}/content/about-boukingolts${qs}`, null),
+      fetchJson<MarqueeContent | null>(`${API_URL}/content/home-product-marquee${qs}`, null),
+      fetchJson<EventsContent | null>(`${API_URL}/content/home-events${qs}`, null),
+      fetchJson<Product[]>(`${API_URL}/products/marquee${qs}`, []),
+      fetchJson<{ data: Event[] }>(`${API_URL}/events/search${qs}`, { data: [] }),
     ]);
 
   const upcomingEvents = (eventsResult.data ?? [])

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import API_URL, { resolveImageUrl } from '@/config/config';
 import { useRouter } from 'next/navigation';
+import { useArtist } from '@/context/ArtistContext';
 import { Image } from '@/types/Image';
 import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
 import RichTextEditor from '@/components/common/RichTextEditor';
@@ -20,6 +21,10 @@ function formatPreviewDate(dateStr: string): string {
 }
 
 export default function EventForm({ mode, eventId }: EventFormProps) {
+  const contextArtist = useArtist();
+  const [selectedArtist, setSelectedArtist] = useState<'elena' | 'alexey' | 'archive'>(
+    contextArtist !== 'all' ? contextArtist as 'elena' | 'alexey' | 'archive' : 'alexey'
+  );
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
@@ -42,6 +47,7 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
           setCategory(data.category || '');
           setDate(data.date ? data.date.substring(0, 10) : '');
           setLocation(data.location || '');
+          if (data.artist) setSelectedArtist(data.artist);
           if (Array.isArray(data.images)) {
             setImages(data.images.map((img: Image) => ({ url: img.url, id: img._id, isNew: false })));
           }
@@ -59,6 +65,7 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
     setSubmitting(true);
 
     const formData = new FormData();
+    formData.append('artist', selectedArtist);
     formData.append('name', name);
     formData.append('description', description);
     formData.append('category', category);
@@ -112,6 +119,27 @@ export default function EventForm({ mode, eventId }: EventFormProps) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
+          {/* Artist assignment */}
+          <div>
+            <label className={LABEL}>Artist</label>
+            <div className="flex gap-2">
+              {(['alexey', 'elena', 'archive'] as const).map(a => (
+                <button
+                  key={a}
+                  type="button"
+                  onClick={() => setSelectedArtist(a)}
+                  className={`px-4 py-1.5 rounded-full text-sm transition-colors ${
+                    selectedArtist === a
+                      ? 'bg-stone-800 text-white'
+                      : 'border border-stone-300 text-stone-600 hover:border-stone-500'
+                  }`}
+                >
+                  {a === 'alexey' ? 'Alexey' : a === 'elena' ? 'Elena' : 'Archive'}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div>
             <label className={LABEL}>Name *</label>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className={INPUT} placeholder="Event name" />

@@ -7,6 +7,7 @@ export interface Event {
   images: import('./Image').Image[];
   date: string;
   location?: string;
+  artist?: 'elena' | 'alexey' | 'archive';
   createdAt?: string;
   createdBy?: string;
 }

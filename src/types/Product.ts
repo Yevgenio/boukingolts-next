@@ -24,6 +24,7 @@ export interface Product {
   specs?: ProductSpec[];
   price?: number;
   salePercent?: number;
+  artist?: 'elena' | 'alexey' | 'archive';
   createdAt?: string;
   createdBy?: string;
 }

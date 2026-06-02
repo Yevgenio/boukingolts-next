@@ -5,9 +5,11 @@ import API_URL from '@/config/config';
 import EventCard from './EventCard';
 import EventsAdminControls from './EventsAdminControls';
 import { Event } from '@/types/Event';
+import { useArtist } from '@/context/ArtistContext';
 
 function EventsPageInner({ initialEvents }: { initialEvents?: Event[] }) {
   const searchParams = useSearchParams();
+  const artist = useArtist();
   const [events, setEvents] = useState<Event[]>(initialEvents ?? []);
   const [categories, setCategories] = useState<string[]>([]);
   const [query, setQuery] = useState('');
@@ -18,12 +20,14 @@ function EventsPageInner({ initialEvents }: { initialEvents?: Event[] }) {
   }, [searchParams]);
 
   useEffect(() => {
-    fetch(`${API_URL}/events/categories`, { cache: 'no-store' })
+    const qs = artist !== 'all' ? `?artist=${artist}` : '';
+    fetch(`${API_URL}/events/categories${qs}`, { cache: 'no-store' })
       .then(r => r.ok ? r.json() : []).then(setCategories).catch(() => {});
-  }, []);
+  }, [artist]);
 
   const fetchEvents = useCallback(async () => {
     const params = new URLSearchParams();
+    if (artist !== 'all') params.set('artist', artist);
     if (query) params.set('query', query);
     if (selectedCategory) params.set('category', selectedCategory);
     const qs = params.toString();
@@ -34,7 +38,7 @@ function EventsPageInner({ initialEvents }: { initialEvents?: Event[] }) {
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
     setEvents(sorted);
-  }, [query, selectedCategory]);
+  }, [artist, query, selectedCategory]);
 
   useEffect(() => { fetchEvents(); }, [fetchEvents]);
 

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import API_URL from '@/config/config';
 import { useRouter } from 'next/navigation';
+import { useArtist } from '@/context/ArtistContext';
 import { Image as ImageType } from '@/types/Image';
 import { Product, ProductSpec } from '@/types/Product';
 
@@ -24,6 +25,10 @@ const DIM_INPUT = 'w-full border border-stone-200 rounded-lg px-3 py-2.5 text-st
 const PRODUCT_REAL_W = 900;
 
 export default function ProductForm({ mode, productId }: ProductFormProps) {
+  const contextArtist = useArtist();
+  const [selectedArtist, setSelectedArtist] = useState<'elena' | 'alexey' | 'archive'>(
+    contextArtist !== 'all' ? contextArtist as 'elena' | 'alexey' | 'archive' : 'alexey'
+  );
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
@@ -101,6 +106,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
           if (Array.isArray(data.specs)) setSpecs(data.specs);
           setPrice(data.price ?? '');
           setSalePercent(data.salePercent ?? '');
+          if (data.artist) setSelectedArtist(data.artist);
           if (Array.isArray(data.images))
             setImages(data.images.map((img: ImageType & { _id: string }) => ({ url: img.url, id: img._id, isNew: false })));
         })
@@ -141,6 +147,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
     setError('');
     setSubmitting(true);
     const formData = new FormData();
+    formData.append('artist', selectedArtist);
     formData.append('name', name);
     formData.append('description', description);
     formData.append('category', category);
@@ -224,6 +231,27 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
 
         {/* ── Form ── */}
         <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
+
+          {/* Artist assignment */}
+          <div>
+            <label className={LABEL}>Artist</label>
+            <div className="flex gap-2">
+              {(['alexey', 'elena', 'archive'] as const).map(a => (
+                <button
+                  key={a}
+                  type="button"
+                  onClick={() => setSelectedArtist(a)}
+                  className={`px-4 py-1.5 rounded-full text-sm transition-colors capitalize ${
+                    selectedArtist === a
+                      ? 'bg-stone-800 text-white'
+                      : 'border border-stone-300 text-stone-600 hover:border-stone-500'
+                  }`}
+                >
+                  {a === 'alexey' ? 'Alexey' : a === 'elena' ? 'Elena' : 'Archive'}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Images — first so you can upload before filling metadata */}
           <div>

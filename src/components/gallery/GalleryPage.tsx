@@ -7,6 +7,7 @@ import GalleryAdminControls from '@/components/gallery/GalleryAdminControls';
 import API_URL from '@/config/config';
 import { Product } from '@/types/Product';
 import { getGallerySettings, GallerySettings } from '@/api/gallerySettings';
+import { useArtist } from '@/context/ArtistContext';
 import { buildRows, computeRowHeight, itemWidth } from '@/utils/galleryLayout';
 
 const DEFAULTS: GallerySettings = { targetHeight: 280, variance: 100 };
@@ -82,6 +83,8 @@ function FilterDropdown({
 
 function GalleryPageInner({ initialProducts }: { initialProducts?: Product[] }) {
   const searchParams = useSearchParams();
+  const artist = useArtist();
+  const artistQs = artist !== 'all' ? `artist=${artist}&` : '';
   const [products, setProducts] = useState<Product[]>(initialProducts ?? []);
   const [categories, setCategories] = useState<string[]>([]);
   const [seriesList, setSeriesList] = useState<string[]>([]);
@@ -111,15 +114,16 @@ function GalleryPageInner({ initialProducts }: { initialProducts?: Product[] }) 
   }, []);
 
   useEffect(() => {
-    fetch(`${API_URL}/products/categories`, { cache: 'no-store' })
+    fetch(`${API_URL}/products/categories?${artistQs}`, { cache: 'no-store' })
       .then(r => r.json()).then(setCategories).catch(() => {});
-    fetch(`${API_URL}/products/series`, { cache: 'no-store' })
+    fetch(`${API_URL}/products/series?${artistQs}`, { cache: 'no-store' })
       .then(r => r.json()).then(setSeriesList).catch(() => {});
     getGallerySettings().then(setSettings);
-  }, []);
+  }, [artist]);
 
   const fetchProducts = useCallback(async () => {
     const params = new URLSearchParams();
+    if (artist !== 'all') params.set('artist', artist);
     if (query) params.set('query', query);
     if (selectedCategory) params.set('category', selectedCategory);
     if (selectedSeries) params.set('series', selectedSeries);
@@ -130,7 +134,7 @@ function GalleryPageInner({ initialProducts }: { initialProducts?: Product[] }) 
     const res = await fetch(`${API_URL}/products/search${qs ? `?${qs}` : ''}`, { cache: 'no-store' });
     const result = await res.json();
     setProducts(result.data);
-  }, [query, selectedCategory, selectedSeries, selectedTag, availableOnly, sort]);
+  }, [artist, query, selectedCategory, selectedSeries, selectedTag, availableOnly, sort]);
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
