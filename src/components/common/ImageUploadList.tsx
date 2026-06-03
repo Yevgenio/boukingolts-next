@@ -21,12 +21,18 @@ function formatSize(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 }
 
+function basename(url: string): string {
+  return url.split('/').pop() ?? url;
+}
+
 export default function ImageUploadList({ images, setImages }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [library, setLibrary] = useState<ManagedImage[]>([]);
   const [libraryLoading, setLibraryLoading] = useState(false);
   const [libraryError, setLibraryError] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [search, setSearch] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -35,9 +41,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
     }
   };
 
-  const remove = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-  };
+  const remove = (index: number) => setImages(prev => prev.filter((_, i) => i !== index));
 
   const move = (from: number, to: number) => {
     if (to < 0 || to >= images.length) return;
@@ -55,8 +59,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
       setLibraryLoading(true);
       setLibraryError(false);
       try {
-        const imgs = await listImages();
-        setLibrary(imgs);
+        setLibrary(await listImages());
       } catch {
         setLibraryError(true);
       } finally {
@@ -85,6 +88,10 @@ export default function ImageUploadList({ images, setImages }: Props) {
 
   const alreadyAddedIds = new Set(images.map(img => img.id).filter(Boolean));
 
+  const filtered = library.filter(img =>
+    !search.trim() || basename(img.url).toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div>
       <div className="flex gap-2 items-center">
@@ -110,15 +117,13 @@ export default function ImageUploadList({ images, setImages }: Props) {
                 src={
                   item.isNew && item.file
                     ? URL.createObjectURL(item.file)
-                    : item.url
-                    ? resolveImageUrl(item.url ?? '')
-                    : resolveImageUrl('default.jpg')
+                    : resolveImageUrl(item.url ?? 'default.jpg')
                 }
                 alt="preview"
                 className="w-12 h-12 object-cover rounded flex-shrink-0"
               />
               <div className="flex-1 min-w-0 text-sm">
-                <p className="truncate text-stone-700">{item.isNew ? item.file?.name : item.url}</p>
+                <p className="truncate text-stone-700">{item.isNew ? item.file?.name : basename(item.url ?? '')}</p>
                 {item.isNew && item.file && (
                   <p className="text-xs text-stone-400">{formatSize(item.file.size)}</p>
                 )}
@@ -135,8 +140,34 @@ export default function ImageUploadList({ images, setImages }: Props) {
 
       {pickerOpen && (
         <div className="mt-3 border border-stone-200 rounded-xl bg-white p-3">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest">Image library</p>
+          {/* Header row */}
+          <div className="flex items-center gap-2 mb-3">
+            <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest flex-1">Image library</p>
+            {/* Grid / List toggle */}
+            <button
+              type="button"
+              onClick={() => setViewMode('grid')}
+              title="Grid view"
+              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-stone-800 text-white' : 'text-stone-400 hover:text-stone-700'}`}
+            >
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('list')}
+              title="List view"
+              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-stone-800 text-white' : 'text-stone-400 hover:text-stone-700'}`}
+            >
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+                <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+                <circle cx="3" cy="6" r="1.5" fill="currentColor" stroke="none" />
+                <circle cx="3" cy="12" r="1.5" fill="currentColor" stroke="none" />
+                <circle cx="3" cy="18" r="1.5" fill="currentColor" stroke="none" />
+              </svg>
+            </button>
             {selected.size > 0 && (
               <button
                 type="button"
@@ -147,15 +178,25 @@ export default function ImageUploadList({ images, setImages }: Props) {
               </button>
             )}
           </div>
+
+          {/* Search */}
+          <input
+            type="text"
+            placeholder="Search by filename…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full mb-3 border border-stone-200 rounded-lg px-3 py-1.5 text-xs text-stone-700 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-stone-200 placeholder:text-stone-400"
+          />
+
           {libraryLoading ? (
             <p className="text-sm text-stone-400 text-center py-6">Loading…</p>
           ) : libraryError ? (
             <p className="text-sm text-red-500 text-center py-6">Failed to load image library.</p>
-          ) : library.length === 0 ? (
-            <p className="text-sm text-stone-400 italic text-center py-6">No images in library</p>
-          ) : (
-            <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-64 overflow-y-auto">
-              {library.map(img => {
+          ) : filtered.length === 0 ? (
+            <p className="text-sm text-stone-400 italic text-center py-6">{library.length === 0 ? 'No images in library' : 'No results'}</p>
+          ) : viewMode === 'grid' ? (
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-64 overflow-y-auto pr-1">
+              {filtered.map(img => {
                 const isSelected = selected.has(img._id);
                 const isAdded = alreadyAddedIds.has(img._id);
                 return (
@@ -163,27 +204,69 @@ export default function ImageUploadList({ images, setImages }: Props) {
                     key={img._id}
                     type="button"
                     onClick={() => !isAdded && toggleSelect(img._id)}
-                    title={img.url}
-                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                      isAdded
-                        ? 'border-stone-200 opacity-40 cursor-not-allowed'
-                        : isSelected
-                        ? 'border-stone-800 ring-2 ring-stone-800'
+                    title={basename(img.url)}
+                    className={`relative w-full rounded-lg overflow-hidden border-2 transition-all ${
+                      isAdded ? 'border-stone-200 opacity-40 cursor-not-allowed'
+                        : isSelected ? 'border-stone-800 ring-2 ring-stone-800'
                         : 'border-transparent hover:border-stone-400'
                     }`}
+                    style={{ paddingBottom: '100%' }}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={resolveImageUrl(img.thumbnail)} alt={img.url} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={resolveImageUrl(img.thumbnail)} alt={img.url} className="w-full h-full object-cover" />
+                      {isSelected && (
+                        <div className="absolute inset-0 bg-stone-900/30 flex items-center justify-center">
+                          <span className="text-white text-lg font-bold">✓</span>
+                        </div>
+                      )}
+                      {isAdded && (
+                        <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                          <span className="text-stone-500 text-xs font-medium">Added</span>
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-1 max-h-64 overflow-y-auto pr-1">
+              {filtered.map(img => {
+                const isSelected = selected.has(img._id);
+                const isAdded = alreadyAddedIds.has(img._id);
+                const name = basename(img.url);
+                const usedCount = img.usedIn?.length ?? 0;
+                return (
+                  <button
+                    key={img._id}
+                    type="button"
+                    onClick={() => !isAdded && toggleSelect(img._id)}
+                    className={`flex items-center gap-3 w-full px-2 py-1.5 rounded-lg text-left transition-colors ${
+                      isAdded ? 'opacity-40 cursor-not-allowed bg-stone-50'
+                        : isSelected ? 'bg-stone-100 ring-1 ring-stone-400'
+                        : 'hover:bg-stone-50'
+                    }`}
+                  >
+                    <div className="w-10 h-10 rounded flex-shrink-0 overflow-hidden bg-stone-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={resolveImageUrl(img.thumbnail)} alt={name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-stone-800 truncate font-medium">{name}</p>
+                      <p className="text-[10px] text-stone-400">
+                        {img.size ? formatSize(img.size) : ''}
+                        {img.size && usedCount > 0 ? ' · ' : ''}
+                        {usedCount > 0 ? `used in ${usedCount}` : ''}
+                        {img.width && img.height ? `${img.size || usedCount > 0 ? ' · ' : ''}${img.width}×${img.height}` : ''}
+                      </p>
+                    </div>
                     {isSelected && (
-                      <div className="absolute inset-0 bg-stone-900/30 flex items-center justify-center">
-                        <span className="text-white text-lg font-bold">✓</span>
-                      </div>
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" className="text-stone-700 flex-shrink-0">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
                     )}
-                    {isAdded && (
-                      <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
-                        <span className="text-stone-500 text-xs font-medium">Added</span>
-                      </div>
-                    )}
+                    {isAdded && <span className="text-[10px] text-stone-400 flex-shrink-0">Added</span>}
                   </button>
                 );
               })}

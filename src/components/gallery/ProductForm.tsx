@@ -8,6 +8,7 @@ import { Image as ImageType } from '@/types/Image';
 import { Product, ProductSpec } from '@/types/Product';
 
 import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
+import ArtistDropdown from '@/components/common/ArtistDropdown';
 import RichTextEditor from '@/components/common/RichTextEditor';
 import ProductImageViewer from '@/components/gallery/ProductImageViewer';
 import GalleryItem from '@/components/gallery/GalleryItem';
@@ -235,22 +236,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
           {/* Artist assignment */}
           <div>
             <label className={LABEL}>Artist</label>
-            <div className="flex gap-2">
-              {(['alexey', 'elena', 'archive'] as const).map(a => (
-                <button
-                  key={a}
-                  type="button"
-                  onClick={() => setSelectedArtist(a)}
-                  className={`px-4 py-1.5 rounded-full text-sm transition-colors capitalize ${
-                    selectedArtist === a
-                      ? 'bg-stone-800 text-white'
-                      : 'border border-stone-300 text-stone-600 hover:border-stone-500'
-                  }`}
-                >
-                  {a === 'alexey' ? 'Alexey' : a === 'elena' ? 'Elena' : 'Archive'}
-                </button>
-              ))}
-            </div>
+            <ArtistDropdown value={selectedArtist} onChange={setSelectedArtist} />
           </div>
 
           {/* Images — first so you can upload before filling metadata */}
