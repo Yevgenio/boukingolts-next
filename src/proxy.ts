@@ -9,8 +9,11 @@ export async function proxy(request: NextRequest) {
   else if (host.startsWith('alexey.')) artist = 'alexey';
   else if (host.startsWith('archive.')) artist = 'archive';
 
+  const { pathname } = request.nextUrl;
+
   // Archive is admin-only: verify JWT and check role === 'admin'
-  if (artist === 'archive') {
+  // Skip gate for /login so the redirect doesn't loop
+  if (artist === 'archive' && pathname !== '/login') {
     const token = request.cookies.get('access_token')?.value;
     if (!token) {
       return NextResponse.redirect(new URL('/login', request.url));
@@ -25,7 +28,6 @@ export async function proxy(request: NextRequest) {
   }
 
   // Protect /settings — require login
-  const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get('access_token')?.value;
   const userRole = request.cookies.get('user_role')?.value;
 

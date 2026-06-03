@@ -6,11 +6,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useArtist } from '@/context/ArtistContext';
 import { FiMenu, FiX, FiChevronDown, FiUser } from 'react-icons/fi';
-import API_URL from '@/config/config';
+import API_URL, { resolveImageUrl } from '@/config/config';
 
 const ARTIST_URLS: Record<string, string> = {
   elena: 'https://elena.boukingolts.art',
   alexey: 'https://alexey.boukingolts.art',
+  archive: 'https://archive.boukingolts.art',
 };
 
 const ARTIST_LABELS: Record<string, string> = {
@@ -19,6 +20,33 @@ const ARTIST_LABELS: Record<string, string> = {
   archive: 'Archive',
   all: 'Boukingolts',
 };
+
+function ArchiveIcon({ size }: { size: number }) {
+  return (
+    <div style={{ width: size, height: size }} className="rounded-full bg-stone-100 flex items-center justify-center flex-shrink-0">
+      <svg viewBox="0 0 24 24" width={size * 0.5} height={size * 0.5} fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="text-stone-500">
+        <polyline points="21 8 21 21 3 21 3 8" />
+        <rect x="1" y="3" width="22" height="5" />
+        <line x1="10" y1="12" x2="14" y2="12" />
+      </svg>
+    </div>
+  );
+}
+
+function ArtistAvatar({ url, label, size }: { url?: string; label: string; size: number }) {
+  if (url) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={url} alt={label} style={{ width: size, height: size }} className="rounded-full object-cover flex-shrink-0 bg-stone-100" />
+    );
+  }
+  const initials = label.split(' ').map(w => w[0]).join('').slice(0, 2);
+  return (
+    <div style={{ width: size, height: size }} className="rounded-full bg-stone-200 flex items-center justify-center flex-shrink-0">
+      <span className="text-stone-600 font-medium" style={{ fontSize: size * 0.35 }}>{initials}</span>
+    </div>
+  );
+}
 
 function NavDropdown({
   label,
@@ -77,6 +105,7 @@ export default function Header() {
   const [snapping, setSnapping] = useState(false);
   const [galleryCategories, setGalleryCategories] = useState<string[]>([]);
   const [eventCategories, setEventCategories] = useState<string[]>([]);
+  const [artistImages, setArtistImages] = useState<Record<string, string>>({});
   const headerRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
 
@@ -88,6 +117,18 @@ export default function Header() {
     fetch(`${API_URL}/events/categories${artistQs}`)
       .then(r => r.ok ? r.json() : []).then(setEventCategories).catch(() => {});
   }, [artist]);
+
+  useEffect(() => {
+    Promise.all([
+      fetch(`${API_URL}/content/about-boukingolts?artist=elena`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`${API_URL}/content/about-boukingolts?artist=alexey`).then(r => r.ok ? r.json() : null).catch(() => null),
+    ]).then(([elena, alexey]) => {
+      const imgs: Record<string, string> = {};
+      if (elena?.images?.[0]) imgs.elena = resolveImageUrl(elena.images[0].url);
+      if (alexey?.images?.[0]) imgs.alexey = resolveImageUrl(alexey.images[0].url);
+      setArtistImages(imgs);
+    });
+  }, []);
 
   useEffect(() => {
     if (mobileOpen) { setOffset(0); return; }
@@ -119,7 +160,9 @@ export default function Header() {
   const handleLogout = () => { logout(); router.push('/login'); };
 
   const brandLabel = ARTIST_LABELS[artist] ?? 'Boukingolts';
-  const otherArtists = (['elena', 'alexey'] as const).filter(a => a !== artist);
+  const namedArtists = (['elena', 'alexey'] as const);
+  const otherNamedArtists = namedArtists.filter(a => a !== artist);
+  const hasDropdown = otherNamedArtists.length > 0 || isAdmin;
 
   const galleryDropdownItems = [
     { label: 'All works', href: '/gallery' },
@@ -145,29 +188,48 @@ export default function Header() {
             className="flex items-center gap-1 font-serif text-xl text-stone-900 tracking-tight hover:text-stone-600 transition-colors"
           >
             {brandLabel}
-            {otherArtists.length > 0 && (
+            {hasDropdown && (
               <FiChevronDown className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180 mt-0.5 text-stone-400" />
             )}
           </Link>
 
-          {otherArtists.length > 0 && (
+          {hasDropdown && (
             <div className="absolute top-full left-0 pt-3 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-150 z-50">
-              <div className="bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden min-w-[200px]">
-                <div className="px-4 py-2 border-b border-stone-100">
-                  <span className="flex items-center gap-1.5 text-sm text-stone-900 font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-stone-800 inline-block" />
-                    {brandLabel}
-                  </span>
-                </div>
-                {otherArtists.map(a => (
+              <div className="bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden min-w-[220px]">
+
+                {/* Current artist (on a named subdomain) */}
+                {(artist === 'elena' || artist === 'alexey') && (
+                  <div className="flex items-center gap-3 px-3 py-2.5 border-b border-stone-100 bg-stone-50">
+                    <ArtistAvatar url={artistImages[artist]} label={ARTIST_LABELS[artist]} size={32} />
+                    <span className="flex-1 text-sm font-medium text-stone-900">{ARTIST_LABELS[artist]}</span>
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" className="text-stone-600 flex-shrink-0">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </div>
+                )}
+
+                {/* Other named artists */}
+                {otherNamedArtists.map(a => (
                   <a
                     key={a}
                     href={ARTIST_URLS[a]}
-                    className="block px-4 py-2.5 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition-colors"
+                    className="flex items-center gap-3 px-3 py-2.5 hover:bg-stone-50 transition-colors"
                   >
-                    {ARTIST_LABELS[a]}
+                    <ArtistAvatar url={artistImages[a]} label={ARTIST_LABELS[a]} size={32} />
+                    <span className="text-sm text-stone-700">{ARTIST_LABELS[a]}</span>
                   </a>
                 ))}
+
+                {/* Archive — admins only */}
+                {isAdmin && (
+                  <a
+                    href={ARTIST_URLS.archive}
+                    className={`flex items-center gap-3 px-3 py-2.5 hover:bg-stone-50 transition-colors ${otherNamedArtists.length > 0 ? 'border-t border-stone-100' : ''}`}
+                  >
+                    <ArchiveIcon size={32} />
+                    <span className="text-sm text-stone-500">Archive</span>
+                  </a>
+                )}
               </div>
             </div>
           )}
@@ -231,14 +293,21 @@ export default function Header() {
           <div className="max-w-7xl mx-auto px-6 py-4 space-y-1">
 
             {/* Artist switcher for mobile */}
-            {otherArtists.length > 0 && (
+            {hasDropdown && (
               <div className="pb-3 mb-1 border-b border-stone-100">
-                <p className="text-xs text-stone-400 uppercase tracking-widest mb-2">Also browse</p>
-                {otherArtists.map(a => (
-                  <a key={a} href={ARTIST_URLS[a]} className="block py-1.5 text-sm text-stone-600 hover:text-stone-900">
+                <p className="text-xs text-stone-400 uppercase tracking-widest mb-2">Browse</p>
+                {otherNamedArtists.map(a => (
+                  <a key={a} href={ARTIST_URLS[a]} className="flex items-center gap-2.5 py-2 text-sm text-stone-600 hover:text-stone-900">
+                    <ArtistAvatar url={artistImages[a]} label={ARTIST_LABELS[a]} size={28} />
                     {ARTIST_LABELS[a]}
                   </a>
                 ))}
+                {isAdmin && (
+                  <a href={ARTIST_URLS.archive} className="flex items-center gap-2.5 py-2 text-sm text-stone-500 hover:text-stone-900">
+                    <ArchiveIcon size={28} />
+                    Archive
+                  </a>
+                )}
               </div>
             )}
 
