@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import EventsPage from '@/components/events/EventsPage';
 import API_URL from '@/config/config';
 import { Event } from '@/types/Event';
@@ -21,6 +22,8 @@ function str(v: string | string[] | undefined): string {
 export default async function Page({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
   const qs = new URLSearchParams();
+  const artist = (await headers()).get('x-artist');
+  if (artist && artist !== 'all') qs.set('artist', artist);
   if (str(params.category)) qs.set('category', str(params.category));
   if (str(params.query)) qs.set('query', str(params.query));
 
