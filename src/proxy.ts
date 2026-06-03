@@ -13,14 +13,14 @@ export async function proxy(request: NextRequest) {
   if (artist === 'archive') {
     const token = request.cookies.get('access_token')?.value;
     if (!token) {
-      return NextResponse.redirect(new URL('https://alexey.boukingolts.art/auth/login'));
+      return NextResponse.redirect(new URL('/login', request.url));
     }
     try {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET);
       const { payload } = await jwtVerify(token, secret);
       if (payload.role !== 'admin') throw new Error('not admin');
     } catch {
-      return NextResponse.redirect(new URL('https://alexey.boukingolts.art/auth/login'));
+      return NextResponse.redirect(new URL('/login', request.url));
     }
   }
 
