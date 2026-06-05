@@ -12,6 +12,7 @@ const ARTIST_URLS: Record<string, string> = {
   elena: 'https://elena.boukingolts.art',
   alexey: 'https://alexey.boukingolts.art',
   archive: 'https://archive.boukingolts.art',
+  staging: 'https://staging.boukingolts.art',
 };
 
 const ARTIST_LABELS: Record<string, string> = {
@@ -20,6 +21,17 @@ const ARTIST_LABELS: Record<string, string> = {
   archive: 'Archive',
   all: 'Boukingolts',
 };
+
+function TestingIcon({ size }: { size: number }) {
+  return (
+    <div style={{ width: size, height: size }} className="rounded-full bg-stone-100 flex items-center justify-center flex-shrink-0">
+      <svg viewBox="0 0 24 24" width={size * 0.5} height={size * 0.5} fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" className="text-stone-500">
+        <path d="M9 3h6M8.5 3v5.5L4 19h16L15.5 8.5V3" />
+        <line x1="6.5" y1="14" x2="17.5" y2="14" />
+      </svg>
+    </div>
+  );
+}
 
 function ArchiveIcon({ size }: { size: number }) {
   return (
@@ -220,15 +232,24 @@ export default function Header() {
                   </a>
                 ))}
 
-                {/* Archive — admins only */}
+                {/* Admin-only entries */}
                 {isAdmin && (
-                  <a
-                    href={ARTIST_URLS.archive}
-                    className={`flex items-center gap-3 px-3 py-2.5 hover:bg-stone-50 transition-colors ${otherNamedArtists.length > 0 ? 'border-t border-stone-100' : ''}`}
-                  >
-                    <ArchiveIcon size={32} />
-                    <span className="text-sm text-stone-500">Archive</span>
-                  </a>
+                  <>
+                    <a
+                      href={ARTIST_URLS.archive}
+                      className={`flex items-center gap-3 px-3 py-2.5 hover:bg-stone-50 transition-colors ${otherNamedArtists.length > 0 ? 'border-t border-stone-100' : ''}`}
+                    >
+                      <ArchiveIcon size={32} />
+                      <span className="text-sm text-stone-500">Archive</span>
+                    </a>
+                    <a
+                      href={ARTIST_URLS.staging}
+                      className="flex items-center gap-3 px-3 py-2.5 hover:bg-stone-50 transition-colors"
+                    >
+                      <TestingIcon size={32} />
+                      <span className="text-sm text-stone-500">Testing</span>
+                    </a>
+                  </>
                 )}
               </div>
             </div>
@@ -303,10 +324,16 @@ export default function Header() {
                   </a>
                 ))}
                 {isAdmin && (
-                  <a href={ARTIST_URLS.archive} className="flex items-center gap-2.5 py-2 text-sm text-stone-500 hover:text-stone-900">
-                    <ArchiveIcon size={28} />
-                    Archive
-                  </a>
+                  <>
+                    <a href={ARTIST_URLS.archive} className="flex items-center gap-2.5 py-2 text-sm text-stone-500 hover:text-stone-900">
+                      <ArchiveIcon size={28} />
+                      Archive
+                    </a>
+                    <a href={ARTIST_URLS.staging} className="flex items-center gap-2.5 py-2 text-sm text-stone-500 hover:text-stone-900">
+                      <TestingIcon size={28} />
+                      Testing
+                    </a>
+                  </>
                 )}
               </div>
             )}
