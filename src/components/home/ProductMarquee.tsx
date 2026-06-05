@@ -99,12 +99,14 @@ export default function ProductMarquee({ products }: Props) {
         <h2 className="text-3xl font-serif text-stone-800">Our Collection</h2>
         <div className="h-px bg-stone-200 mt-4 max-w-[80px] mx-auto" />
       </div>
-      <div className="relative overflow-hidden border-y border-stone-200 py-6">
+      <div className="relative overflow-hidden py-6">
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-white to-transparent" />
 
         <button
           onClick={() => applyBoost('left')}
           aria-label="Scroll left"
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9
             bg-white/90 border border-stone-200 shadow-md rounded-full
             flex items-center justify-center text-stone-500 hover:text-stone-900
             transition-colors duration-200"
@@ -124,18 +126,18 @@ export default function ProductMarquee({ products }: Props) {
                     key={idx}
                     href={`/gallery/${product._id}`}
                     style={{ width: `min(${w}px, calc(100vw - 6rem))`, height: CARD_HEIGHT, flexShrink: 0 }}
-                    className="group"
+                    className="group transition-transform duration-300 hover:scale-105 hover:z-10 relative"
                   >
                     <div
                       style={{ width: '100%', height: CARD_HEIGHT }}
-                      className="rounded-lg overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-md transition-shadow"
+                      className="rounded-lg overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-xl transition-shadow duration-300"
                     >
                       <Image
                         src={resolveImageUrl(product.images[0]?.thumbnail ?? 'default.jpg')}
                         alt={product.name}
                         width={product.images[0]?.width || 400}
                         height={product.images[0]?.height || 400}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:brightness-110 transition-[filter] duration-300"
                       />
                     </div>
                   </Link>
@@ -148,7 +150,7 @@ export default function ProductMarquee({ products }: Props) {
         <button
           onClick={() => applyBoost('right')}
           aria-label="Scroll right"
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9
             bg-white/90 border border-stone-200 shadow-md rounded-full
             flex items-center justify-center text-stone-500 hover:text-stone-900
             transition-colors duration-200"
