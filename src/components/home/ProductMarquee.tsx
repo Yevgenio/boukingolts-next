@@ -126,18 +126,18 @@ export default function ProductMarquee({ products }: Props) {
                     key={idx}
                     href={`/gallery/${product._id}`}
                     style={{ width: `min(${w}px, calc(100vw - 6rem))`, height: CARD_HEIGHT, flexShrink: 0 }}
-                    className="group transition-transform duration-300 hover:scale-105 hover:z-10 relative"
+                    className="group transition-[transform,margin] duration-500 hover:scale-[1.12] hover:mx-5 hover:z-10 relative"
                   >
                     <div
                       style={{ width: '100%', height: CARD_HEIGHT }}
-                      className="rounded-lg overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-xl transition-shadow duration-300"
+                      className="rounded-lg overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-xl transition-shadow duration-500"
                     >
                       <Image
                         src={resolveImageUrl(product.images[0]?.thumbnail ?? 'default.jpg')}
                         alt={product.name}
                         width={product.images[0]?.width || 400}
                         height={product.images[0]?.height || 400}
-                        className="w-full h-full object-cover group-hover:brightness-110 transition-[filter] duration-300"
+                        className="w-full h-full object-cover group-hover:brightness-110 transition-[filter] duration-500"
                       />
                     </div>
                   </Link>
