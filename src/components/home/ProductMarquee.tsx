@@ -100,8 +100,8 @@ export default function ProductMarquee({ products }: Props) {
         <div className="h-px bg-stone-200 mt-4 max-w-[80px] mx-auto" />
       </div>
       <div className="relative overflow-hidden py-6">
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-gradient-to-r from-white to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-6 sm:w-10 md:w-16 z-10 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-6 sm:w-10 md:w-16 z-10 bg-gradient-to-l from-white to-transparent" />
 
         <button
           onClick={() => applyBoost('left')}
