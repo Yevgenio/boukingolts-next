@@ -268,6 +268,14 @@ export default function Header() {
           </Link>
           <NavDropdown label="Gallery" href="/gallery" active={pathname.startsWith('/gallery')} items={galleryDropdownItems} />
           <NavDropdown label="Events" href="/events" active={pathname.startsWith('/events')} items={eventsDropdownItems} />
+          <Link
+            href="/about"
+            className={`text-sm tracking-wide transition-colors ${
+              pathname.startsWith('/about') ? 'text-stone-900 font-medium' : 'text-stone-500 hover:text-stone-900'
+            }`}
+          >
+            About
+          </Link>
         </nav>
 
         {/* Right: admin + account */}
@@ -379,6 +387,10 @@ export default function Header() {
                 </div>
               )}
             </div>
+
+            <Link href="/about" className={`block py-3 text-sm border-b border-stone-50 transition-colors ${pathname.startsWith('/about') ? 'text-stone-900 font-medium' : 'text-stone-600'}`}>
+              About
+            </Link>
 
             <div className="pt-2 space-y-1">
               {isLoggedIn ? (
