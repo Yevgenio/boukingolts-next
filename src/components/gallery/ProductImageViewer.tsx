@@ -41,6 +41,11 @@ export default function ProductImageViewer({ images, name }: Props) {
     lensRef.current.style.transform = `scale(${scale}) translate(${tx}%, ${ty}%)`;
   }, []);
 
+  // Reset zoom when switching images
+  useEffect(() => {
+    applyTransform(1, 0, 0, false);
+  }, [activeIndex, applyTransform]);
+
   const handleMouseEnter = useCallback(() => applyTransform(ZOOM, 0, 0, true), [applyTransform]);
   const handleMouseLeave = useCallback(() => applyTransform(1, 0, 0, true), [applyTransform]);
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -102,19 +107,25 @@ export default function ProductImageViewer({ images, name }: Props) {
 
   if (!images.length) {
     return (
-      <div className="w-full aspect-square rounded-xl overflow-hidden bg-stone-100 shadow-sm relative">
+      <div className="w-full rounded-xl overflow-hidden bg-stone-100 shadow-sm relative" style={{ aspectRatio: '1 / 1' }}>
         <Image src={resolveImageUrl('default.jpg')} alt={name} fill className="object-contain" />
       </div>
     );
   }
 
+  const activeImg = images[activeIndex];
+  const aspectRatio = activeImg?.width && activeImg?.height
+    ? `${activeImg.width} / ${activeImg.height}`
+    : '1 / 1';
+
   return (
     <>
       <div className="flex flex-col gap-3">
-        {/* Main image */}
+        {/* Main image — height tracks image aspect ratio so wide images don't overflow */}
         <div
           ref={containerRef}
-          className="w-full aspect-square rounded-xl overflow-hidden relative bg-stone-100 shadow-sm cursor-crosshair"
+          style={{ aspectRatio }}
+          className="w-full rounded-xl overflow-hidden relative bg-stone-100 shadow-sm cursor-crosshair"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onMouseMove={handleMouseMove}
