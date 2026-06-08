@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
+import { useArtist, artistParam } from '@/context/ArtistContext';
 import { HeroContent } from '@/types/HomeContent';
 import { Image } from '@/types/Image';
 import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
@@ -43,6 +44,7 @@ function getTintStyle(tint: string): React.CSSProperties {
 
 export default function HeroAdminPage() {
   const { isAdmin } = useAuth();
+  const artist = useArtist();
   const router = useRouter();
   const [form, setForm] = useState<HeroContent | null>(null);
   const [images, setImages] = useState<ImageItem[]>([]);
@@ -78,7 +80,7 @@ export default function HeroAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/content/home-hero`)
+    fetch(`${API_URL}/content/home-hero${artistParam(artist)}`)
       .then(res => res.json())
       .then(data => {
         setForm(data);
@@ -105,7 +107,7 @@ export default function HeroAdminPage() {
       images.filter(img => img.isNew && img.file).forEach(img => formData.append('images', img.file as File));
     }
     try {
-      const res = await fetch(`${API_URL}/content/home-hero`, { method: 'PUT', credentials: 'include', body: formData });
+      const res = await fetch(`${API_URL}/content/home-hero${artistParam(artist)}`, { method: 'PUT', credentials: 'include', body: formData });
       if (res.ok) showToast('Раздел сохранён!', true);
       else showToast('Ошибка сохранения', false);
     } catch { showToast('Ошибка сохранения', false); }

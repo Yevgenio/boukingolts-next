@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
+import { useArtist, artistParam } from '@/context/ArtistContext';
 import { TestimonialItem } from '@/types/HomeContent';
 import { useRouter } from 'next/navigation';
 import Testimonials from '@/components/home/Testimonials';
@@ -14,6 +15,7 @@ const LABEL = 'block text-sm font-medium text-stone-700';
 
 export default function TestimonialsAdminPage() {
   const { isAdmin } = useAuth();
+  const artist = useArtist();
   const router = useRouter();
   const previewRef = useRef<HTMLDivElement>(null);
   const [previewW, setPreviewW] = useState(450);
@@ -42,7 +44,7 @@ export default function TestimonialsAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/content/home-testimonials`)
+    fetch(`${API_URL}/content/home-testimonials${artistParam(artist)}`)
       .then(res => res.json())
       .then(data => { setComments(data.testimonials || []); setEnabled(data.enabled ?? false); setOrder(data.order ?? 0); setLoading(false); })
       .catch(() => setLoading(false));
@@ -51,7 +53,7 @@ export default function TestimonialsAdminPage() {
   const updateComments = async (updated: TestimonialItem[]) => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_URL}/content/home-testimonials`, {
+      const res = await fetch(`${API_URL}/content/home-testimonials${artistParam(artist)}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({ enabled, order, testimonials: updated }),
       });
@@ -64,7 +66,7 @@ export default function TestimonialsAdminPage() {
   const saveSettings = async () => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_URL}/content/home-testimonials`, {
+      const res = await fetch(`${API_URL}/content/home-testimonials${artistParam(artist)}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({ enabled, order, testimonials: comments }),
       });

@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
+import { useArtist, artistParam } from '@/context/ArtistContext';
 import { AboutContent } from '@/types/HomeContent';
 import { Image } from '@/types/Image';
 import ImageUploadList, { ImageItem } from '@/components/common/ImageUploadList';
@@ -16,6 +17,7 @@ const LABEL = 'block text-sm font-medium text-stone-700';
 
 export default function AboutAdminPage() {
   const { isAdmin } = useAuth();
+  const artist = useArtist();
   const router = useRouter();
   const [form, setForm] = useState<AboutContent | null>(null);
   const [images, setImages] = useState<ImageItem[]>([]);
@@ -51,7 +53,7 @@ export default function AboutAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/content/about-boukingolts`)
+    fetch(`${API_URL}/content/about-boukingolts${artistParam(artist)}`)
       .then(res => res.json())
       .then(data => {
         setForm(data);
@@ -76,7 +78,7 @@ export default function AboutAdminPage() {
       images.filter(img => img.isNew && img.file).forEach(img => formData.append('images', img.file as File));
     }
     try {
-      const res = await fetch(`${API_URL}/content/about-boukingolts`, { method: 'PUT', credentials: 'include', body: formData });
+      const res = await fetch(`${API_URL}/content/about-boukingolts${artistParam(artist)}`, { method: 'PUT', credentials: 'include', body: formData });
       if (res.ok) showToast('Раздел сохранён!', true);
       else showToast('Ошибка сохранения', false);
     } catch { showToast('Ошибка сохранения', false); }

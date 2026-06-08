@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import API_URL, { resolveImageUrl } from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
+import { useArtist, artistParam } from '@/context/ArtistContext';
 import { useRouter } from 'next/navigation';
 import { MarqueeContent, EventsContent } from '@/types/HomeContent';
 import { Product } from '@/types/Product';
@@ -16,6 +17,7 @@ const LABEL = 'block text-sm font-medium text-stone-700';
 
 export default function ProductMarqueeAdminPage() {
   const { isAdmin } = useAuth();
+  const artist = useArtist();
   const router = useRouter();
 
   const previewRef = useRef<HTMLDivElement>(null);
@@ -44,9 +46,9 @@ export default function ProductMarqueeAdminPage() {
   useEffect(() => {
     if (!isAdmin) return;
     Promise.all([
-      fetch(`${API_URL}/content/home-product-marquee`).then(r => r.json()),
-      fetch(`${API_URL}/content/home-events`).then(r => r.json()),
-      getMarqueeProducts(),
+      fetch(`${API_URL}/content/home-product-marquee${artistParam(artist)}`).then(r => r.json()),
+      fetch(`${API_URL}/content/home-events${artistParam(artist)}`).then(r => r.json()),
+      getMarqueeProducts(artist),
     ]).then(([marqueeData, eventsData, productData]) => {
       setMarquee(marqueeData);
       setEvents(eventsData);
@@ -59,15 +61,15 @@ export default function ProductMarqueeAdminPage() {
     setSaving(true);
     try {
       const [r1, r2] = await Promise.all([
-        fetch(`${API_URL}/content/home-product-marquee`, {
+        fetch(`${API_URL}/content/home-product-marquee${artistParam(artist)}`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
           body: JSON.stringify(marquee),
         }),
-        fetch(`${API_URL}/content/home-events`, {
+        fetch(`${API_URL}/content/home-events${artistParam(artist)}`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
           body: JSON.stringify(events),
         }),
-        updateMarqueeProductIds(products.map(p => p._id)),
+        updateMarqueeProductIds(products.map(p => p._id), artist),
       ]);
       if (r1.ok && r2.ok) { showToast('Сохранено!', true); setTimeout(() => router.push('/admin'), 1500); }
       else showToast('Ошибка сохранения', false);
