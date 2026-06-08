@@ -96,7 +96,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
     <div>
       <div className="flex gap-2 items-center">
         <label className="flex-1 cursor-pointer border border-stone-300 rounded-lg px-3 py-2 text-sm text-stone-600 bg-white hover:bg-stone-50 transition-colors">
-          Upload new image{images.length > 0 ? 's' : ''}
+          {images.length > 0 ? 'Загрузить ещё' : 'Загрузить изображение'}
           <input type="file" multiple accept="image/*" onChange={handleChange} className="hidden" />
         </label>
         <button
@@ -104,7 +104,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
           onClick={openPicker}
           className={`px-3 py-2 rounded-lg text-sm border transition-colors ${pickerOpen ? 'bg-stone-800 text-white border-stone-800' : 'border-stone-300 text-stone-600 bg-white hover:bg-stone-50'}`}
         >
-          Browse library {pickerOpen ? '▴' : '▾'}
+          Библиотека {pickerOpen ? '▴' : '▾'}
         </button>
       </div>
 
@@ -142,12 +142,12 @@ export default function ImageUploadList({ images, setImages }: Props) {
         <div className="mt-3 border border-stone-200 rounded-xl bg-white p-3">
           {/* Header row */}
           <div className="flex items-center gap-2 mb-3">
-            <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest flex-1">Image library</p>
+            <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest flex-1">Библиотека изображений</p>
             {/* Grid / List toggle */}
             <button
               type="button"
               onClick={() => setViewMode('grid')}
-              title="Grid view"
+              title="Сетка"
               className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-stone-800 text-white' : 'text-stone-400 hover:text-stone-700'}`}
             >
               <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
@@ -158,7 +158,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
             <button
               type="button"
               onClick={() => setViewMode('list')}
-              title="List view"
+              title="Список"
               className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-stone-800 text-white' : 'text-stone-400 hover:text-stone-700'}`}
             >
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
@@ -174,7 +174,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
                 onClick={addSelected}
                 className="bg-stone-800 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-stone-700"
               >
-                Add {selected.size} selected
+                Добавить: {selected.size}
               </button>
             )}
           </div>
@@ -182,18 +182,18 @@ export default function ImageUploadList({ images, setImages }: Props) {
           {/* Search */}
           <input
             type="text"
-            placeholder="Search by filename…"
+            placeholder="Поиск по имени файла…"
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full mb-3 border border-stone-200 rounded-lg px-3 py-1.5 text-xs text-stone-700 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-stone-200 placeholder:text-stone-400"
           />
 
           {libraryLoading ? (
-            <p className="text-sm text-stone-400 text-center py-6">Loading…</p>
+            <p className="text-sm text-stone-400 text-center py-6">Загрузка…</p>
           ) : libraryError ? (
-            <p className="text-sm text-red-500 text-center py-6">Failed to load image library.</p>
+            <p className="text-sm text-red-500 text-center py-6">Ошибка загрузки библиотеки.</p>
           ) : filtered.length === 0 ? (
-            <p className="text-sm text-stone-400 italic text-center py-6">{library.length === 0 ? 'No images in library' : 'No results'}</p>
+            <p className="text-sm text-stone-400 italic text-center py-6">{library.length === 0 ? 'Библиотека пуста' : 'Нет результатов'}</p>
           ) : viewMode === 'grid' ? (
             <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-64 overflow-y-auto pr-1">
               {filtered.map(img => {
@@ -222,7 +222,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
                       )}
                       {isAdded && (
                         <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
-                          <span className="text-stone-500 text-xs font-medium">Added</span>
+                          <span className="text-stone-500 text-xs font-medium">Добавлено</span>
                         </div>
                       )}
                     </div>
@@ -257,7 +257,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
                       <p className="text-[10px] text-stone-400">
                         {img.size ? formatSize(img.size) : ''}
                         {img.size && usedCount > 0 ? ' · ' : ''}
-                        {usedCount > 0 ? `used in ${usedCount}` : ''}
+                        {usedCount > 0 ? `используется: ${usedCount}` : ''}
                         {img.width && img.height ? `${img.size || usedCount > 0 ? ' · ' : ''}${img.width}×${img.height}` : ''}
                       </p>
                     </div>
@@ -266,7 +266,7 @@ export default function ImageUploadList({ images, setImages }: Props) {
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     )}
-                    {isAdded && <span className="text-[10px] text-stone-400 flex-shrink-0">Added</span>}
+                    {isAdded && <span className="text-[10px] text-stone-400 flex-shrink-0">Добавлено</span>}
                   </button>
                 );
               })}
