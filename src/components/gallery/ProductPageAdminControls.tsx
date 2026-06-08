@@ -38,18 +38,18 @@ export default function ProductPageAdminControls({ productId }: { productId: str
   return (
     <div className="flex flex-wrap gap-4 items-center text-xs text-stone-400 border-b border-stone-100 pb-4">
       <button onClick={() => router.push(`/gallery/edit/${productId}`)} className="hover:text-stone-700 underline underline-offset-2">
-        Edit
+        Редактировать
       </button>
       <button
         onClick={handleDelete}
         className={`underline underline-offset-2 transition-colors ${confirmDelete ? 'text-red-500 hover:text-red-700' : 'hover:text-stone-700'}`}
       >
-        {confirmDelete ? 'Confirm delete?' : 'Delete'}
+        {confirmDelete ? 'Подтвердить удаление?' : 'Удалить'}
       </button>
       <button onClick={toggleMarquee} className="hover:text-stone-700 underline underline-offset-2">
-        {inList ? 'Remove from marquee' : 'Add to marquee'}
+        {inList ? 'Убрать из бегущей строки' : 'Добавить в бегущую строку'}
       </button>
-      {deleteError && <span className="text-red-500">Failed to delete.</span>}
+      {deleteError && <span className="text-red-500">Ошибка удаления.</span>}
     </div>
   );
 }

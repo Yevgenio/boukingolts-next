@@ -55,9 +55,9 @@ export default function TestimonialsAdminPage() {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({ enabled, order, testimonials: updated }),
       });
-      if (res.ok) { setComments(updated); setEditingIndex(null); setEditedItem({ comment: '', author: '' }); setNewComment({ comment: '', author: '' }); showToast('Testimonials updated!', true); }
-      else showToast('Failed to update', false);
-    } catch { showToast('Failed to update', false); }
+      if (res.ok) { setComments(updated); setEditingIndex(null); setEditedItem({ comment: '', author: '' }); setNewComment({ comment: '', author: '' }); showToast('Отзывы обновлены!', true); }
+      else showToast('Ошибка обновления', false);
+    } catch { showToast('Ошибка обновления', false); }
     finally { setSaving(false); }
   };
 
@@ -68,8 +68,8 @@ export default function TestimonialsAdminPage() {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
         body: JSON.stringify({ enabled, order, testimonials: comments }),
       });
-      if (res.ok) showToast('Settings saved!', true); else showToast('Failed to save', false);
-    } catch { showToast('Failed to save', false); }
+      if (res.ok) showToast('Настройки сохранены!', true); else showToast('Ошибка сохранения', false);
+    } catch { showToast('Ошибка сохранения', false); }
     finally { setSaving(false); }
   };
 
@@ -88,14 +88,14 @@ export default function TestimonialsAdminPage() {
     ? comments.map((c, i) => (i === editingIndex ? editedItem : c))
     : newComment.comment || newComment.author ? [...comments, newComment] : comments;
 
-  if (!isAdmin) return <div className="p-4">Unauthorized</div>;
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (!isAdmin) return <div className="p-4">Доступ запрещён</div>;
+  if (loading) return <div className="p-4">Загрузка...</div>;
 
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">← Back to Admin</button>
-        <h1 className="text-2xl font-serif text-stone-800 mb-1">Manage Testimonials</h1>
+        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">← Назад</button>
+        <h1 className="text-2xl font-serif text-stone-800 mb-1">Управление отзывами</h1>
         <div className="h-px bg-stone-200 mb-6" />
 
 
@@ -104,18 +104,18 @@ export default function TestimonialsAdminPage() {
           <div className="space-y-4">
             {/* Settings card */}
             <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-4">
-              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Section Settings</h2>
+              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Настройки раздела</h2>
               <label className="flex items-center gap-3 cursor-pointer">
                 <input type="checkbox" className="accent-stone-800 w-4 h-4" checked={enabled} onChange={e => setEnabled(e.target.checked)} />
-                <span className="text-sm font-medium text-stone-700">Section enabled</span>
+                <span className="text-sm font-medium text-stone-700">Раздел включён</span>
               </label>
               <div>
-                <label className={LABEL}>Display order</label>
+                <label className={LABEL}>Порядок отображения</label>
                 <input type="number" className={INPUT} value={order} onChange={e => setOrder(parseInt(e.target.value))} />
               </div>
               <div className="flex items-center gap-3">
                 <button className="bg-stone-700 hover:bg-stone-600 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50 transition-colors" onClick={saveSettings} disabled={saving}>
-                  {saving ? 'Saving…' : 'Save Settings'}
+                  {saving ? 'Сохранение…' : 'Сохранить настройки'}
                 </button>
                 {toast && (
                   <p className={`text-sm ${toast.ok ? 'text-green-700' : 'text-red-600'}`}>{toast.msg}</p>
@@ -129,18 +129,18 @@ export default function TestimonialsAdminPage() {
                 {editingIndex === i ? (
                   <>
                     <div>
-                      <label className={LABEL}>Author</label>
-                      <input type="text" className={INPUT} value={editedItem.author} onChange={e => setEditedItem({ ...editedItem, author: e.target.value })} placeholder="Author name" />
+                      <label className={LABEL}>Автор</label>
+                      <input type="text" className={INPUT} value={editedItem.author} onChange={e => setEditedItem({ ...editedItem, author: e.target.value })} placeholder="Имя автора" />
                     </div>
                     <div>
-                      <label className={LABEL}>Comment</label>
-                      <textarea className={INPUT} rows={3} value={editedItem.comment} onChange={e => setEditedItem({ ...editedItem, comment: e.target.value })} placeholder="Testimonial comment" />
+                      <label className={LABEL}>Отзыв</label>
+                      <textarea className={INPUT} rows={3} value={editedItem.comment} onChange={e => setEditedItem({ ...editedItem, comment: e.target.value })} placeholder="Текст отзыва" />
                     </div>
                     <div className="flex gap-2">
                       <button className="bg-green-700 text-white px-4 py-1.5 rounded-lg text-sm disabled:opacity-50" onClick={handleEditSave} disabled={saving}>
-                        {saving ? 'Saving…' : 'Save'}
+                        {saving ? 'Сохранение…' : 'Сохранить'}
                       </button>
-                      <button className="bg-stone-100 text-stone-600 px-4 py-1.5 rounded-lg text-sm" onClick={() => setEditingIndex(null)}>Cancel</button>
+                      <button className="bg-stone-100 text-stone-600 px-4 py-1.5 rounded-lg text-sm" onClick={() => setEditingIndex(null)}>Отмена</button>
                     </div>
                   </>
                 ) : (
@@ -148,8 +148,8 @@ export default function TestimonialsAdminPage() {
                     <p className="font-semibold text-stone-800">{testimonial.author}</p>
                     <p className="text-stone-600 text-sm">{testimonial.comment}</p>
                     <div className="flex gap-2">
-                      <button className="bg-stone-800 text-white px-4 py-1.5 rounded-lg text-sm" onClick={() => handleEdit(i)}>Edit</button>
-                      <button className="bg-red-600 text-white px-4 py-1.5 rounded-lg text-sm" onClick={() => handleDelete(i)}>Delete</button>
+                      <button className="bg-stone-800 text-white px-4 py-1.5 rounded-lg text-sm" onClick={() => handleEdit(i)}>Редактировать</button>
+                      <button className="bg-red-600 text-white px-4 py-1.5 rounded-lg text-sm" onClick={() => handleDelete(i)}>Удалить</button>
                     </div>
                   </>
                 )}
@@ -158,24 +158,24 @@ export default function TestimonialsAdminPage() {
 
             {/* Add new */}
             <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-4">
-              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Add New Testimonial</h2>
+              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Добавить отзыв</h2>
               <div>
-                <label className={LABEL}>Author</label>
-                <input type="text" className={INPUT} value={newComment.author} onChange={e => setNewComment({ ...newComment, author: e.target.value })} placeholder="Author name" />
+                <label className={LABEL}>Автор</label>
+                <input type="text" className={INPUT} value={newComment.author} onChange={e => setNewComment({ ...newComment, author: e.target.value })} placeholder="Имя автора" />
               </div>
               <div>
-                <label className={LABEL}>Comment</label>
-                <textarea className={INPUT} rows={3} value={newComment.comment} onChange={e => setNewComment({ ...newComment, comment: e.target.value })} placeholder="Testimonial comment" />
+                <label className={LABEL}>Отзыв</label>
+                <textarea className={INPUT} rows={3} value={newComment.comment} onChange={e => setNewComment({ ...newComment, comment: e.target.value })} placeholder="Текст отзыва" />
               </div>
               <button className="bg-stone-800 hover:bg-stone-700 text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-50 transition-colors" onClick={handleAdd} disabled={saving}>
-                {saving ? 'Adding…' : 'Add Testimonial'}
+                {saving ? 'Добавление…' : 'Добавить'}
               </button>
             </div>
           </div>
 
           {/* Preview */}
           <div ref={previewRef} className="lg:sticky lg:top-4">
-            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview — {Math.round(previewW / REAL_W * 100)}% scale</p>
+            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Предпросмотр — {Math.round(previewW / REAL_W * 100)}% масштаб</p>
             <div className="rounded-xl overflow-hidden border border-stone-200" style={{ height: 320 }}>
               <div style={{ width: REAL_W, transformOrigin: 'top left', transform: `scale(${previewW / REAL_W})`, pointerEvents: 'none' }}>
                 <Testimonials content={{ enabled: true, order: 0, testimonials: previewComments }} />

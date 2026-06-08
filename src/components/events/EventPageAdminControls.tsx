@@ -22,15 +22,15 @@ export default function EventPageAdminControls({ eventId }: { eventId: string })
   return (
     <div className="flex flex-wrap gap-4 items-center text-xs text-stone-400 mb-4">
       <button onClick={() => router.push(`/events/edit/${eventId}`)} className="hover:text-stone-700 underline underline-offset-2">
-        Edit
+        Редактировать
       </button>
       <button
         onClick={handleDelete}
         className={`underline underline-offset-2 transition-colors ${confirmDelete ? 'text-red-500 hover:text-red-700' : 'hover:text-stone-700'}`}
       >
-        {confirmDelete ? 'Confirm delete?' : 'Delete'}
+        {confirmDelete ? 'Подтвердить удаление?' : 'Удалить'}
       </button>
-      {deleteError && <span className="text-red-500">Failed to delete.</span>}
+      {deleteError && <span className="text-red-500">Ошибка удаления.</span>}
     </div>
   );
 }

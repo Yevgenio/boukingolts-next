@@ -16,26 +16,26 @@ import {
 
 const HOME_ITEMS = [
   {
-    label: 'Hero Section',
-    description: 'Edit the main banner — title, text and images',
+    label: 'Главный баннер',
+    description: 'Редактировать заголовок, текст и изображения баннера',
     icon: FiImage,
     path: '/admin/hero',
   },
   {
-    label: 'Homepage Sections',
-    description: 'Toggle and order the product marquee and upcoming events',
+    label: 'Разделы главной страницы',
+    description: 'Управление бегущей строкой и предстоящими событиями',
     icon: FiSliders,
     path: '/admin/marquee',
   },
   {
-    label: 'Testimonials',
-    description: 'Add, edit or remove customer reviews',
+    label: 'Отзывы',
+    description: 'Добавить, редактировать или удалить отзывы',
     icon: FiMessageSquare,
     path: '/admin/testimonials',
   },
   {
-    label: 'About Section',
-    description: 'Edit contact details, description and photos',
+    label: 'Раздел «О нас»',
+    description: 'Редактировать контакты, описание и фотографии',
     icon: FiInfo,
     path: '/admin/about',
   },
@@ -43,14 +43,14 @@ const HOME_ITEMS = [
 
 const GALLERY_ITEMS = [
   {
-    label: 'Manage Products',
-    description: 'Add, edit and organise your artworks',
+    label: 'Управление работами',
+    description: 'Добавлять, редактировать и упорядочивать работы',
     icon: FiGrid,
     path: '/admin/products',
   },
   {
-    label: 'Gallery Layout',
-    description: 'Set how many artworks appear per row',
+    label: 'Макет галереи',
+    description: 'Настроить расположение работ в строках',
     icon: FiLayout,
     path: '/admin/gallery-layout',
   },
@@ -58,8 +58,8 @@ const GALLERY_ITEMS = [
 
 const MEDIA_ITEMS = [
   {
-    label: 'Image Library',
-    description: 'Browse, inspect and delete uploaded images',
+    label: 'Библиотека изображений',
+    description: 'Просматривать, изучать и удалять загруженные изображения',
     icon: FiFolder,
     path: '/admin/images',
   },
@@ -97,7 +97,7 @@ export default function AdminPanel() {
   const { isAdmin } = useAuth();
   const router = useRouter();
 
-  if (!isAdmin) return <p className="p-4">Unauthorized</p>;
+  if (!isAdmin) return <p className="p-4">Доступ запрещён</p>;
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -106,13 +106,13 @@ export default function AdminPanel() {
         {/* Header */}
         <div className="mb-10">
           <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-1">Boukingolts</p>
-          <h1 className="text-3xl font-serif text-stone-800">Admin Dashboard</h1>
+          <h1 className="text-3xl font-serif text-stone-800">Панель администратора</h1>
           <div className="mt-3 h-px bg-stone-200" />
         </div>
 
         {/* Home Page section */}
         <section className="mb-8">
-          <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Home Page</h2>
+          <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Главная страница</h2>
           <div className="space-y-3">
             {HOME_ITEMS.map((item) => (
               <AdminCard
@@ -128,7 +128,7 @@ export default function AdminPanel() {
 
         {/* Gallery section */}
         <section className="mb-8">
-          <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Gallery</h2>
+          <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Галерея</h2>
           <div className="space-y-3">
             {GALLERY_ITEMS.map((item) => (
               <AdminCard
@@ -144,7 +144,7 @@ export default function AdminPanel() {
 
         {/* Media section */}
         <section>
-          <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Media</h2>
+          <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Медиа</h2>
           <div className="space-y-3">
             {MEDIA_ITEMS.map((item) => (
               <AdminCard

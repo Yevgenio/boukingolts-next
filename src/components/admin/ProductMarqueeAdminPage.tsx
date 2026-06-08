@@ -69,9 +69,9 @@ export default function ProductMarqueeAdminPage() {
         }),
         updateMarqueeProductIds(products.map(p => p._id)),
       ]);
-      if (r1.ok && r2.ok) { showToast('Saved!', true); setTimeout(() => router.push('/admin'), 1500); }
-      else showToast('Failed to save', false);
-    } catch { showToast('Failed to save', false); }
+      if (r1.ok && r2.ok) { showToast('Сохранено!', true); setTimeout(() => router.push('/admin'), 1500); }
+      else showToast('Ошибка сохранения', false);
+    } catch { showToast('Ошибка сохранения', false); }
     finally { setSaving(false); }
   };
 
@@ -92,19 +92,19 @@ export default function ProductMarqueeAdminPage() {
       const prod: Product = await res.json();
       setProducts([...products, prod]);
       setNewId('');
-    } catch { showToast('Product not found', false); }
+    } catch { showToast('Работа не найдена', false); }
   };
 
-  if (!isAdmin) return <div className="p-4">Unauthorized</div>;
-  if (loading || !marquee || !events) return <div className="p-4">Loading…</div>;
+  if (!isAdmin) return <div className="p-4">Доступ запрещён</div>;
+  if (loading || !marquee || !events) return <div className="p-4">Загрузка…</div>;
 
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="max-w-5xl mx-auto px-4 py-8">
         <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">
-          ← Back to Admin
+          ← Назад
         </button>
-        <h1 className="text-2xl font-serif text-stone-800 mb-1">Homepage Sections</h1>
+        <h1 className="text-2xl font-serif text-stone-800 mb-1">Разделы главной страницы</h1>
         <div className="h-px bg-stone-200 mb-6" />
 
         <div className="grid lg:grid-cols-2 gap-8 items-start">
@@ -113,21 +113,21 @@ export default function ProductMarqueeAdminPage() {
 
             {/* Product Marquee */}
             <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-4">
-              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Product Marquee</h2>
+              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Бегущая строка работ</h2>
               <label className="flex items-center gap-3 cursor-pointer">
                 <input type="checkbox" className="accent-stone-800 w-4 h-4" checked={marquee.enabled} onChange={e => setMarquee({ ...marquee, enabled: e.target.checked })} />
-                <span className="text-sm font-medium text-stone-700">Section enabled</span>
+                <span className="text-sm font-medium text-stone-700">Раздел включён</span>
               </label>
               <div>
-                <label className={LABEL}>Display order</label>
+                <label className={LABEL}>Порядок отображения</label>
                 <input type="number" className={INPUT} value={marquee.order} onChange={e => setMarquee({ ...marquee, order: parseInt(e.target.value) })} />
               </div>
             </div>
 
             {/* Product list */}
             <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-3">
-              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Products in Marquee</h2>
-              {products.length === 0 && <p className="text-sm text-stone-400 italic">No products added yet</p>}
+              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Работы в бегущей строке</h2>
+              {products.length === 0 && <p className="text-sm text-stone-400 italic">Работы ещё не добавлены</p>}
               {products.map((p, i) => (
                 <div key={p._id} className="flex items-center gap-3 border border-stone-100 rounded-lg p-2 bg-stone-50">
                   {p.images?.[0]?.thumbnail && (
@@ -135,7 +135,7 @@ export default function ProductMarqueeAdminPage() {
                     <img src={resolveImageUrl(p.images[0].thumbnail)} alt={p.name} className="w-10 h-10 object-cover rounded" />
                   )}
                   <span className="flex-1 text-sm text-stone-700">{p.name}</span>
-                  <button onClick={() => router.push(`/gallery/${p._id}`)} className="text-xs text-stone-400 underline">View</button>
+                  <button onClick={() => router.push(`/gallery/${p._id}`)} className="text-xs text-stone-400 underline">Просмотр</button>
                   <button onClick={() => move(i, -1)} className="px-1.5 text-stone-400 hover:text-stone-700">↑</button>
                   <button onClick={() => move(i, 1)} className="px-1.5 text-stone-400 hover:text-stone-700">↓</button>
                   <button onClick={() => setProducts(products.filter((_, j) => j !== i))} className="px-1.5 text-red-400 hover:text-red-600">✕</button>
@@ -143,26 +143,26 @@ export default function ProductMarqueeAdminPage() {
               ))}
               <div className="flex gap-2 items-center pt-2">
                 <input
-                  value={newId} onChange={e => setNewId(e.target.value)} placeholder="Paste a Product ID here"
+                  value={newId} onChange={e => setNewId(e.target.value)} placeholder="Вставить ID работы"
                   className="flex-1 border border-stone-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-stone-200"
                   onKeyDown={e => e.key === 'Enter' && addProduct()}
                 />
-                <button className="bg-stone-100 border border-stone-300 px-3 py-2 rounded-lg text-sm text-stone-700 hover:bg-stone-200" onClick={addProduct}>Add</button>
+                <button className="bg-stone-100 border border-stone-300 px-3 py-2 rounded-lg text-sm text-stone-700 hover:bg-stone-200" onClick={addProduct}>Добавить</button>
                 <button className="bg-white border border-stone-300 px-3 py-2 rounded-lg text-sm text-stone-600 hover:bg-stone-50 whitespace-nowrap" onClick={() => router.push('/admin/products')} type="button">
-                  Browse →
+                  Выбрать →
                 </button>
               </div>
             </div>
 
             {/* Upcoming Events */}
             <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-4">
-              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Upcoming Events</h2>
+              <h2 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Предстоящие события</h2>
               <label className="flex items-center gap-3 cursor-pointer">
                 <input type="checkbox" className="accent-stone-800 w-4 h-4" checked={events.enabled} onChange={e => setEvents({ ...events, enabled: e.target.checked })} />
-                <span className="text-sm font-medium text-stone-700">Section enabled</span>
+                <span className="text-sm font-medium text-stone-700">Раздел включён</span>
               </label>
               <div>
-                <label className={LABEL}>Display order</label>
+                <label className={LABEL}>Порядок отображения</label>
                 <input type="number" className={INPUT} value={events.order} onChange={e => setEvents({ ...events, order: parseInt(e.target.value) })} />
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function ProductMarqueeAdminPage() {
               onClick={save}
               disabled={saving}
             >
-              {saving ? 'Saving…' : 'Save Changes'}
+              {saving ? 'Сохранение…' : 'Сохранить'}
             </button>
             {toast && (
               <p className={`text-sm text-center ${toast.ok ? 'text-green-700' : 'text-red-600'}`}>{toast.msg}</p>
@@ -181,7 +181,7 @@ export default function ProductMarqueeAdminPage() {
 
           {/* Preview */}
           <div ref={previewRef} className="lg:sticky lg:top-4">
-            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Marquee Preview — {Math.round(previewW / REAL_W * 100)}% scale</p>
+            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Предпросмотр — {Math.round(previewW / REAL_W * 100)}% масштаб</p>
             <div className="rounded-xl overflow-hidden border border-stone-200" style={{ height: 240 }}>
               <div style={{ width: REAL_W, transformOrigin: 'top left', transform: `scale(${previewW / REAL_W})`, pointerEvents: 'none' }}>
                 <ProductMarquee products={products} />

@@ -49,12 +49,12 @@ export default function WebsiteIntroAdminPage() {
         setEditingIndex(null);
         setEditedText('');
         setNewParagraph('');
-        showToast('Saved!', true);
+        showToast('Сохранено!', true);
       } else {
-        showToast('Failed to update', false);
+        showToast('Ошибка обновления', false);
       }
     } catch {
-      showToast('Failed to update', false);
+      showToast('Ошибка обновления', false);
     } finally {
       setSaving(false);
     }
@@ -79,21 +79,21 @@ export default function WebsiteIntroAdminPage() {
     updateParagraphs([...paragraphs, newParagraph.trim()]);
   };
 
-  if (!isAdmin) return <div className="p-4">Unauthorized</div>;
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (!isAdmin) return <div className="p-4">Доступ запрещён</div>;
+  if (loading) return <div className="p-4">Загрузка...</div>;
 
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="max-w-2xl mx-auto px-4 py-8">
         <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">
-          ← Back to Admin
+          ← Назад
         </button>
-        <h1 className="text-2xl font-serif text-stone-800 mb-1">Website Introduction</h1>
+        <h1 className="text-2xl font-serif text-stone-800 mb-1">Введение на сайте</h1>
         <div className="h-px bg-stone-200 mb-6" />
 
         <div className="space-y-3 mb-8">
           {paragraphs.length === 0 && (
-            <p className="text-sm text-stone-400 italic">No paragraphs yet.</p>
+            <p className="text-sm text-stone-400 italic">Абзацев ещё нет.</p>
           )}
           {paragraphs.map((text, i) => (
             <div key={i} className="bg-white border border-stone-200 rounded-xl p-4 space-y-3">
@@ -111,13 +111,13 @@ export default function WebsiteIntroAdminPage() {
                       disabled={saving}
                       className="bg-stone-800 hover:bg-stone-700 text-white text-sm px-4 py-2 rounded-lg disabled:opacity-50 transition-colors"
                     >
-                      {saving ? 'Saving…' : 'Save'}
+                      {saving ? 'Сохранение…' : 'Сохранить'}
                     </button>
                     <button
                       onClick={() => setEditingIndex(null)}
                       className="border border-stone-200 text-stone-600 hover:bg-stone-50 text-sm px-4 py-2 rounded-lg transition-colors"
                     >
-                      Cancel
+                      Отмена
                     </button>
                   </div>
                 </>
@@ -129,13 +129,13 @@ export default function WebsiteIntroAdminPage() {
                       onClick={() => handleEdit(i)}
                       className="text-xs text-stone-400 hover:text-stone-700 underline underline-offset-2 transition-colors"
                     >
-                      Edit
+                      Редактировать
                     </button>
                     <button
                       onClick={() => handleDelete(i)}
                       className="text-xs text-red-400 hover:text-red-600 underline underline-offset-2 transition-colors"
                     >
-                      Delete
+                      Удалить
                     </button>
                   </div>
                 </>
@@ -145,13 +145,13 @@ export default function WebsiteIntroAdminPage() {
         </div>
 
         <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-3">
-          <label className={LABEL}>Add New Paragraph</label>
+          <label className={LABEL}>Добавить абзац</label>
           <textarea
             className={INPUT}
             rows={3}
             value={newParagraph}
             onChange={(e) => setNewParagraph(e.target.value)}
-            placeholder="Type a paragraph…"
+            placeholder="Введите текст абзаца…"
           />
           <div className="flex items-center gap-3">
             <button
@@ -159,7 +159,7 @@ export default function WebsiteIntroAdminPage() {
               disabled={saving || !newParagraph.trim()}
               className="bg-stone-800 hover:bg-stone-700 text-white text-sm px-5 py-2.5 rounded-lg disabled:opacity-50 transition-colors"
             >
-              {saving ? 'Adding…' : 'Add Paragraph'}
+              {saving ? 'Добавление…' : 'Добавить'}
             </button>
             {toast && (
               <p className={`text-sm ${toast.ok ? 'text-green-700' : 'text-red-600'}`}>{toast.msg}</p>

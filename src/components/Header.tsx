@@ -240,14 +240,14 @@ export default function Header() {
                       className={`flex items-center gap-3 px-3 py-2.5 hover:bg-stone-50 transition-colors ${otherNamedArtists.length > 0 ? 'border-t border-stone-100' : ''}`}
                     >
                       <ArchiveIcon size={32} />
-                      <span className="text-sm text-stone-500">Archive</span>
+                      <span className="text-sm text-stone-500">Архив</span>
                     </a>
                     <a
                       href={ARTIST_URLS.staging}
                       className="flex items-center gap-3 px-3 py-2.5 hover:bg-stone-50 transition-colors"
                     >
                       <TestingIcon size={32} />
-                      <span className="text-sm text-stone-500">Testing</span>
+                      <span className="text-sm text-stone-500">Тестирование</span>
                     </a>
                   </>
                 )}
@@ -282,7 +282,7 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-5 flex-shrink-0">
           {isAdmin && (
             <Link href="/admin" className="text-xs tracking-widest uppercase text-stone-400 hover:text-stone-600 transition-colors">
-              Admin
+              Панель
             </Link>
           )}
           <div className="relative group">
@@ -335,11 +335,11 @@ export default function Header() {
                   <>
                     <a href={ARTIST_URLS.archive} className="flex items-center gap-2.5 py-2 text-sm text-stone-500 hover:text-stone-900">
                       <ArchiveIcon size={28} />
-                      Archive
+                      Архив
                     </a>
                     <a href={ARTIST_URLS.staging} className="flex items-center gap-2.5 py-2 text-sm text-stone-500 hover:text-stone-900">
                       <TestingIcon size={28} />
-                      Testing
+                      Тестирование
                     </a>
                   </>
                 )}
@@ -404,7 +404,7 @@ export default function Header() {
                   <Link href="/signup" className="block py-3 text-sm text-stone-600">Sign up</Link>
                 </>
               )}
-              {isAdmin && <Link href="/admin" className="block py-3 text-xs uppercase tracking-widest text-stone-400">Admin</Link>}
+              {isAdmin && <Link href="/admin" className="block py-3 text-xs uppercase tracking-widest text-stone-400">Панель</Link>}
             </div>
           </div>
         </div>

@@ -106,20 +106,20 @@ export default function HeroAdminPage() {
     }
     try {
       const res = await fetch(`${API_URL}/content/home-hero`, { method: 'PUT', credentials: 'include', body: formData });
-      if (res.ok) showToast('Hero section saved!', true);
-      else showToast('Failed to save', false);
-    } catch { showToast('Failed to save', false); }
+      if (res.ok) showToast('Раздел сохранён!', true);
+      else showToast('Ошибка сохранения', false);
+    } catch { showToast('Ошибка сохранения', false); }
     finally { setSaving(false); }
   };
 
-  if (!isAdmin) return <div className="p-4">Unauthorized</div>;
-  if (loading || !form) return <div className="p-4">Loading...</div>;
+  if (!isAdmin) return <div className="p-4">Доступ запрещён</div>;
+  if (loading || !form) return <div className="p-4">Загрузка...</div>;
 
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">← Back to Admin</button>
-        <h1 className="text-2xl font-serif text-stone-800 mb-1">Edit Hero Section</h1>
+        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">← Назад</button>
+        <h1 className="text-2xl font-serif text-stone-800 mb-1">Редактировать главный баннер</h1>
         <div className="h-px bg-stone-200 mb-6" />
 
 
@@ -128,31 +128,31 @@ export default function HeroAdminPage() {
           <div className="bg-white border border-stone-200 rounded-xl p-6 space-y-5">
             <label className="flex items-center gap-3 cursor-pointer">
               <input type="checkbox" className="accent-stone-800 w-4 h-4" checked={form.enabled} onChange={e => setForm({ ...form, enabled: e.target.checked })} />
-              <span className="text-sm font-medium text-stone-700">Section enabled</span>
+              <span className="text-sm font-medium text-stone-700">Раздел включён</span>
             </label>
 
             <div>
-              <label className={LABEL}>Background images</label>
-              <p className="text-xs text-stone-400 mt-0.5 mb-2">Multiple images will cycle automatically every 5 seconds.</p>
+              <label className={LABEL}>Фоновые изображения</label>
+              <p className="text-xs text-stone-400 mt-0.5 mb-2">Несколько изображений будут автоматически меняться каждые 5 секунд.</p>
               <ImageUploadList images={images} setImages={setImages} />
             </div>
 
             <div>
-              <label className={LABEL}>Title</label>
-              <p className="text-xs text-stone-400 mt-0.5 mb-2">Supports bold, italic, colour, and other formatting.</p>
+              <label className={LABEL}>Заголовок</label>
+              <p className="text-xs text-stone-400 mt-0.5 mb-2">Поддерживает жирный, курсив, цвет и другое форматирование.</p>
               <div className="[&_.ql-editor]:min-h-[72px]">
                 <RichTextEditor value={form.title} onChange={v => setForm({ ...form, title: v })} />
               </div>
             </div>
             <div>
-              <label className={LABEL}>Paragraph</label>
-              <p className="text-xs text-stone-400 mt-0.5 mb-2">Supports bold, italic, colour, and other formatting.</p>
+              <label className={LABEL}>Абзац</label>
+              <p className="text-xs text-stone-400 mt-0.5 mb-2">Поддерживает жирный, курсив, цвет и другое форматирование.</p>
               <RichTextEditor value={form.paragraph} onChange={v => setForm({ ...form, paragraph: v })} />
             </div>
 
             <div>
-              <label className={LABEL}>Image overlay</label>
-              <p className="text-xs text-stone-400 mt-0.5 mb-3">Darken the image so the text is easier to read.</p>
+              <label className={LABEL}>Наложение цвета</label>
+              <p className="text-xs text-stone-400 mt-0.5 mb-3">Затемнить изображение для удобства чтения текста.</p>
               {(() => {
                 const { color, opacity } = parseTint(form.tint);
                 const r = parseInt(color.slice(1, 3), 16);
@@ -161,7 +161,7 @@ export default function HeroAdminPage() {
                 return (
                   <div className="flex items-center gap-5">
                     <div className="flex flex-col items-center gap-1">
-                      <span className="text-xs text-stone-400">Colour</span>
+                      <span className="text-xs text-stone-400">Цвет</span>
                       <input
                         type="color"
                         value={color}
@@ -171,7 +171,7 @@ export default function HeroAdminPage() {
                     </div>
                     <div className="flex-1">
                       <div className="flex justify-between text-xs text-stone-400 mb-1.5">
-                        <span>Darkness</span>
+                        <span>Затемнение</span>
                         <span>{opacity}%</span>
                       </div>
                       <div className="relative flex items-center">
@@ -190,8 +190,8 @@ export default function HeroAdminPage() {
                         />
                       </div>
                       <div className="flex justify-between text-xs text-stone-300 mt-1">
-                        <span>None</span>
-                        <span>Very dark</span>
+                        <span>Нет</span>
+                        <span>Очень тёмный</span>
                       </div>
                     </div>
                   </div>
@@ -200,13 +200,13 @@ export default function HeroAdminPage() {
             </div>
 
             <div>
-              <label className={LABEL}>Display order</label>
-              <p className="text-xs text-stone-400 mt-0.5">Lower numbers appear higher on the home page.</p>
+              <label className={LABEL}>Порядок отображения</label>
+              <p className="text-xs text-stone-400 mt-0.5">Меньшее число — выше на главной странице.</p>
               <input type="number" className={INPUT} value={form.order} onChange={e => setForm({ ...form, order: parseInt(e.target.value) })} />
             </div>
 
             <button className="bg-stone-800 hover:bg-stone-700 text-white px-6 py-2.5 rounded-lg font-medium disabled:opacity-50 transition-colors w-full" onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving…' : 'Save Changes'}
+              {saving ? 'Сохранение…' : 'Сохранить'}
             </button>
             {toast && (
               <p className={`text-sm text-center ${toast.ok ? 'text-green-700' : 'text-red-600'}`}>{toast.msg}</p>
@@ -215,7 +215,7 @@ export default function HeroAdminPage() {
 
           {/* Preview */}
           <div ref={previewRef} className="lg:sticky lg:top-4">
-            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Live Preview — {Math.round(previewW / REAL_W * 100)}% scale</p>
+            <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Предпросмотр — {Math.round(previewW / REAL_W * 100)}% масштаб</p>
             <div className="rounded-xl overflow-hidden border border-stone-200" style={{ height: 320 }}>
               <div style={{ width: REAL_W, transformOrigin: 'top left', transform: `scale(${previewW / REAL_W})`, pointerEvents: 'none' }}>
                 <HeroSection content={{ ...form, images: previewImages }} />

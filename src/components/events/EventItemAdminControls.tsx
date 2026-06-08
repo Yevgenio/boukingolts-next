@@ -40,14 +40,14 @@ export default function EventItemAdminControls({ eventId }: { eventId: string })
     >
       <button
         onClick={handleEdit}
-        title="Edit"
+        title="Редактировать"
         className="p-1.5 rounded-full text-white/75 hover:text-white hover:bg-white/15 transition-colors"
       >
         <EditIcon />
       </button>
       <button
         onClick={handleDelete}
-        title={confirmDelete ? 'Confirm delete' : 'Delete'}
+        title={confirmDelete ? 'Подтвердить удаление' : 'Удалить'}
         className={`p-1.5 rounded-full transition-colors ${
           confirmDelete
             ? 'text-red-400 hover:text-red-300 bg-red-500/20 hover:bg-red-500/30'

@@ -36,7 +36,7 @@ export default function ProductsAdminPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+    if (!confirm('Вы уверены, что хотите удалить эту работу?')) return;
     const res = await fetch(`${API_URL}/products/id/${id}`, {
       method: 'DELETE',
       credentials: 'include',
@@ -44,21 +44,21 @@ export default function ProductsAdminPage() {
     if (res.ok) {
       setProducts(products.filter(p => p._id !== id));
     } else {
-      alert('Failed to delete product');
+      alert('Ошибка удаления работы');
     }
   };
 
-  if (!isAdmin) return <div className="p-4">Unauthorized</div>;
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (!isAdmin) return <div className="p-4">Доступ запрещён</div>;
+  if (loading) return <div className="p-4">Загрузка...</div>;
 
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
-      <h1 className="text-2xl font-bold mb-4">Manage Products</h1>
+      <h1 className="text-2xl font-bold mb-4">Управление работами</h1>
       <button
         className="bg-gray-200 px-3 py-2 rounded mb-4"
         onClick={() => router.push('/gallery/create')}
       >
-        + Add New
+        + Добавить
       </button>
       <div className="space-y-2">
         {products.map(p => (
@@ -71,7 +71,7 @@ export default function ProductsAdminPage() {
               />
             )}
             <span className="flex-1">{p.name}</span>
-            <button onClick={() => router.push(`/gallery/${p._id}`)} className="px-2 underline">View</button>
+            <button onClick={() => router.push(`/gallery/${p._id}`)} className="px-2 underline">Просмотр</button>
             <button onClick={() => router.push(`/gallery/edit/${p._id}`)} className="px-2">
               <EditIcon className="w-5 h-5" />
             </button>

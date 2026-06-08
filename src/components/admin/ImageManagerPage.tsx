@@ -6,11 +6,11 @@ import API_URL, { resolveImageUrl } from '@/config/config';
 import { listImages, deleteImage, ManagedImage } from '@/api/images';
 
 const CONTENT_LABELS: Record<string, string> = {
-  'home-hero': 'Hero',
-  'home-product-marquee': 'Marquee',
-  'home-testimonials': 'Testimonials',
-  'home-events': 'Events',
-  'about-boukingolts': 'About',
+  'home-hero': 'Баннер',
+  'home-product-marquee': 'Строка',
+  'home-testimonials': 'Отзывы',
+  'home-events': 'События',
+  'about-boukingolts': 'О нас',
 };
 
 function formatSize(bytes?: number | null): string {
@@ -70,7 +70,7 @@ function ImageCard({ img, onDeleted }: { img: ManagedImage; onDeleted: () => voi
         </div>
         <div className="flex flex-wrap gap-1 min-h-[1.5rem]">
           {img.usedIn.length === 0
-            ? <span className="text-xs px-2 py-0.5 rounded-full bg-stone-100 text-stone-400">Unused</span>
+            ? <span className="text-xs px-2 py-0.5 rounded-full bg-stone-100 text-stone-400">Не используется</span>
             : img.usedIn.map((u, i) => <UsedInBadge key={i} entry={u} />)
           }
         </div>
@@ -83,7 +83,7 @@ function ImageCard({ img, onDeleted }: { img: ManagedImage; onDeleted: () => voi
               : 'border-stone-200 text-stone-500 hover:border-red-300 hover:text-red-600'
           }`}
         >
-          {deleting ? 'Deleting…' : confirming ? 'Confirm delete?' : 'Delete'}
+          {deleting ? 'Удаление…' : confirming ? 'Подтвердить удаление?' : 'Удалить'}
         </button>
       </div>
     </div>
@@ -104,7 +104,7 @@ export default function ImageManagerPage() {
 
   useEffect(() => { if (isAdmin) load(); }, [isAdmin]);
 
-  if (!isAdmin) return <div className="p-4">Unauthorized</div>;
+  if (!isAdmin) return <div className="p-4">Доступ запрещён</div>;
 
   const visible = orphanedOnly ? images.filter(img => img.usedIn.length === 0) : images;
   const totalSize = images.reduce((acc, img) => acc + (img.size ?? 0), 0);
@@ -112,14 +112,14 @@ export default function ImageManagerPage() {
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">← Back to Admin</button>
-        <h1 className="text-2xl font-serif text-stone-800 mb-1">Image Library</h1>
+        <button onClick={() => router.push('/admin')} className="text-sm text-stone-400 hover:text-stone-600 hover:underline mb-4 block">← Назад</button>
+        <h1 className="text-2xl font-serif text-stone-800 mb-1">Библиотека изображений</h1>
         <div className="h-px bg-stone-200 mb-6" />
 
         {!loading && (
           <div className="flex items-center justify-between mb-5">
             <p className="text-sm text-stone-500">
-              {images.length} image{images.length !== 1 ? 's' : ''} · {formatSize(totalSize)} total
+              {images.length} изображений · {formatSize(totalSize)} всего
             </p>
             <label className="flex items-center gap-2 cursor-pointer text-sm text-stone-600">
               <input
@@ -128,16 +128,16 @@ export default function ImageManagerPage() {
                 checked={orphanedOnly}
                 onChange={e => setOrphanedOnly(e.target.checked)}
               />
-              Show unused only
+              Только неиспользуемые
             </label>
           </div>
         )}
 
         {loading ? (
-          <p className="text-stone-400 text-sm">Loading…</p>
+          <p className="text-stone-400 text-sm">Загрузка…</p>
         ) : visible.length === 0 ? (
           <p className="text-stone-400 text-sm italic text-center py-16">
-            {orphanedOnly ? 'No unused images found.' : 'No images found.'}
+            {orphanedOnly ? 'Неиспользуемые изображения не найдены.' : 'Изображения не найдены.'}
           </p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
