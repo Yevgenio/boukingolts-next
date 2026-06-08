@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import API_URL from '@/config/config';
 import { useAuth } from '@/context/AuthContext';
+import { useArtist, artistParam } from '@/context/ArtistContext';
 import { useRouter } from 'next/navigation';
 
 const LABEL = 'block text-xs font-medium text-stone-500 uppercase tracking-wide mb-1';
@@ -10,6 +11,7 @@ const INPUT = 'w-full border border-stone-200 rounded-lg px-3 py-2.5 text-stone-
 
 export default function WebsiteIntroAdminPage() {
   const { isAdmin } = useAuth();
+  const artist = useArtist();
   const router = useRouter();
 
   const [paragraphs, setParagraphs] = useState<string[]>([]);
@@ -27,7 +29,7 @@ export default function WebsiteIntroAdminPage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    fetch(`${API_URL}/content/website-introduction`)
+    fetch(`${API_URL}/content/website-introduction${artistParam(artist)}`)
       .then(res => res.json())
       .then(data => {
         setParagraphs(data.paragraphs || []);
@@ -38,7 +40,7 @@ export default function WebsiteIntroAdminPage() {
   const updateParagraphs = async (updated: string[]) => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_URL}/content/website-introduction`, {
+      const res = await fetch(`${API_URL}/content/website-introduction${artistParam(artist)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

@@ -1,19 +1,23 @@
 import API_URL from '@/config/config';
 
-export async function getMarqueeProducts() {
-  const res = await fetch(`${API_URL}/products/marquee`, { cache: 'no-store' });
+function qs(artist?: string) {
+  return artist && artist !== 'all' ? `?artist=${artist}` : '';
+}
+
+export async function getMarqueeProducts(artist?: string) {
+  const res = await fetch(`${API_URL}/products/marquee${qs(artist)}`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch marquee products');
   return res.json();
 }
 
-export async function getMarqueeProductIds() {
-  const res = await fetch(`${API_URL}/products/marquee/ids`, { cache: 'no-store' });
+export async function getMarqueeProductIds(artist?: string) {
+  const res = await fetch(`${API_URL}/products/marquee/ids${qs(artist)}`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch marquee ids');
   return res.json();
 }
 
-export async function updateMarqueeProductIds(ids: string[]) {
-  const res = await fetch(`${API_URL}/products/marquee/ids`, {
+export async function updateMarqueeProductIds(ids: string[], artist?: string) {
+  const res = await fetch(`${API_URL}/products/marquee/ids${qs(artist)}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
