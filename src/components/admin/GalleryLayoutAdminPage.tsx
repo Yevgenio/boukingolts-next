@@ -51,7 +51,7 @@ function Preview({ products, settings }: { products: Product[]; settings: Galler
   return (
     <div ref={containerRef} className="w-full rounded-xl overflow-hidden border border-stone-200 bg-stone-50 min-h-32">
       {!products.length && (
-        <p className="text-sm text-stone-400 italic text-center py-10">No artworks to preview</p>
+        <p className="text-sm text-stone-400 italic text-center py-10">Нет работ для предпросмотра</p>
       )}
       {products.length > 0 && width > 0 && (
         <div className="flex flex-col" style={{ gap: PREVIEW_GAP }}>
@@ -93,7 +93,7 @@ export default function GalleryLayoutAdminPage() {
       .then(r => r.json()).then((d: { data: Product[] }) => setProducts(d.data ?? [])).catch(() => {});
   }, [isAdmin]);
 
-  if (!isAdmin) return <p className="p-4">Unauthorized</p>;
+  if (!isAdmin) return <p className="p-4">Доступ запрещён</p>;
 
   const handleSave = async () => {
     setSaving(true); setSaved(false);
@@ -107,24 +107,24 @@ export default function GalleryLayoutAdminPage() {
       <div className="max-w-2xl mx-auto px-4 py-10">
 
         <button onClick={() => router.back()} className="text-sm text-stone-400 hover:text-stone-600 mb-6 flex items-center gap-1">
-          ← Back
+          ← Назад
         </button>
 
-        <h1 className="text-3xl font-serif text-stone-800 mb-1">Gallery Layout</h1>
+        <h1 className="text-3xl font-serif text-stone-800 mb-1">Макет галереи</h1>
         <p className="text-sm text-stone-500 mb-8">
-          Controls how rows are formed. Target height sets the average row size. Variance controls how much rows can differ — higher variance allows 1 wide image or 5 thin ones in the same gallery.
+          Управляет формированием строк. Целевая высота задаёт средний размер строки. Разброс управляет тем, насколько строки могут различаться — больший разброс допускает 1 широкое или 5 узких изображений в одной строке.
         </p>
         <div className="h-px bg-stone-200 mb-8" />
 
         <div className="space-y-8 mb-10">
           <Slider
-            label="Target row height"
+            label="Высота строки"
             value={settings.targetHeight}
             min={100} max={600} unit="px"
             onChange={v => setSettings(s => ({ ...s, targetHeight: v }))}
           />
           <Slider
-            label="Row height variance"
+            label="Разброс высоты"
             value={settings.variance}
             min={0} max={300} unit="px"
             onChange={v => setSettings(s => ({ ...s, variance: v }))}
@@ -132,7 +132,7 @@ export default function GalleryLayoutAdminPage() {
         </div>
 
         <div className="mb-8">
-          <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Preview</p>
+          <p className="text-xs font-semibold tracking-widest text-stone-400 uppercase mb-3">Предпросмотр</p>
           <Preview products={products} settings={settings} />
         </div>
 
@@ -142,9 +142,9 @@ export default function GalleryLayoutAdminPage() {
             disabled={saving}
             className="px-6 py-2.5 bg-stone-800 text-white rounded-lg text-sm hover:bg-stone-700 transition-colors disabled:opacity-50"
           >
-            {saving ? 'Saving…' : 'Save'}
+            {saving ? 'Сохранение…' : 'Сохранить'}
           </button>
-          {saved && <p className="text-sm text-green-600">Saved.</p>}
+          {saved && <p className="text-sm text-green-600">Сохранено.</p>}
         </div>
 
       </div>

@@ -13,7 +13,7 @@ export default function EventsAdminControls() {
       onClick={() => router.push('/events/create')}
       className="text-sm border border-stone-300 text-stone-600 px-4 py-1.5 rounded-full hover:border-stone-500 hover:text-stone-800 transition-colors"
     >
-      + Add event
+      + Добавить событие
     </button>
   );
 }

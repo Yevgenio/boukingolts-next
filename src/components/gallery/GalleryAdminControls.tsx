@@ -14,7 +14,7 @@ export default function GalleryAdminControls() {
       onClick={() => router.push('/gallery/create')}
       className="text-sm border border-stone-300 text-stone-600 px-4 py-1.5 rounded-full hover:border-stone-500 hover:text-stone-800 transition-colors"
     >
-      + Add artwork
+      + Добавить работу
     </button>
   );
 }

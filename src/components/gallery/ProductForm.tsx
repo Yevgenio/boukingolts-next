@@ -224,7 +224,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
       <h1 className="text-3xl font-serif text-stone-800 mb-2">
-        {mode === 'create' ? 'Add Artwork' : 'Edit Artwork'}
+        {mode === 'create' ? 'Добавить работу' : 'Редактировать работу'}
       </h1>
       <div className="h-px bg-stone-200 mb-8" />
 
@@ -235,70 +235,70 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
 
           {/* Artist assignment */}
           <div>
-            <label className={LABEL}>Artist</label>
+            <label className={LABEL}>Художник</label>
             <ArtistDropdown value={selectedArtist} onChange={setSelectedArtist} />
           </div>
 
           {/* Images — first so you can upload before filling metadata */}
           <div>
-            <label className={LABEL}>Images</label>
+            <label className={LABEL}>Изображения</label>
             <ImageUploadList images={images} setImages={setImages} />
           </div>
 
           <div>
-            <label className={LABEL}>Name *</label>
-            <input type="text" value={name} onChange={e => setName(e.target.value)} required className={INPUT} placeholder="Artwork title" />
+            <label className={LABEL}>Название *</label>
+            <input type="text" value={name} onChange={e => setName(e.target.value)} required className={INPUT} placeholder="Название работы" />
           </div>
 
           <div>
-            <label className={LABEL}>Category *</label>
-            <input type="text" value={category} onChange={e => setCategory(e.target.value)} required className={INPUT} placeholder="e.g. Painting, Sculpture" />
+            <label className={LABEL}>Категория *</label>
+            <input type="text" value={category} onChange={e => setCategory(e.target.value)} required className={INPUT} placeholder="например, Живопись, Скульптура" />
           </div>
 
           <div>
-            <label className={LABEL}>Tags</label>
-            <input type="text" value={tags} onChange={e => setTags(e.target.value)} className={INPUT} placeholder="oil, landscape, blue — comma separated" />
+            <label className={LABEL}>Теги</label>
+            <input type="text" value={tags} onChange={e => setTags(e.target.value)} className={INPUT} placeholder="масло, пейзаж, синий — через запятую" />
           </div>
 
           <div>
-            <label className={LABEL}>Series</label>
-            <input type="text" value={series} onChange={e => setSeries(e.target.value)} className={INPUT} placeholder="e.g. Mediterranean Coast" />
+            <label className={LABEL}>Серия</label>
+            <input type="text" value={series} onChange={e => setSeries(e.target.value)} className={INPUT} placeholder="например, Средиземноморское побережье" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={LABEL}>Year</label>
-              <input type="number" value={year} onChange={e => setYear(e.target.value === '' ? '' : Number(e.target.value))} className={INPUT} placeholder="e.g. 2023" />
+              <label className={LABEL}>Год</label>
+              <input type="number" value={year} onChange={e => setYear(e.target.value === '' ? '' : Number(e.target.value))} className={INPUT} placeholder="например, 2023" />
             </div>
             <div className="flex flex-col">
-              <label className={LABEL}>For Sale</label>
+              <label className={LABEL}>На продажу</label>
               <button
                 type="button"
                 onClick={() => setForSale(v => !v)}
                 className={`mt-1 flex items-center gap-3 px-4 py-2.5 rounded-lg border text-sm transition-colors ${forSale ? 'bg-stone-800 border-stone-800 text-white' : 'bg-white border-stone-200 text-stone-500'}`}
               >
                 <span className={`w-4 h-4 rounded-full border-2 flex-shrink-0 transition-colors ${forSale ? 'bg-white border-white' : 'border-stone-400'}`} />
-                {forSale ? 'Available for purchase' : 'Not for sale'}
+                {forSale ? 'Доступно для покупки' : 'Не продаётся'}
               </button>
             </div>
           </div>
 
           <div>
-            <label className={LABEL}>Dimensions</label>
+            <label className={LABEL}>Размеры</label>
             <div className="flex items-center gap-2">
               <div className="flex-1">
                 <input type="number" step="0.1" value={dimW} onChange={e => setDimW(e.target.value)} className={DIM_INPUT} placeholder="W" />
-                <p className="text-center text-[10px] text-stone-400 mt-0.5">Width</p>
+                <p className="text-center text-[10px] text-stone-400 mt-0.5">Ширина</p>
               </div>
               <span className="text-stone-400 text-sm pb-4">×</span>
               <div className="flex-1">
                 <input type="number" step="0.1" value={dimH} onChange={e => setDimH(e.target.value)} className={DIM_INPUT} placeholder="H" />
-                <p className="text-center text-[10px] text-stone-400 mt-0.5">Height</p>
+                <p className="text-center text-[10px] text-stone-400 mt-0.5">Высота</p>
               </div>
               <span className="text-stone-400 text-sm pb-4">×</span>
               <div className="flex-1">
                 <input type="number" step="0.1" value={dimD} onChange={e => setDimD(e.target.value)} className={DIM_INPUT} placeholder="D" />
-                <p className="text-center text-[10px] text-stone-400 mt-0.5">Depth (opt.)</p>
+                <p className="text-center text-[10px] text-stone-400 mt-0.5">Глубина (необ.)</p>
               </div>
               <select value={dimUnit} onChange={e => setDimUnit(e.target.value)} className="border border-stone-200 rounded-lg px-2 py-2.5 text-stone-700 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-stone-200 self-start mt-0">
                 <option>cm</option><option>mm</option><option>in</option><option>m</option>
@@ -308,16 +308,16 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className={LABEL}>Specifications</label>
-              <button type="button" onClick={addSpec} className="text-xs text-stone-500 hover:text-stone-800 transition-colors">+ Add row</button>
+              <label className={LABEL}>Характеристики</label>
+              <button type="button" onClick={addSpec} className="text-xs text-stone-500 hover:text-stone-800 transition-colors">+ Добавить строку</button>
             </div>
-            {specs.length === 0 && <p className="text-sm text-stone-400 italic py-2">No specs yet — click &quot;Add row&quot; to start.</p>}
+            {specs.length === 0 && <p className="text-sm text-stone-400 italic py-2">Нет характеристик — нажмите «Добавить строку».</p>}
             <div className="space-y-2">
               {specs.map((spec, i) => (
                 <div key={i} className="flex gap-2 items-center">
-                  <input type="text" value={spec.key} onChange={e => updateSpec(i, 'key', e.target.value)} className="w-2/5 border border-stone-200 rounded-lg px-3 py-2 text-stone-700 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-stone-200 placeholder:text-stone-400" placeholder="e.g. Material" />
-                  <input type="text" value={spec.value} onChange={e => updateSpec(i, 'value', e.target.value)} className="flex-1 border border-stone-200 rounded-lg px-3 py-2 text-stone-700 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-stone-200 placeholder:text-stone-400" placeholder="e.g. Oil on canvas" />
-                  <button type="button" onClick={() => removeSpec(i)} className="text-stone-300 hover:text-red-400 transition-colors text-lg leading-none px-1" aria-label="Remove">×</button>
+                  <input type="text" value={spec.key} onChange={e => updateSpec(i, 'key', e.target.value)} className="w-2/5 border border-stone-200 rounded-lg px-3 py-2 text-stone-700 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-stone-200 placeholder:text-stone-400" placeholder="например, Материал" />
+                  <input type="text" value={spec.value} onChange={e => updateSpec(i, 'value', e.target.value)} className="flex-1 border border-stone-200 rounded-lg px-3 py-2 text-stone-700 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-stone-200 placeholder:text-stone-400" placeholder="например, Масло на холсте" />
+                  <button type="button" onClick={() => removeSpec(i)} className="text-stone-300 hover:text-red-400 transition-colors text-lg leading-none px-1" aria-label="Удалить">×</button>
                 </div>
               ))}
             </div>
@@ -325,37 +325,37 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={LABEL}>Price (₪)</label>
+              <label className={LABEL}>Цена (₪)</label>
               <input type="number" step="0.01" value={price} onChange={e => setPrice(e.target.value === '' ? '' : Number(e.target.value))} className={INPUT} placeholder="0.00" />
             </div>
             <div>
-              <label className={LABEL}>Sale (%)</label>
+              <label className={LABEL}>Скидка (%)</label>
               <input type="number" step="0.01" value={salePercent} onChange={e => handleSalePercentChange(e.target.value)} className={INPUT} placeholder="0" />
-              {salePrice !== '' && <p className="text-xs text-stone-500 mt-1.5">Final price: ₪{salePrice}</p>}
+              {salePrice !== '' && <p className="text-xs text-stone-500 mt-1.5">Итоговая цена: ₪{salePrice}</p>}
             </div>
           </div>
 
           <div>
-            <label className={LABEL}>Sale price override (₪)</label>
-            <input type="number" step="0.01" placeholder="Or enter final price directly" value={salePrice} onChange={e => handleSalePriceChange(e.target.value)} className={INPUT} />
+            <label className={LABEL}>Итоговая цена вручную (₪)</label>
+            <input type="number" step="0.01" placeholder="Или введите итоговую цену" value={salePrice} onChange={e => handleSalePriceChange(e.target.value)} className={INPUT} />
           </div>
 
           <div>
-            <label className={LABEL}>Description</label>
+            <label className={LABEL}>Описание</label>
             <RichTextEditor value={description} onChange={setDescription} />
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <button type="submit" disabled={submitting} className="w-full bg-stone-800 text-white py-3 rounded-xl text-sm tracking-wide hover:bg-stone-700 transition-colors disabled:opacity-60">
-            {submitting ? (mode === 'create' ? 'Creating…' : 'Saving…') : (mode === 'create' ? 'Create Artwork' : 'Save Changes')}
+            {submitting ? (mode === 'create' ? 'Создание…' : 'Сохранение…') : (mode === 'create' ? 'Создать работу' : 'Сохранить')}
           </button>
         </form>
 
         {/* ── Preview ── */}
         <div ref={previewRef} className="lg:sticky lg:top-24 space-y-3">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-stone-400 uppercase tracking-widest">Live Preview</p>
+            <p className="text-xs font-medium text-stone-400 uppercase tracking-widest">Предпросмотр</p>
             <div className="flex gap-1 bg-stone-100 rounded-lg p-1">
               {(['page', 'card'] as const).map(tab => (
                 <button
@@ -364,7 +364,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
                   onClick={() => setPreviewTab(tab)}
                   className={`px-3 py-1 text-xs rounded-md transition-colors ${previewTab === tab ? 'bg-white text-stone-800 shadow-sm font-medium' : 'text-stone-500 hover:text-stone-700'}`}
                 >
-                  {tab === 'page' ? 'Product page' : 'Gallery card'}
+                  {tab === 'page' ? 'Страница работы' : 'Карточка галереи'}
                 </button>
               ))}
             </div>
@@ -444,7 +444,7 @@ export default function ProductForm({ mode, productId }: ProductFormProps) {
           </div>
 
           <p className="text-[10px] text-stone-400 text-center">
-            {previewTab === 'page' ? `${Math.round(productScale * 100)}% scale` : 'actual card ratio'}
+            {previewTab === 'page' ? `${Math.round(productScale * 100)}% масштаб` : 'фактический размер'}
           </p>
         </div>
 
