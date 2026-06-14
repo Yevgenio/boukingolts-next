@@ -1,3 +1,3 @@
 export async function GET() {
-  return Response.json({ ok: true, service: 'boukingolts-frontend', version: 3 });
+  return Response.json({ ok: true, service: 'boukingolts-frontend', version: 4 });
 }
