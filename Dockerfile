@@ -13,9 +13,8 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_IMAGE_URL=$NEXT_PUBLIC_IMAGE_URL
 RUN npm run build
 
-FROM node:24-alpine AS runner
+FROM node:24-slim AS runner
 WORKDIR /app
-RUN apk add --no-cache libc6-compat
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 ENV NODE_ENV=production
 ENV PORT=3000
