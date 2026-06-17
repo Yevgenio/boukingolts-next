@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -65,15 +65,19 @@ function NavDropdown({
   href,
   active,
   items,
+  containerRef,
+  onMouseEnter,
 }: {
   label: string;
   href: string;
   active: boolean;
   items: { label: string; href: string }[];
+  containerRef?: React.Ref<HTMLDivElement>;
+  onMouseEnter?: () => void;
 }) {
   const hasItems = items.length > 0;
   return (
-    <div className="relative group">
+    <div ref={containerRef} className="relative group" onMouseEnter={onMouseEnter}>
       <Link
         href={href}
         className={`flex items-center gap-0.5 text-sm tracking-wide transition-colors ${
@@ -120,6 +124,30 @@ export default function Header() {
   const [artistImages, setArtistImages] = useState<Record<string, string>>({});
   const headerRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
+
+  const navRef = useRef<HTMLElement>(null);
+  const homeRef = useRef<HTMLAnchorElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const eventsRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLAnchorElement>(null);
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
+
+  const moveIndicatorTo = useCallback((el: HTMLElement | null) => {
+    if (!el || !navRef.current) return;
+    const navRect = navRef.current.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    setIndicator({ left: elRect.left - navRect.left, width: elRect.width, ready: true });
+  }, []);
+
+  const snapToActive = useCallback(() => {
+    if (pathname.startsWith('/home') && homeRef.current) { moveIndicatorTo(homeRef.current); return; }
+    if (pathname.startsWith('/gallery') && galleryRef.current) { moveIndicatorTo(galleryRef.current); return; }
+    if (pathname.startsWith('/events') && eventsRef.current) { moveIndicatorTo(eventsRef.current); return; }
+    if (pathname.startsWith('/about') && aboutRef.current) { moveIndicatorTo(aboutRef.current); return; }
+    setIndicator(prev => ({ ...prev, ready: false }));
+  }, [pathname, moveIndicatorTo]);
+
+  useEffect(() => { snapToActive(); }, [snapToActive]);
 
   const artistQs = artist !== 'all' ? `?artist=${artist}` : '';
 
@@ -257,22 +285,40 @@ export default function Header() {
         </div>
 
         {/* Desktop nav — centred */}
-        <nav className="hidden md:flex items-center gap-8 flex-1 justify-center">
+        <nav
+          ref={navRef}
+          className="relative hidden md:flex items-center gap-8 flex-1 justify-center"
+          onMouseLeave={snapToActive}
+        >
+          {indicator.ready && (
+            <span
+              className="absolute bottom-0 h-0.5 bg-stone-400 pointer-events-none"
+              style={{
+                left: indicator.left,
+                width: indicator.width,
+                transition: 'left 200ms ease-out, width 200ms ease-out',
+              }}
+            />
+          )}
           <Link
+            ref={homeRef}
             href="/home"
             className={`text-sm tracking-wide transition-colors ${
               pathname.startsWith('/home') ? 'text-stone-900 font-medium' : 'text-stone-500 hover:text-stone-900'
             }`}
+            onMouseEnter={() => moveIndicatorTo(homeRef.current)}
           >
             Home
           </Link>
-          <NavDropdown label="Gallery" href="/gallery" active={pathname.startsWith('/gallery')} items={galleryDropdownItems} />
-          <NavDropdown label="Events" href="/events" active={pathname.startsWith('/events')} items={eventsDropdownItems} />
+          <NavDropdown label="Gallery" href="/gallery" active={pathname.startsWith('/gallery')} items={galleryDropdownItems} containerRef={galleryRef} onMouseEnter={() => moveIndicatorTo(galleryRef.current)} />
+          <NavDropdown label="Events" href="/events" active={pathname.startsWith('/events')} items={eventsDropdownItems} containerRef={eventsRef} onMouseEnter={() => moveIndicatorTo(eventsRef.current)} />
           <Link
+            ref={aboutRef}
             href="/about"
             className={`text-sm tracking-wide transition-colors ${
               pathname.startsWith('/about') ? 'text-stone-900 font-medium' : 'text-stone-500 hover:text-stone-900'
             }`}
+            onMouseEnter={() => moveIndicatorTo(aboutRef.current)}
           >
             About
           </Link>
@@ -346,14 +392,14 @@ export default function Header() {
               </div>
             )}
 
-            <Link href="/home" className={`block py-3 text-sm border-b border-stone-50 transition-colors ${pathname.startsWith('/home') ? 'text-stone-900 font-medium' : 'text-stone-600'}`}>
+            <Link href="/home" className={`block py-3 text-sm border-b border-stone-50 transition-colors ${pathname.startsWith('/home') ? 'text-stone-900 font-semibold pl-3 border-l-2 border-stone-900' : 'text-stone-600'}`}>
               Home
             </Link>
 
             {/* Gallery accordion */}
             <div>
               <div className="flex items-center justify-between py-3 border-b border-stone-50">
-                <Link href="/gallery" className={`text-sm ${pathname.startsWith('/gallery') ? 'text-stone-900 font-medium' : 'text-stone-600'}`}>Gallery</Link>
+                <Link href="/gallery" className={`text-sm transition-colors ${pathname.startsWith('/gallery') ? 'text-stone-900 font-semibold pl-3 border-l-2 border-stone-900' : 'text-stone-600'}`}>Gallery</Link>
                 {galleryCategories.length > 0 && (
                   <button onClick={() => setMobileExpanded(v => v === 'gallery' ? null : 'gallery')} className="p-1 text-stone-400" aria-label="Expand gallery categories">
                     <FiChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileExpanded === 'gallery' ? 'rotate-180' : ''}`} />
@@ -372,7 +418,7 @@ export default function Header() {
             {/* Events accordion */}
             <div>
               <div className="flex items-center justify-between py-3 border-b border-stone-50">
-                <Link href="/events" className={`text-sm ${pathname.startsWith('/events') ? 'text-stone-900 font-medium' : 'text-stone-600'}`}>Events</Link>
+                <Link href="/events" className={`text-sm transition-colors ${pathname.startsWith('/events') ? 'text-stone-900 font-semibold pl-3 border-l-2 border-stone-900' : 'text-stone-600'}`}>Events</Link>
                 {eventCategories.length > 0 && (
                   <button onClick={() => setMobileExpanded(v => v === 'events' ? null : 'events')} className="p-1 text-stone-400" aria-label="Expand event categories">
                     <FiChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileExpanded === 'events' ? 'rotate-180' : ''}`} />
@@ -388,7 +434,7 @@ export default function Header() {
               )}
             </div>
 
-            <Link href="/about" className={`block py-3 text-sm border-b border-stone-50 transition-colors ${pathname.startsWith('/about') ? 'text-stone-900 font-medium' : 'text-stone-600'}`}>
+            <Link href="/about" className={`block py-3 text-sm border-b border-stone-50 transition-colors ${pathname.startsWith('/about') ? 'text-stone-900 font-semibold pl-3 border-l-2 border-stone-900' : 'text-stone-600'}`}>
               About
             </Link>
 
